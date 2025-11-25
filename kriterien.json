@@ -1,0 +1,14 @@
+{
+  "Deutschrap": {
+    "historischer_bezug": 0.50,
+    "kreativitaet": 0.25,
+    "technische_qualitaet": 0.15,
+    "community_feedback": 0.10
+  },
+  "Hip-Hop": {
+    "historischer_bezug": 0.45,
+    "kreativitaet": 0.30,
+    "technische_qualitaet": 0.15,
+    "community_feedback": 0.10
+  }
+}
