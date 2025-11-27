@@ -1,52 +1,57 @@
-```python
-from flask import Flask, request, jsonify, render_template_string
-import sqlite3
-import json
-import datetime
+from flask import Flask, render_template, request, flash, redirect, url_for
+import os
 
 app = Flask(__name__)
-if not hasattr(app, 'submissions'):
-    app.submissions = []
-submissions = app.submissions
-# Datenbank anlegen
-def init_db():
-    conn = sqlite3.connect('jumper.db')
-    c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS artists 
-                 (id INTEGER PRIMARY KEY, name TEXT, age INTEGER, track TEXT, genre TEXT, month TEXT, score REAL)''')
-    c.execute('''CREATE TABLE IF NOT EXISTS criteria (genre TEXT, weights TEXT)''')
-    c.execute('''CREATE TABLE IF NOT EXISTS mentors (name TEXT, years_active INTEGER)''')
-    conn.commit()
-    conn.close()
+app.secret_key = "jumper2025"
 
-init_db()
+# Globale Speicher (persistent via app.config)
+app.config['SUBMISSIONS'] = []
+app.config['GENRES'] = {
+    "oldschool": "Old School / Boom Bap",
+    "conscious": "Conscious / Politischer Rap",
+    "battle": "Battle-Rap",
+    "gangsta": "Gangsta- / Straßenrap",
+    "poprap": "Pop-Rap / Raop",
+    "emo": "Emo Rap",
+    "trap": "Trap",
+    "cloud": "Cloud Rap / Hashtag-Rap"
+}
 
-# Standard-Kriterien (stark Geschichte gewichtet)
-default_criteria = {"historischer_bezug": 0.5, "kreativitaet": 0.25, "technische_qualitaet": 0.15, "community_feedback": 0.1}
+def get_submissions():
+    if 'SUBMISSIONS' not in app.config:
+        app.config['SUBMISSIONS'] = []
+    return app.config['SUBMISSIONS']
 
-HTML = '''
-<h1>Jumper – Anmeldung</h1>
-<form action="/anmelden" method="post">
-    Künstlername: <input name="name" required><br><br>
-    Alter: <input type="number" name="age" required><br><br>
-    Track/Album: <input name="track" required><br><br>
-    Genre: <input name="genre" value="Deutschrap" required><br><br>
-    <button type="submit">Anmelden & bewerten lassen</button>
-</form>
-<hr>
-<a href="/leaderboard">Zum aktuellen Monats-Leaderboard</a>
-'''
+def get_genres():
+    return app.config['GENRES']
+
+@app.route("/")
+def index():
+    return render_template("index.html")
 
 @app.route("/submit", methods=["GET", "POST"])
 def submit():
     if request.method == "POST":
-        name = request.form["name"]
-        alter = int(request.form["alter"])
-        genre = request.form["genre"]
-        track = request.form["track"]
-        
-        # Später hier speichern (Datenbank oder Liste)
-        bonus = " (+15 % Jungkünstler-Bonus)" if alter < 25 else ""
-        flash(f"Danke {name}! Dein Track im Genre »{genre}« wurde eingereicht.{bonus}")
+        submissions = get_submissions()
+        entry = {
+            "name": request.form["name"],
+            "alter": int(request.form["alter"]),
+            "genre": request.form["genre"],
+            "track": request.form["track"],
+            "bonus": int(request.form["alter"]) < 25
+        }
+        submissions.append(entry)
+        bonus_text = " (+15 % Jungkünstler-Bonus)" if entry["bonus"] else ""
+        flash(f"Danke {entry['name']}! Dein Track im Genre »{get_genres()[entry['genre']]}« wurde eingereicht.{bonus_text}")
         return redirect(url_for("index"))
     return render_template("submit.html")
+
+@app.route("/leaderboard")
+def leaderboard():
+    submissions = get_submissions()
+    genres = get_genres()
+    return render_template("leaderboard.html", submissions=submissions, genres=genres)
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
