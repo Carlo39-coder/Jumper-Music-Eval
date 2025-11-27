@@ -17,10 +17,6 @@ GENRES = {
     "cloud": "Cloud Rap / Hashtag-Rap"
 }
 
-@app.route("/")
-def index():
-    return render_template("index.html")
-
 @app.route("/submit", methods=["GET", "POST"])
 def submit():
     if request.method == "POST":
@@ -32,16 +28,14 @@ def submit():
             "bonus": int(request.form["alter"]) < 25
         }
         submissions.append(entry)
+
         bonus_text = " (+15 % Jungkünstler-Bonus)" if entry["bonus"] else ""
         genre_name = GENRES.get(entry["genre"], entry["genre"])
-        flash(f"Danke {entry['name']}! Dein Track im Genre »{genre_name}« wurde eingereicht.{bonus_text}")
-        return redirect(url_for("index"))
+        
+        # WICHTIG: statt flash + redirect → render_template mit Nachricht
+        return render_template("submit_success.html",
+                               name=entry["name"],
+                               genre=genre_name,
+                               bonus_text=bonus_text)
+
     return render_template("submit.html")
-
-@app.route("/leaderboard")
-def leaderboard():
-    return render_template("leaderboard.html", submissions=submissions, genres=GENRES)
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
