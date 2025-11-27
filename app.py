@@ -5,7 +5,9 @@ import json
 import datetime
 
 app = Flask(__name__)
-
+if not hasattr(app, 'submissions'):
+    app.submissions = []
+submissions = app.submissions
 # Datenbank anlegen
 def init_db():
     conn = sqlite3.connect('jumper.db')
