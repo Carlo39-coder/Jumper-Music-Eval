@@ -4,9 +4,9 @@ import os
 app = Flask(__name__)
 app.secret_key = "jumper2025"
 
-# Globale Speicher (persistent via app.config)
-app.config['SUBMISSIONS'] = []
-app.config['GENRES'] = {
+# Globale Variablen (persistent in Render)
+submissions = []
+GENRES = {
     "oldschool": "Old School / Boom Bap",
     "conscious": "Conscious / Politischer Rap",
     "battle": "Battle-Rap",
@@ -17,14 +17,6 @@ app.config['GENRES'] = {
     "cloud": "Cloud Rap / Hashtag-Rap"
 }
 
-def get_submissions():
-    if 'SUBMISSIONS' not in app.config:
-        app.config['SUBMISSIONS'] = []
-    return app.config['SUBMISSIONS']
-
-def get_genres():
-    return app.config['GENRES']
-
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -32,7 +24,6 @@ def index():
 @app.route("/submit", methods=["GET", "POST"])
 def submit():
     if request.method == "POST":
-        submissions = get_submissions()
         entry = {
             "name": request.form["name"],
             "alter": int(request.form["alter"]),
@@ -42,15 +33,14 @@ def submit():
         }
         submissions.append(entry)
         bonus_text = " (+15 % Jungkünstler-Bonus)" if entry["bonus"] else ""
-        flash(f"Danke {entry['name']}! Dein Track im Genre »{get_genres()[entry['genre']]}« wurde eingereicht.{bonus_text}")
+        genre_name = GENRES.get(entry["genre"], entry["genre"])
+        flash(f"Danke {entry['name']}! Dein Track im Genre »{genre_name}« wurde eingereicht.{bonus_text}")
         return redirect(url_for("index"))
     return render_template("submit.html")
 
 @app.route("/leaderboard")
 def leaderboard():
-    submissions = get_submissions()
-    genres = get_genres()
-    return render_template("leaderboard.html", submissions=submissions, genres=genres)
+    return render_template("leaderboard.html", submissions=submissions, genres=GENRES)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
