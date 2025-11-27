@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <title>Danke! – Jumper</title>
+    <style>
+        body { font-family: Arial; background: #111; color: #fff; text-align: center; padding: 50px; }
+        h1 { color: #00ff88; }
+        a { color: #00ff88; font-size: 1.5em; }
+    </style>
+</head>
+<body>
+    <h1>Danke {{ name }}!</h1>
+    <p>Dein Track im Genre »{{ genre }}« wurde eingereicht.{{ bonus_text }}</p>
+    <p><a href="/submit">→ Noch einen einreichen</a></p>
+    <p><a href="/leaderboard">→ Zum Leaderboard</a></p>
+    <p><a href="/">← Zurück zur Startseite</a></p>
+</body>
+</html>
