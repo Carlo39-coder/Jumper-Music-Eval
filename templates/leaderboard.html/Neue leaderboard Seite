@@ -9,12 +9,12 @@
         table { width: 100%; border-collapse: collapse; margin: 20px 0; }
         th, td { padding: 12px; border: 1px solid #333; text-align: left; }
         th { background: #222; }
-        a { color: #00Nicoleff88; }
+        a { color: #00ff88; }
         .bonus { color: #00ff88; font-weight: bold; }
     </style>
 </head>
 <body>
-    <h1>JUMPER LEADERBOARD</h1>
+    <h1>JUMPER LEADERBOARD 🔥</h1>
     <p><a href="/">← Zurück zur Startseite</a> | <a href="/submit">Track einreichen</a></p>
 
     {% if submissions %}
@@ -36,8 +36,9 @@
         </tr>
         {% endfor %}
     </table>
+    <p>Gesamt: {{ submissions|length }} Einreichungen</p>
     {% else %}
-    <p>Noch keine Einreichungen – sei der/die Erste!</p>
+    <p>Noch keine Einreichungen – <a href="/submit">sei der/die Erste!</a></p>
     {% endif %}
 </body>
 </html>
