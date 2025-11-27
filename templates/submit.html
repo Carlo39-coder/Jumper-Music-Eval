@@ -12,7 +12,27 @@
         <p>Alter:<br><input type="number" name="alter" required></p>
         <p>Track-Link (SoundCloud/YouTube):<br><input type="text" name="track" required></p>
         <p><input type="submit" value="Abschicken 🔥"></p>
-    </form>
+    <form method="POST">
+    <p>Name/Künstlername:<br><input type="text" name="name" required></p>
+    <p>Alter:<br><input type="number" name="alter" min="13" max="99" required></p>
+    
+    <p>Genre deines Tracks:<br>
+        <select name="genre" required>
+            <option value="">– Bitte auswählen –</option>
+            <option value="oldschool">Old School / Boom Bap</option>
+            <option value="conscious">Conscious / Politischer Rap</option>
+            <option value="battle">Battle-Rap</option>
+            <option value="gangsta">Gangsta- / Straßenrap</option>
+            <option value="poprap">Pop-Rap / Raop</option>
+            <option value="emo">Emo Rap</option>
+            <option value="trap">Trap</option>
+            <option value="cloud">Cloud Rap / Hashtag-Rap</option>
+        </select>
+    </p>
+    
+    <p>Track-Link (YouTube/SoundCloud):<br><input type="text" name="track" required></p>
+    <p><input type="submit" value="Abschicken"></p>
+</form>
     <p><a href="/">← Zurück</a></p>
 </body>
 </html>
