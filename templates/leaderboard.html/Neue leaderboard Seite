@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+OCTYPE html>
 <html lang="de">
 <head>
     <meta charset="utf-8">
@@ -36,9 +36,3 @@
         </tr>
         {% endfor %}
     </table>
-    <p>Gesamt: {{ submissions|length }} Einreichungen</p>
-    {% else %}
-    <p>Noch keine Einreichungen – <a href="/submit">sei der/die Erste!</a></p>
-    {% endif %}
-</body>
-</html>
