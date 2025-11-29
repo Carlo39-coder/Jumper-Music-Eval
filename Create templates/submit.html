@@ -1,35 +1,17 @@
 @app.route('/submit', methods=['GET', 'POST'])
 def submit():
     if request.method == 'POST':
-        # Prüfen ob Datei vorhanden ist
-        if 'track' not in request.files:
-            return "Keine Datei ausgewählt", 400
-        file = request.files['track']
-        if file.filename == '':
-            return "Keine Datei ausgewählt", 400
-
-        # Das ist der neue Teil – hochladen zu Cloudinary statt runterladen!
-        upload_result = cloudinary.uploader.upload(
-            file,
-            resource_type="video",        # wichtig für MP3, WAV, M4A etc.
-            folder="jumper-tracks"        # ordnet alles schön in einen Ordner
-        )
-        track_url = upload_result['secure_url']
-
-        # Schöne Erfolgsmeldung statt Download
-        return f'''
-        <h1 style="color:green; text-align:center;">Track erfolgreich eingereicht!</h1>
-        <p style="text-align:center; font-size:120%;">
-            Dein Track ist jetzt dauerhaft gespeichert und verschwindet nie mehr.
-        </p>
-        <p style="text-align:center;">
-            <a href="{track_url}" target="_blank">Direkt anhören / herunterladen</a>
-        </p>
-        <p style="text-align:center; margin-top:40px;">
-            <a href="/submit">Noch einen einreichen</a> | 
-            <a href="/">Zur Startseite</a>
-        </p>
-        '''
+# ... deine Form-Felder (name, alter, link) ...
     
-    # Dein bisheriger GET-Teil (Formular anzeigen) bleibt einfach so wie er ist
-    return ''' ... dein bisheriges Formular ... '''
+    # Für Datei-Upload (falls du das hinzufügst: <input type="file" name="track">)
+    if 'track' in request.files:
+        file = request.files['track']
+        if file.filename:
+            upload = cloudinary.uploader.upload(file, resource_type="video", folder="jumper-tracks")
+            track_url = upload['secure_url']
+            # Speichere URL in tracks-Liste
+    else:
+        track_url = request.form['link']  # Fallback zu Link
+    
+    tracks.append({'name': name, 'alter': alter, 'link': track_url, ...})
+    return "Erfolgreich – Track in Cloudinary!"
