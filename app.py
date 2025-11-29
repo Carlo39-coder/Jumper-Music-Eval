@@ -1,41 +1,35 @@
-from flask import Flask, render_template, request, flash, redirect, url_for
-import os
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
-app.secret_key = "jumper2025"
 
-# Globale Variablen (persistent in Render)
-submissions = []
-GENRES = {
-    "oldschool": "Old School / Boom Bap",
-    "conscious": "Conscious / Politischer Rap",
-    "battle": "Battle-Rap",
-    "gangsta": "Gangsta- / Straßenrap",
-    "poprap": "Pop-Rap / Raop",
-    "emo": "Emo Rap",
-    "trap": "Trap",
-    "cloud": "Cloud Rap / Hashtag-Rap"
-}
+@app.route("/")
+def home():
+    return render_template("index.html")
 
-@app.route("/submit", methods=["GET", "POST"])
-def submit():
-    if request.method == "POST":
-        entry = {
-            "name": request.form["name"],
-            "alter": int(request.form["alter"]),
-            "genre": request.form["genre"],
-            "track": request.form["track"],
-            "bonus": int(request.form["alter"]) < 25
-        }
-        submissions.append(entry)
-
-        bonus_text = " (+15 % Jungkünstler-Bonus)" if entry["bonus"] else ""
-        genre_name = GENRES.get(entry["genre"], entry["genre"])
-        
-        # WICHTIG: statt flash + redirect → render_template mit Nachricht
-        return render_template("submit_success.html",
-                               name=entry["name"],
-                               genre=genre_name,
-                               bonus_text=bonus_text)
-
+@app.route("/submit")
+def submit_form():
     return render_template("submit.html")
+
+# ← ← ← DAS IST DIE WICHTIGE NEUE ROUTE ← ← ←
+@app.route("/submit", methods=["POST"])
+def submit_post():
+    name = request.form.get("name", "Unbekannt")
+    age = request.form.get("age", "??")
+    link = request.form.get("link", "")
+
+    # Einfach nur zur Bestätigung, dass es funktioniert
+    return f"""
+    <h1 style="color:#ff0044; text-align:center; margin-top:100px;">
+        ERFOLG! 🔥
+    </h1>
+    <div style="text-align:center; color:white; font-family:sans-serif;">
+        <h2>{name} ({age} Jahre)</h2>
+        <p>Dein Track: <a href="{link}" style="color:#ff0044;">{link}</a></p>
+        <hr style="border-color:#ff0044;">
+        <h3>Die KI-Auswertung kommt im nächsten Schritt – läuft!</h3>
+        <a href="/submit" style="color:#888;">← Noch einen einreichen</a>
+    </div>
+    """
+
+if __name__ == "__main__":
+    app.run(debug=True)
