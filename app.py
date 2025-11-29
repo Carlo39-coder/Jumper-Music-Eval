@@ -1,35 +1,28 @@
-from flask import Flask, render_template, request
+import cloudinary
+import cloudinary.uploader
+from flask import request
 
-app = Flask(__name__)
+# Cloudinary einmalig konfigurieren
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET")
+)
 
-@app.route("/")
-def home():
-    return render_template("index.html")
-
-@app.route("/submit")
-def submit_form():
-    return render_template("submit.html")
-
-# ← ← ← DAS IST DIE WICHTIGE NEUE ROUTE ← ← ←
-@app.route("/submit", methods=["POST"])
-def submit_post():
-    name = request.form.get("name", "Unbekannt")
-    age = request.form.get("age", "??")
-    link = request.form.get("link", "")
-
-    # Einfach nur zur Bestätigung, dass es funktioniert
-    return f"""
-    <h1 style="color:#ff0044; text-align:center; margin-top:100px;">
-        ERFOLG! 🔥
-    </h1>
-    <div style="text-align:center; color:white; font-family:sans-serif;">
-        <h2>{name} ({age} Jahre)</h2>
-        <p>Dein Track: <a href="{link}" style="color:#ff0044;">{link}</a></p>
-        <hr style="border-color:#ff0044;">
-        <h3>Die KI-Auswertung kommt im nächsten Schritt – läuft!</h3>
-        <a href="/submit" style="color:#888;">← Noch einen einreichen</a>
-    </div>
-    """
-
-if __name__ == "__main__":
-    app.run(debug=True)
+# Deine Route, wo der Track hochgeladen wird
+@app.route('/submit', methods=['POST'])
+def submit_track():
+    if 'track' not in request.files:
+        return "Kein Track hochgeladen"
+    
+    datei = request.files['track']
+    
+    # Hochladen zu Cloudinary (das passiert in Sekundenschnelle)
+    upload_ergebnis = cloudinary.uploader.upload(datei, resource_type="video")  # "video" weil MP3/MP4
+    
+    track_url = upload_ergebnis['secure_url']   # das ist der dauerhafte Link
+    
+    # Hier speicherst du jetzt nur noch den Link (z. B. in einer Liste oder später in einer Datenbank)
+    print("Track dauerhaft gespeichert unter:", track_url)
+    
+    return "Track erfolgreich hochgeladen und gespeichert!"
