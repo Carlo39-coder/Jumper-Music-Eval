@@ -1,30 +1,35 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jumper – Track einreichen</title>
-    <style>
-        body { background:#111; color:#ff0044; font-family:Arial; text-align:center; padding:50px; }
-        input, button { padding:15px; margin:10px; width:90%; max-width:400px; font-size:1.1em; border-radius:8px; }
-        input { background:#222; border:2px solid #ff0044; color:white; }
-        button { background:#ff0044; color:white; border:none; cursor:pointer; font-weight:bold; }
-        button:hover { background:#ff3366; }
-        a { color:#888; text-decoration:none; }
-    </style>
-</head>
-<body>
-    <h1>JUMPER</h1>
-    <h2>Track einreichen</h2>
+@app.route('/submit', methods=['GET', 'POST'])
+def submit():
+    if request.method == 'POST':
+        # Prüfen ob Datei vorhanden ist
+        if 'track' not in request.files:
+            return "Keine Datei ausgewählt", 400
+        file = request.files['track']
+        if file.filename == '':
+            return "Keine Datei ausgewählt", 400
 
-    <form action="/submit" method="POST">
-        <input type="text" name="name" placeholder="Name / Künstlername" required>
-        <input type="number" name="age" placeholder="Alter" min="13" max="99" required>
-        <input type="url" name="link" placeholder="YouTube oder SoundCloud Link" required>
-        <button type="submit">Abschicken & bewerten lassen!</button>
-    </form>
+        # Das ist der neue Teil – hochladen zu Cloudinary statt runterladen!
+        upload_result = cloudinary.uploader.upload(
+            file,
+            resource_type="video",        # wichtig für MP3, WAV, M4A etc.
+            folder="jumper-tracks"        # ordnet alles schön in einen Ordner
+        )
+        track_url = upload_result['secure_url']
 
-    <br><br>
-    <a href="/">← Zurück</a>
-</body>
-</html>
+        # Schöne Erfolgsmeldung statt Download
+        return f'''
+        <h1 style="color:green; text-align:center;">Track erfolgreich eingereicht!</h1>
+        <p style="text-align:center; font-size:120%;">
+            Dein Track ist jetzt dauerhaft gespeichert und verschwindet nie mehr.
+        </p>
+        <p style="text-align:center;">
+            <a href="{track_url}" target="_blank">Direkt anhören / herunterladen</a>
+        </p>
+        <p style="text-align:center; margin-top:40px;">
+            <a href="/submit">Noch einen einreichen</a> | 
+            <a href="/">Zur Startseite</a>
+        </p>
+        '''
+    
+    # Dein bisheriger GET-Teil (Formular anzeigen) bleibt einfach so wie er ist
+    return ''' ... dein bisheriges Formular ... '''
