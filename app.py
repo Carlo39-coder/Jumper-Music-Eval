@@ -10,19 +10,37 @@ cloudinary.config(
 )
 
 # Deine Route, wo der Track hochgeladen wird
-@app.route('/submit', methods=['POST'])
-def submit_track():
-    if 'track' not in request.files:
-        return "Kein Track hochgeladen"
+@app.route('/submit', methods=
+'POST':
+        # Prüfen ob Datei vorhanden ist
+        if 'track' not in request.files:
+            return "Keine Datei ausgewählt", 400
+        file = request.files['track']
+        if file.filename == '':
+            return "Keine Datei ausgewählt", 400
+
+        # Das ist der neue Teil – hochladen zu Cloudinary statt runterladen!
+        upload_result = cloudinary.uploader.upload(
+            file,
+            resource_type="video",        # wichtig für MP3, WAV, M4A etc.
+            folder="jumper-tracks"        # ordnet alles schön in einen Ordner
+        )
+        track_url = upload_result['secure_url']
+
+        # Schöne Erfolgsmeldung statt Download
+        return f'''
+        <h1 style="color:green; text-align:center;">Track erfolgreich eingereicht!</h1>
+        <p style="text-align:center; font-size:120%;">
+            Dein Track ist jetzt dauerhaft gespeichert und verschwindet nie mehr.
+        </p>
+        <p style="text-align:center;">
+            <a href="{track_url}" target="_blank">Direkt anhören / herunterladen</a>
+        </p>
+        <p style="text-align:center; margin-top:40px;">
+            <a href="/submit">Noch einen einreichen</a> | 
+            <a href="/">Zur Startseite</a>
+        </p>
+        '''
     
-    datei = request.files['track']
-    
-    # Hochladen zu Cloudinary (das passiert in Sekundenschnelle)
-    upload_ergebnis = cloudinary.uploader.upload(datei, resource_type="video")  # "video" weil MP3/MP4
-    
-    track_url = upload_ergebnis['secure_url']   # das ist der dauerhafte Link
-    
-    # Hier speicherst du jetzt nur noch den Link (z. B. in einer Liste oder später in einer Datenbank)
-    print("Track dauerhaft gespeichert unter:", track_url)
-    
-    return "Track erfolgreich hochgeladen und gespeichert!"
+    # Dein bisheriger GET-Teil (Formular anzeigen) bleibt einfach so wie er ist
+    return ''' ... dein bisheriges Formular ... '''
