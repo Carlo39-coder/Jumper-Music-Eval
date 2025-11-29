@@ -23,50 +23,60 @@ def home():
 
 @app.route('/submit', methods=['GET', 'POST'])
 def submit():
+   @app.route('/submit', methods=['GET', 'POST'])
+def submit():
     if request.method == 'POST':
         name = request.form['name']
         alter = int(request.form['alter'])
-        link = request.form['link']
 
-        # Bonus für unter 25
+        # Fall 1: Direkter Datei-Upload
+        if 'track' in request.files and request.files['track'].filename:
+            file = request.files['track']
+            upload = cloudinary.uploader.upload(
+                file,
+                resource_type="video",          # für MP3/WAV/M4A
+                folder="jumper-tracks"
+            )
+            track_url = upload['secure_url']
+            art = "Datei-Upload"
+
+        # Fall 2: SoundCloud/YouTube-Link
+        else:
+            track_url = request.form['link']
+            art = "Link"
+
         bonus = " (+ Bonus <25)" if alter < 25 else ""
 
-        # Track speichern
         tracks.append({
             'name': name,
             'alter': alter,
-            'link': link,
+            'url': track_url,
+            'art': art,
             'bonus': bonus,
             'datum': datetime.now().strftime("%d.%m.%Y %H:%M")
         })
 
-        return '''
+        return f'''
         <h1 style="color:green; text-align:center;">Erfolgreich eingereicht!</h1>
-        <p style="text-align:center; font-size:120%;">Dein Track ist jetzt in der Bewertung.</p>
+        <p style="text-align:center;">Dein Track ist jetzt dauerhaft gespeichert.</p>
+        <p style="text-align:center;"><a href="{track_url}" target="_blank">Anhören</a></p>
         <p style="text-align:center;"><a href="/tracks">Alle Tracks ansehen</a> | <a href="/submit">Noch einen einreichen</a></p>
         '''
 
+    # Formular mit Datei-Upload + Link als Alternative
     return '''
     <h1 style="text-align:center;">Track einreichen</h1>
-    <form method="post" style="text-align:center; margin-top:50px; font-size:18px;">
-        <p>Name/Künstlername:<br><input type="text" name="name" required style="width:80%; max-width:400px; padding:10px;"></p>
-        <p>Alter:<br><input type="number" name="alter" required style="width:80%; max-width:400px; padding:10px;"></p>
-        <p>Track-Link (SoundCloud/YouTube):<br><input type="text" name="link" required style="width:80%; max-width:400px; padding:10px;"></p>
+    <form method="post" enctype="multipart/form-data" style="text-align:center; margin:50px auto; max-width:500px; font-size:18px;">
+        <p>Name/Künstlername:<br><input type="text" name="name" required style="width:100%; padding:10px;"></p>
+        <p>Alter:<br><input type="number" name="alter" required style="width:100%; padding:10px;"></p>
+        
+        <p><b>Direkt MP3 hochladen</b> (empfohlen):<br>
+           <input type="file" name="track" accept="audio/*" style="width:100%; padding:10px;"></p>
+        
+        <p><i>oder</i> SoundCloud/YouTube-Link:<br>
+           <input type="text" name="link" placeholder="https://..." style="width:100%; padding:10px;"></p>
+        
         <p><input type="submit" value="Einreichen" style="padding:15px 40px; font-size:18px; background:#ff4d4d; color:white; border:none; border-radius:10px;"></p>
     </form>
-    <p style="text-align:center; margin-top:50px;"><a href="/">← Zurück</a></p>
+    <p style="text-align:center;"><a href="/">← Zurück</a></p>
     '''
-
-@app.route('/tracks')
-def alle_tracks():
-    if not tracks:
-        return '<h2 style="text-align:center;">Noch keine Tracks eingereicht</h2><p style="text-align:center;"><a href="/submit">Jetzt einer sein!</a></p>'
-    
-    liste = "<h1 style='text-align:center;'>Eingereichte Tracks</h1><ol style='max-width:600px; margin:40px auto; font-size:18px;'>"
-    for t in tracks:
-        liste += f"<li><b>{t['name']}</b> ({t['alter']} Jahre{t['bonus']})<br><a href='{t['link']}' target='_blank'>Track anhören</a><br><small>{t['datum']}</small></li><hr>"
-    liste += "</ol><p style='text-align:center;'><a href='/submit'>Weiteren einreichen</a></p>"
-    return liste
-
-if __name__ == '__main__':
-    app.run(debug=True)
