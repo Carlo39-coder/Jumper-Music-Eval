@@ -80,3 +80,26 @@ def submit():
     </form>
     <p style="text-align:center;"><a href="/">← Zurück</a></p>
     '''
+@app.route('/tracks')
+def tracks():
+    # Alle Tracks direkt aus Cloudinary holen
+    result = cloudinary.api.resources(
+        folder="jumper-tracks",
+        resource_type="video",
+        max_results=500
+    )
+
+    if not result.get('resources'):
+        return '<h2 style="text-align:center;">Noch keine Tracks hochgeladen</h2><p style="text-align:center;"><a href="/submit">Jetzt einreichen!</a></p>'
+
+    liste = "<h1 style='text-align:center;'>Eingereichte Tracks</h1><ol style='max-width:700px; margin:40px auto; font-size:18px;'>"
+    for r in result['resources']:
+        ctx = r.get('context', {}).get('custom', {})
+        name = ctx.get('name', 'Unbekannt')
+        alter = ctx.get('alter', '?')
+        bonus = " (+ Bonus <25)" if ctx.get('bonus') == 'True' else ""
+        liste += f"<li><b>{name}</b> ({alter} Jahre{bonus})<br><a href='{r['secure_url']}' target='_blank'>Anhören / Download</a></li><hr>"
+    liste += "</ol><p style='text-align:center;'><a href='/submit'>Weiter einreichen</a></p>"
+    return liste
+    if __name__ == '__main__':
+    app.run(debug=True
