@@ -101,5 +101,5 @@ def tracks():
         liste += f"<li><b>{name}</b> ({alter} Jahre{bonus})<br><a href='{r['secure_url']}' target='_blank'>Anhören / Download</a></li><hr>"
     liste += "</ol><p style='text-align:center;'><a href='/submit'>Weiter einreichen</a></p>"
     return liste
-    if __name__ == '__main__':
+ /tracks-Block   if __name__ == '__main__':
     app.run(debug=True
