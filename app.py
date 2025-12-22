@@ -1,12 +1,30 @@
 from flask import Flask, request, redirect, url_for
 import cloudinary.uploader
 import os
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
 
-# Einfache In-Memory-Datenbank (wird später durch echte PostgreSQL ersetzt)
-tracks = []
+# DB-Konfiguration: PostgreSQL auf Render via Env-Var, Fallback zu SQLite lokal
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///jumper.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+# Track-Modell für DB
+class Track(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    alter = db.Column(db.Integer, nullable=False)
+    url = db.Column(db.String(500), nullable=False)
+    art = db.Column(db.String(50), nullable=False)
+    bonus = db.Column(db.String(50))
+    datum = db.Column(db.String(50))
+
+# Erstelle Tabellen automatisch
+with app.app_context():
+    db.create_all()
 
 @app.route('/')
 def home():
@@ -23,38 +41,39 @@ def home():
 
 @app.route('/submit', methods=['GET', 'POST'])
 def submit():
-   @app.route('/submit', methods=['GET', 'POST'])
-def submit():
     if request.method == 'POST':
         name = request.form['name']
         alter = int(request.form['alter'])
+        bonus = " (+ Bonus <25)" if alter < 25 else ""
+        datum = datetime.now().strftime("%d.%m.%Y %H:%M")
 
-        # Fall 1: Direkter Datei-Upload
+        # Fall 1: Datei-Upload
         if 'track' in request.files and request.files['track'].filename:
             file = request.files['track']
+            # Upload mit Custom-Context für Metadaten (Backup für Cloudinary)
             upload = cloudinary.uploader.upload(
                 file,
-                resource_type="video",          # für MP3/WAV/M4A
-                folder="jumper-tracks"
+                resource_type="video",
+                folder="jumper-tracks",
+                context={
+                    'name': name,
+                    'alter': str(alter),
+                    'bonus': 'True' if alter < 25 else 'False',
+                    'datum': datum
+                }
             )
             track_url = upload['secure_url']
             art = "Datei-Upload"
 
-        # Fall 2: SoundCloud/YouTube-Link
+        # Fall 2: Link
         else:
             track_url = request.form['link']
             art = "Link"
 
-        bonus = " (+ Bonus <25)" if alter < 25 else ""
-
-        tracks.append({
-            'name': name,
-            'alter': alter,
-            'url': track_url,
-            'art': art,
-            'bonus': bonus,
-            'datum': datetime.now().strftime("%d.%m.%Y %H:%M")
-        })
+        # Speichere in DB (persistent!)
+        new_track = Track(name=name, alter=alter, url=track_url, art=art, bonus=bonus, datum=datum)
+        db.session.add(new_track)
+        db.session.commit()
 
         return f'''
         <h1 style="color:green; text-align:center;">Erfolgreich eingereicht!</h1>
@@ -63,7 +82,7 @@ def submit():
         <p style="text-align:center;"><a href="/tracks">Alle Tracks ansehen</a> | <a href="/submit">Noch einen einreichen</a></p>
         '''
 
-    # Formular mit Datei-Upload + Link als Alternative
+    # Formular (unverändert)
     return '''
     <h1 style="text-align:center;">Track einreichen</h1>
     <form method="post" enctype="multipart/form-data" style="text-align:center; margin:50px auto; max-width:500px; font-size:18px;">
@@ -78,28 +97,22 @@ def submit():
         
         <p><input type="submit" value="Einreichen" style="padding:15px 40px; font-size:18px; background:#ff4d4d; color:white; border:none; border-radius:10px;"></p>
     </form>
-    <p style="text-align:center;"><a href="/">← Zurück</a></p>
+    <p style="text-align:center;"><a href="/">Zurück</a></p>
     '''
+
 @app.route('/tracks')
 def tracks():
-    # Alle Tracks direkt aus Cloudinary holen
-    result = cloudinary.api.resources(
-        folder="jumper-tracks",
-        resource_type="video",
-        max_results=500
-    )
+    # Hole aus DB (persistent und vollständig)
+    all_tracks = Track.query.all()
 
-    if not result.get('resources'):
+    if not all_tracks:
         return '<h2 style="text-align:center;">Noch keine Tracks hochgeladen</h2><p style="text-align:center;"><a href="/submit">Jetzt einreichen!</a></p>'
 
     liste = "<h1 style='text-align:center;'>Eingereichte Tracks</h1><ol style='max-width:700px; margin:40px auto; font-size:18px;'>"
-    for r in result['resources']:
-        ctx = r.get('context', {}).get('custom', {})
-        name = ctx.get('name', 'Unbekannt')
-        alter = ctx.get('alter', '?')
-        bonus = " (+ Bonus <25)" if ctx.get('bonus') == 'True' else ""
-        liste += f"<li><b>{name}</b> ({alter} Jahre{bonus})<br><a href='{r['secure_url']}' target='_blank'>Anhören / Download</a></li><hr>"
+    for track in all_tracks:
+        liste += f"<li><b>{track.name}</b> ({track.alter} Jahre{track.bonus})<br><a href='{track.url}' target='_blank'>Anhören / Download</a><br>Eingereicht: {track.datum}</li><hr>"
     liste += "</ol><p style='text-align:center;'><a href='/submit'>Weiter einreichen</a></p>"
     return liste
- /tracks-Block   if __name__ == '__main__':
-    app.run(debug=True
+
+if __name__ == '__main__':
+    app.run(debug=True)
