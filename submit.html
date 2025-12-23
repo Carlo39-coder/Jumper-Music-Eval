@@ -9,18 +9,34 @@
 <label for="monat">Monat (optional):</label>
 <input type="number" id="monat" name="monat" min="1" max="12">
 <head>
-    <meta charset="utf-8">
-    <title>Track einreichen – Jumper</title>
-    <style>body { font-family: Arial; max-width: 600px; margin: 50px auto; background: #111; color: #fff; }</style>
-</head>
-<body>
-    <h1>Track einreichen</h1>
-    <form method="POST">
-        <p>Name/Künstlername:<br><input type="text" name="name" required></p>
-        <p>Alter:<br><input type="number" name="alter" required></p>
-        <p>Track-Link (SoundCloud/YouTube):<br><input type="text" name="track" required></p>
-        <p><input type="submit" value="Abschicken 🔥"></p>
+   <div class="container mt-5">
+    <h2 class="text-center">Track einreichen</h2>
+    <form action="/submit" method="POST" enctype="multipart/form-data" class="bg-dark p-4 rounded">
+        <div class="mb-3">
+            <label for="name" class="form-label">Name/Künstlername:</label>
+            <input type="text" id="name" name="name" class="form-control bg-secondary text-white" required>
+        </div>
+        <div class="mb-3">
+            <label for="alter" class="form-label">Alter:</label>
+            <input type="number" id="alter" name="alter" class="form-control bg-secondary text-white" min="18" required>
+        </div>
+        <div class="mb-3">
+            <label for="genre" class="form-label">Genre:</label>
+            <select id="genre" name="genre" class="form-select bg-secondary text-white">
+                <option>Deutschrap</option>
+                <option>Hip-Hop</option>
+                <option>Trap</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="file" class="form-label">Direkt MP3 hochladen (empfohlen):</label>
+            <input type="file" id="file" name="file" class="form-control bg-secondary text-white" accept=".mp3">
+        </div>
+        <div class="mb-3">
+            <label for="link" class="form-label">Oder SoundCloud/YouTube-Link:</label>
+            <input type="url" id="link" name="link" class="form-control bg-secondary text-white">
+        </div>
+        <button type="submit" class="btn btn-custom w-100">Einreichen</button>
     </form>
-    <p><a href="/">← Zurück</a></p>
-</body>
-</html>
+    <a href="/" class="btn btn-secondary mt-3">Zurück</a>
+</div> 
