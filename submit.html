@@ -40,3 +40,18 @@
     </form>
     <a href="/" class="btn btn-secondary mt-3">Zurück</a>
 </div> 
+from flask import Flask, render_template, request, redirect
+app = Flask(__name__)
+
+@app.route('/submit', methods=['GET', 'POST'])
+def submit():
+    if request.method == 'POST':
+        name = request.form['name']
+        alter = request.form['alter']
+        genre = request.form.get('genre')
+        file = request.files.get('file')
+        link = request.form.get('link')
+        # Speichere in DB, z.B. mit SQLAlchemy
+        # Wenn File: file.save('uploads/' + file.filename)
+        return redirect('/tracks')
+    return render_template('submit.html')
