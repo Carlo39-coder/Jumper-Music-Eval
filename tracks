@@ -1,0 +1,17 @@
+<div class="container mt-5">
+    <h2 class="text-center">Alle Tracks</h2>
+    <div class="row">
+        <!-- Dynamisch generiert, z.B. via Loop in deiner App -->
+        <div class="col-md-4 mb-4">
+            <div class="card bg-dark text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Track-Titel</h5>
+                    <p class="card-text">Künstler: Name | Genre: Deutschrap | Datum: 23.12.2025</p>
+                    <audio controls><source src="track.mp3" type="audio/mpeg"></audio>
+                    <button class="btn btn-custom">Bewerten</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="/submit" class="btn btn-custom mt-3">Jetzt einreichen!</a>
+</div>
