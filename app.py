@@ -7,10 +7,10 @@ from datetime import datetime
 app = Flask(__name__)
 
 # DB-Konfiguration: PostgreSQL auf Render via Env-Var, Fallback zu SQLite lokal
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///jumper.db')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
+db_uri = os.environ.get('DATABASE_URL')
+if db_uri and db_uri.startswith('postgres://'):
+    db_uri = db_uri.replace('postgres://', 'postgresql://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = db_uri or 'sqlite:///jumper.db'
 
 # Track-Modell für DB
 class Track(db.Model):
