@@ -1,11 +1,19 @@
 from flask import Flask, request, redirect, url_for
-import cloudinary.uploader
+import import cloudinary
 import os
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
 
+# Cloudinary-Konfiguration via Environment-Vars (für Render)
+
+cloudinary.config(
+    cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.environ.get('CLOUDINARY_API_KEY'),
+    api_secret=os.environ.get('CLOUDINARY_API_SECRET'),
+    secure=True  # Für HTTPS-URLs
+)
 # DB-Konfiguration: PostgreSQL auf Render via Env-Var, Fallback zu SQLite lokal
 db_uri = os.environ.get('DATABASE_URL')
 if db_uri and db_uri.startswith('postgres://'):
