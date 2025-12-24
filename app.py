@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for
+ from flask import Flask, request, redirect, url_for
 import import cloudinary
 import os
 from flask_sqlalchemy import SQLAlchemy
@@ -111,7 +111,7 @@ def submit():
 @app.route('/tracks')
 def tracks():
     # Hole aus DB (persistent und vollständig)
-    all_tracks = Track.query.all()
+    all_tracks = Track.query.order_by(Track.datum.desc()).all() – neueste Tracks oben.
 
     if not all_tracks:
         return '<h2 style="text-align:center;">Noch keine Tracks hochgeladen</h2><p style="text-align:center;"><a href="/submit">Jetzt einreichen!</a></p>'
