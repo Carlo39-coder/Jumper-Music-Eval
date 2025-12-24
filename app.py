@@ -9,9 +9,9 @@ app = Flask(__name__)
 # Cloudinary-Konfiguration via Environment-Vars (für Render)
 
 cloudinary.config(
-    cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    api_key=os.environ.get('CLOUDINARY_API_KEY'),
-    api_secret=os.environ.get('CLOUDINARY_API_SECRET'),
+    cloud_name=os.environ.get(dnjnpeqgk),
+    api_key=os.environ.get(575458242544459),
+    api_secret=os.environ.get(gb059CWqyr7IrLF8ZQ9RxlCmfIY),
     secure=True  # Für HTTPS-URLs
 )
 # DB-Konfiguration: PostgreSQL auf Render via Env-Var, Fallback zu SQLite lokal
