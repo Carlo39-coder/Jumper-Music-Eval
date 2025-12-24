@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 # Cloudinary-Konfiguration via Environment-Vars (für Render)
 
-cloudinary.config(
+cloudinary.config(CLOUDINARY_URL=cloudinary://<your_api_key>:<your_api_secret>@dnjnpeqgk
     cloud_name=os.environ.get(dnjnpeqgk),
     api_key=os.environ.get(575458242544459),
     api_secret=os.environ.get(gb059CWqyr7IrLF8ZQ9RxlCmfIY),
