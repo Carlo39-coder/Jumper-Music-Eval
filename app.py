@@ -24,13 +24,12 @@ db = SQLAlchemy(app)  # Initialisiere db hier
 
 # Track-Modell für DB
 class Track(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    alter = db.Column(db.Integer, nullable=False)
-    url = db.Column(db.String(500), nullable=False)
-    art = db.Column(db.String(50), nullable=False)
-    bonus = db.Column(db.String(50))
-    datum = db.Column(db.String(50))
+    # ... deine bestehenden Felder ...
+    historischer_bezug = db.Column(db.Integer, default=0)  # Score 0-10
+    kreativitaet = db.Column(db.Integer, default=0)        # Score 0-10
+    community = db.Column(db.Integer, default=0)           # Score 0-10
+    gesamt_score = db.Column(db.Float, default=0.0)        # Berechneter Score
+    mentor_feedback = db.Column(db.Text)                   # Optionaler Text
 
 # Erstelle Tabellen automatisch
 with app.app_context():
