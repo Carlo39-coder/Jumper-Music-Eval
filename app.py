@@ -126,3 +126,28 @@ def tracks():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))  # Render-Port oder Fallback auf 5000 lokal
     app.run(host='0.0.0.0', port=port, debug=False)  # debug=False für Production
+@app.route('/rate/<int:track_id>', methods=['GET', 'POST'])
+def rate(track_id):
+    track = Track.query.get_or_404(track_id)
+    if request.method == 'POST':
+        # Hole Form-Daten
+        track.historischer_bezug = int(request.form['historischer_bezug']) * 2  # Höheres Gewicht (x2)
+        track.kreativitaet = int(request.form['kreativitaet'])
+        track.community = int(request.form['community'])
+        bonus = 5 if track.alter < 25 else 0  # Extra-Bonus Punkte
+        track.gesamt_score = (track.historischer_bezug + track.kreativitaet + track.community + bonus) / 4.0  # Durchschnitt, anpassen
+        track.mentor_feedback = request.form.get('feedback')
+        db.session.commit()
+        return redirect(url_for('tracks'))
+    
+    # Formular für Bewertung (einfaches HTML)
+    return f'''
+    <h1>Bewerte Track: {track.name}</h1>
+    <form method="post">
+        <p>Historischer Bezug (0-10, höchstes Gewicht): <input type="number" name="historischer_bezug" min="0" max="10"></p>
+        <p>Kreativität (0-10): <input type="number" name="kreativitaet" min="0" max="10"></p>
+        <p>Community (0-10): <input type="number" name="community" min="0" max="10"></p>
+        <p>Mentor-Feedback: <textarea name="feedback"></textarea></p>
+        <input type="submit" value="Bewerten">
+    </form>
+    '''
