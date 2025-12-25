@@ -151,3 +151,6 @@ def rate(track_id):
         <input type="submit" value="Bewerten">
     </form>
     '''
+
+# In der tracks()-Funktion, in der Loop:
+liste += f"<li><b>{track.name}</b> ({track.alter} Jahre{track.bonus}) - Score: {track.gesamt_score}<br><a href='{track.url}'>Anhören</a> | <a href='/rate/{track.id}'>Bewerten</a><br>Eingereicht: {track.datum}</li><hr>"
