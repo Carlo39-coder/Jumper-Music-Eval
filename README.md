@@ -2,7 +2,7 @@
 
 Monatliche Wettbewerbe mit echtem Fokus auf Musikgeschichte, Kreativität und Community – nicht nur Klicks!
  
-### Features
+### Features 
 - Künstler melden sich mit Tracks an
 - Bewertung nach anpassbaren Kriterien (Historischer Bezug hat höchstes Gewicht)
 - Extra-Bonus für junge Künstler (< 25 Jahre)
