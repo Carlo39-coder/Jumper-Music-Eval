@@ -1,5 +1,5 @@
- from flask import Flask, request, redirect, url_for
-import import cloudinary
+from flask import Flask, request, redirect, url_for
+import cloudinary
 import os
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -7,18 +7,20 @@ from datetime import datetime
 app = Flask(__name__)
 
 # Cloudinary-Konfiguration via Environment-Vars (für Render)
-
-cloudinary.config(CLOUDINARY_URL=cloudinary://<your_api_key>:<your_api_secret>@dnjnpeqgk
-    cloud_name=os.environ.get(dnjnpeqgk),
-    api_key=os.environ.get(575458242544459),
-    api_secret=os.environ.get(gb059CWqyr7IrLF8ZQ9RxlCmfIY),
+cloudinary.config(
+    cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.environ.get('CLOUDINARY_API_KEY'),
+    api_secret=os.environ.get('CLOUDINARY_API_SECRET'),
     secure=True  # Für HTTPS-URLs
 )
+
 # DB-Konfiguration: PostgreSQL auf Render via Env-Var, Fallback zu SQLite lokal
 db_uri = os.environ.get('DATABASE_URL')
 if db_uri and db_uri.startswith('postgres://'):
     db_uri = db_uri.replace('postgres://', 'postgresql://', 1)
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri or 'sqlite:///jumper.db'
+
+db = SQLAlchemy(app)  # Initialisiere db hier
 
 # Track-Modell für DB
 class Track(db.Model):
@@ -111,7 +113,7 @@ def submit():
 @app.route('/tracks')
 def tracks():
     # Hole aus DB (persistent und vollständig)
-    all_tracks = Track.query.order_by(Track.datum.desc()).all() – neueste Tracks oben.
+    all_tracks = Track.query.order_by(Track.datum.desc()).all()  # neueste Tracks oben.
 
     if not all_tracks:
         return '<h2 style="text-align:center;">Noch keine Tracks hochgeladen</h2><p style="text-align:center;"><a href="/submit">Jetzt einreichen!</a></p>'
@@ -123,4 +125,5 @@ def tracks():
     return liste
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))  # Render-Port oder Fallback auf 5000 lokal
+    app.run(host='0.0.0.0', port=port, debug=False)  # debug=False für Production
