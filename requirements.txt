@@ -1,4 +1,4 @@
-flask
+flask-migrate
 cloudinary
 flask-sqlalchemy
 gunicorn
