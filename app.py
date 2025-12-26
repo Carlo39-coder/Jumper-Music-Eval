@@ -27,6 +27,9 @@ cloudinary.config(
 )
 def meine_funktion():
     some_function(
+
+
+        
         arg1,
         arg2
     )
