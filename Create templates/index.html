@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Jumper Music Eval</title>
+
+    <!-- CSS einbinden -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>🎵 Jumper Music Eval</h1>
+    <p>Musikanalyse & Bewertung</p>
+</header>
+
+<main>
+    <section class="card">
+        <h2>Analyse starten</h2>
+
+        <form method="POST">
+            <label>Song / Datei:</label>
+            <input type="text" name="song" placeholder="Songname eingeben">
+
+            <button type="submit">Analysieren</button>
+        </form>
+    </section>
+</main>
+
+<footer>
+    © 2025 Jumper Music Eval
+</footer>
+
+</body>
+</html>
