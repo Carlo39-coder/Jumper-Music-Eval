@@ -1,6 +1,10 @@
-from flask import Flask, render_template, request
+from flask import Flask
 
-app = Flask(__main.py__)
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Hello World"
 
 @app.route("/", methods=["GET", "POST"])
 def index():
