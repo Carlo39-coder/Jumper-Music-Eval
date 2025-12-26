@@ -16,6 +16,7 @@ def index():
 if __name__ == "__main__":
     app.run()
 
+import os
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
