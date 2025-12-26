@@ -1,10 +1,16 @@
-from flask import Flask, request, redirect, url_for
-import cloudinary
-import os
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    if request.method == "POST":
+        song = request.form.get("song")
+        # hier später Analyse
+    return render_template("index.html")
+
+if __name__ == "__main__":
+    app.run()
 
 # Cloudinary-Konfiguration via Environment-Vars (für Render)
 cloudinary.config(
