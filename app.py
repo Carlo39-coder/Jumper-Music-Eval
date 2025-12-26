@@ -16,7 +16,9 @@ def index():
 if __name__ == "__main__":
     app.run()
 
-# Cloudinary-Konfiguration via Environment-Vars (für Render)
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 cloudinary.config(
     cloud_name=os.environ.get('dnjnpeqgk'),
     api_key=os.environ.get('575458242544459'),
