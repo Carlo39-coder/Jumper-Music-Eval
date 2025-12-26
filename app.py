@@ -21,9 +21,10 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 cloudinary.config(
-    cloud_name=os.environ.get('dnjnpeqgk'),
-    api_key=os.environ.get('575458242544459'),
-    api_secret=os.environ.get('gb059CWqyr7IrLF8ZQ9RxlCmfIY'),
+    cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.environ.get('CLOUDINARY_API_KEY'),
+    api_secret=os.environ.get('CLOUDINARY_API_SECRET')
+)
     secure=True  # Für HTTPS-URLs
 )
 
