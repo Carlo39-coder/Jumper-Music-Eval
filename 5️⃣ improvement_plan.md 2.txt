@@ -1,0 +1,23 @@
+## Feature-Erweiterungen
+
+1. Nutzer-Authentifizierung
+- Login
+- Profile
+- Eigene Bewertungen
+
+2. Gewichtete Bewertungen
+- Kriterien unterschiedlich wichtig
+- Punktesystem
+
+3. Statistik
+- Beste Genres
+- Durchschnittsbewertungen
+
+4. Export
+- CSV
+- JSON
+
+## Code-Verbesserungen
+- Tests
+- Strukturierung
+- Sauberer Code
