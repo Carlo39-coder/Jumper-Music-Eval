@@ -1,63 +1,79 @@
 body {
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  background: linear-gradient(135deg, #1e1e2f, #2b2b40);
-  color: #ffffff;
   margin: 0;
-  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: #050505;
+  color: #22c55e;
 }
 
 header {
   text-align: center;
-  padding: 2.5rem 1rem;
-  background: rgba(0, 0, 0, 0.3);
+  padding: 2rem;
+  border-bottom: 1px solid #14532d;
 }
 
 header h1 {
-  font-size: 2.5rem;
+  margin: 0;
+  color: #22c55e;
 }
 
 header p {
-  color: #bbbbbb;
+  color: #86efac;
 }
 
 main {
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  background: #0a0a0a;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 420px;
+  border: 1px solid #14532d;
+  box-shadow: 0 0 20px rgba(34,197,94,0.15);
 }
 
-input {
+.card h2 {
+  margin-top: 0;
+}
+
+.artist {
+  color: #86efac;
+}
+
+audio {
   width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
   margin: 1rem 0;
-  font-size: 1rem;
+  filter: hue-rotate(90deg);
+}
+
+label {
+  display: block;
+  margin-top: 1rem;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #22c55e;
 }
 
 button {
-  background: #6c63ff;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 10px;
-  color: white;
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 0.8rem;
+  background: transparent;
+  border: 2px solid #22c55e;
+  border-radius: 8px;
+  color: #22c55e;
   font-size: 1rem;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 button:hover {
-  background: #584fff;
-}
-
-footer {
-  text-align: center;
-  padding: 1rem;
-  color: #aaa;
+  background: #22c55e;
+  color: #050505;
 }
