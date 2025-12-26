@@ -25,10 +25,11 @@ cloudinary.config(
     api_key=os.environ.get('CLOUDINARY_API_KEY'),
     api_secret=os.environ.get('CLOUDINARY_API_SECRET')
 )
+def meine_funktion():
     some_function(
-    arg1,
-    arg2
-)
+        arg1,
+        arg2
+    )
 
 response.set_cookie(
     "mycookie",
