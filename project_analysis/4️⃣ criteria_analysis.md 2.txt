@@ -1,0 +1,14 @@
+## Bewertungskriterien
+
+Quelle:
+- kriterien.json
+- KRITERIEN_MUSIKGESCHICHTE.md
+
+Beispiele:
+- Melodie
+- Rhythmus
+- Genre-Treue
+- Kreativität
+
+Ziel:
+Faire & vergleichbare Musikbewertungen
