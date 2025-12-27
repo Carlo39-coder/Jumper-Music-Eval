@@ -226,6 +226,7 @@ def rate(track_id):
     </html>
     '''
 
+
+
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(debug=os.getenv('FLASK_DEBUG', 'False') == 'True')
