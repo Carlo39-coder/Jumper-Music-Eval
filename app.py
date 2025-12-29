@@ -233,13 +233,4 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))  
     app.run(host="0.0.0.0", port=port, debug=False) 
     
-@app.route('/kriterien')
-def kriterien():
-    try:
-        with open('KRITERIEN_MUSIKGESCHICHTE.md', 'r', encoding='utf-8') as f:
-            md_content = f.read()
-        html_content = markdown.markdown(md_content, extensions=['extra', 'toc'])
-    except FileNotFoundError:
-        html_content = "<p>Kriterien-Datei wird gerade aktualisiert...</p>"
 
-    return render_template('kriterien.html', content=html_content)
