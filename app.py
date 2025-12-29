@@ -89,14 +89,15 @@ def home():
     </html>
     '''
 
-@app.route('/submit', methods=['GET', 'POST'])
+@app.route('/submit', methods=['POST'])
 def submit():
-        if request.method == 'POST':
+    if request.method == 'POST':  # Zeile 94
         artist_name = request.form['artist_name']
         artist_age = request.form.get('artist_age', type=int)
         track_title = request.form['track_title']
         track_url = request.form['track_url']
         genre = request.form.get('genre', '')
+        return redirect(url_for('index'))
 
         # Neu: In DB speichern statt in Liste
         new_track = Track(
