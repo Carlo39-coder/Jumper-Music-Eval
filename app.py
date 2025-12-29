@@ -7,26 +7,24 @@ import cloudinary.api
 
 app = Flask(__name__)
 
-# Database Config
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///test.db')  # Fallback für lokal
+# Database Konfiguration
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///data.db')  # Render setzt DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# Modell für Tracks definieren
+# Track-Modell (ersetzt deine in-memory Liste)
 class Track(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     artist_name = db.Column(db.String(100), nullable=False)
-    artist_age = db.Column(db.Integer)  # für U25-Bonus
+    artist_age = db.Column(db.Integer)
     track_title = db.Column(db.String(200), nullable=False)
-    track_url = db.Column(db.String(500), nullable=False)  # z.B. YouTube/SoundCloud Link
+    track_url = db.Column(db.String(500), nullable=False)
     genre = db.Column(db.String(50))
-    # Weitere Felder nach Bedarf, z.B.:
-    # score = db.Column(db.Float)
-    # evaluation = db.Column(db.Text)
 
     def __repr__(self):
         return f"<Track {self.track_title}>"
+        
 # Cloudinary-Konfiguration
 cloudinary.config(
     cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
@@ -93,36 +91,27 @@ def home():
 
 @app.route('/submit', methods=['GET', 'POST'])
 def submit():
-    if request.method == 'POST':
-        name = request.form.get('name')
-        try:
-            alter = int(request.form.get('alter'))
-        except ValueError:
-            return "Fehler: Alter muss eine Zahl sein."
-        bonus = " (+ Bonus <25)" if alter < 25 else ""
-        datum = datetime.now().strftime("%d.%m.%Y %H:%M")
+        if request.method == 'POST':
+        artist_name = request.form['artist_name']
+        artist_age = request.form.get('artist_age', type=int)
+        track_title = request.form['track_title']
+        track_url = request.form['track_url']
+        genre = request.form.get('genre', '')
 
-        try:
-            if 'track' in request.files and request.files['track'].filename:
-                file = request.files['track']
-                upload = cloudinary.uploader.upload(
-                    file,
-                    resource_type="video",
-                    folder="jumper-tracks",
-                    context={{
-                        'name': name,
-                        'alter': str(alter),
-                        'bonus': 'True' if alter < 25 else 'False',
-                        'datum': datum
-                    }}
-                )
-                track_url = upload['secure_url']
-                art = "Datei-Upload"
-            else:
-                track_url = request.form.get('link')
-                if not track_url:
-                    return "Fehler: Datei oder Link angeben."
-                art = "Link"
+        # Neu: In DB speichern statt in Liste
+        new_track = Track(
+            artist_name=artist_name,
+            artist_age=artist_age,
+            track_title=track_title,
+            track_url=track_url,
+            genre=genre
+        )
+        db.session.add(new_track)
+        db.session.commit()
+
+        return redirect(url_for('tracks'))
+
+    return render_template('submit.html')
 
             new_track = Track(name=name, alter=alter, url=track_url, art=art, bonus=bonus, datum=datum)
             db.session.add(new_track)
@@ -171,9 +160,8 @@ def submit():
 
 @app.route('/tracks')
 def tracks():
-    all_tracks = Track.query.order_by(Track.datum.desc()).all()
-    if not all_tracks:
-        return f'''
+    all_tracks = Track.query.order_by(Track.id.desc()).all()  # Neueste zuerst
+    return render_template('tracks.html', tracks=all_tracks)
         <!DOCTYPE html>
         <html lang="de">
         <head>
@@ -245,7 +233,9 @@ def rate(track_id):
     </html>
     '''
 
-
+# Erstellt die Tabelle beim ersten Start
+with app.app_context():
+    db.create_all()
 
 if __name__ == "__main__":
     import os
