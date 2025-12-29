@@ -2,13 +2,15 @@ services:
   - type: web
     name: jumper-music-eval
     env: python
-    plan: free  # Oder 'starter' / 'standard' je nach Bedarf (free reicht für den Start)
-    region: frankfurt  # Empfohlen für Deutschland (niedrige Latenz, DSGVO-freundlich)
+    region: frankfurt  # oder oregon, je nachdem wo du bist
+    plan: free
+    branch: main
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.12.3  # Passe an deine lokale Python-Version an, falls nötig
-      # Hier ggf. weitere Env-Vars hinzufügen, z. B. für Cloudinary:
-      # - key: CLOUDINARY_URL
-      #   sync: false  # Render fragt dich dann im Dashboard nach dem Wert (sicher für Secrets)
+    autoDeploy: true
+
+    # Falls du eine SQLite-DB (z. B. data.db) hast – das macht sie persistent!
+    disks:
+      - name: data
+        mountPath: /opt/render/project/src
+        sizeGB: 1
