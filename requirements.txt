@@ -1,6 +1,5 @@
 Flask-SQLAlchemy
 psycopg2-binary
-Flask-Migrate  
 gunicorn
 numpy
 pandas
