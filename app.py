@@ -1,6 +1,5 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 import os
 import cloudinary
 import cloudinary.uploader
@@ -8,6 +7,26 @@ import cloudinary.api
 
 app = Flask(__name__)
 
+# Database Config
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///test.db')  # Fallback für lokal
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+# Modell für Tracks definieren
+class Track(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    artist_name = db.Column(db.String(100), nullable=False)
+    artist_age = db.Column(db.Integer)  # für U25-Bonus
+    track_title = db.Column(db.String(200), nullable=False)
+    track_url = db.Column(db.String(500), nullable=False)  # z.B. YouTube/SoundCloud Link
+    genre = db.Column(db.String(50))
+    # Weitere Felder nach Bedarf, z.B.:
+    # score = db.Column(db.Float)
+    # evaluation = db.Column(db.Text)
+
+    def __repr__(self):
+        return f"<Track {self.track_title}>"
 # Cloudinary-Konfiguration
 cloudinary.config(
     cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
@@ -232,5 +251,7 @@ if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 5000))  
     app.run(host="0.0.0.0", port=port, debug=False) 
+    with app.app_context():
+    db.create_all()  # Erstellt Tabellen beim Start, falls nicht vorhanden
     
 
