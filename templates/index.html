@@ -3,43 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JUMPER – Die fairste Deutschrap & Hip-Hop Plattform</title>
-    <style>
-        body {
-            background: #0a0a0a;
-            color: #e0e0e0;
-            font-family: Arial, Helvetica, sans-serif;
-            margin: 0;
-            padding: 40px 20px;
-            text-align: center;
-            line-height: 1.6;
-        }
-        h1 { font-size: 4.5rem; margin: 0.2em 0; color: #ffffff; }
-        h2 { font-size: 1.8rem; margin: 0.8em 0 1.5em; color: #bbbbbb; }
-        hr { border: 0; border-top: 1px solid #333; margin: 2em auto; width: 60%; }
-        a {
-            color: #4da6ff;
-            text-decoration: none;
-            font-size: 1.3rem;
-            margin: 0 1.5em;
-            display: inline-block;
-        }
-        a:hover { color: #80bfff; text-decoration: underline; }
-        .container { max-width: 900px; margin: 0 auto; }
-    </style>
+    <title>JUMPER - Die faire Deutschrap & Hip-Hop Plattform</title>
+    <!-- Fonts, Bootstrap und CSS wie oben -->
 </head>
 <body>
-    <div class="container">
-        <h1>JUMPER</h1>
-        <h2>Die fairste Deutschrap & Hip-Hop Plattform</h2>
-        <hr>
-        <p style="font-size: 1.2rem; margin: 2em 0; color: #cccccc;">
-            Bewertung nach <strong>Musikwissen</strong> statt Klicks.<br>
-            Monatliche Wettbewerbe • Open Source • Community-driven
-        </p>
-        <hr>
-        <a href="/submit">Jetzt Track einreichen</a>
-        <a href="/tracks">Alle Tracks ansehen</a>
+
+<!-- Hero-Bereich -->
+<section class="hero">
+    <h1># JUMPER</h1>
+    <h2>Die fairste Deutschrap & Hip-Hop Plattform</h2>
+    <p>„Wer die Geschichte nicht kennt, kann keine neue schreiben.“ – Jumper Manifest 2026</p>
+    <!-- Optional: Bild hinzufügen, z.B. <img src="{{ url_for('static', filename='images/hero.jpg') }}" alt="Hip-Hop Timeline" class="img-fluid"> -->
+</section>
+
+<!-- Manifest-Abschnitt -->
+<section class="section" id="manifest">
+    <h2>Warum Jumper?</h2>
+    <p>Die Musikwelt hat sich durch Social Media verändert. Früher stand Kreativität und Geschichte im Vordergrund – heute geht's oft nur um Virals. Jumper bringt die Wurzeln zurück!</p>
+    
+    <!-- Tabelle: Vor vs. Nach Social Media (aus KRITERIEN_MUSIKGESCHICHTE.md) -->
+    <div class="table-responsive">
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>Vor Social Media</th>
+                    <th>Nach Social Media</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Fokus auf Kreativität, Texte und Musikgeschichte</td>
+                    <td>Fokus auf Virals, Algorithmen und schnelle Aufmerksamkeit</td>
+                </tr>
+                <tr>
+                    <td>Sampling alter Klassiker (z.B. Kool Savas, Fantastischen Vier)</td>
+                    <td>Optimiert für TikTok-Sounds und Hooks</td>
+                </tr>
+                <!-- Füge mehr Zeilen aus deinem MD hinzu, z.B. Community vs. Metrics -->
+            </tbody>
+        </table>
     </div>
+</section>
+
+<!-- Bewertungskriterien -->
+<section class="section" id="kriterien">
+    <h2>Unsere faire Bewertung</h2>
+    <p>Basierend auf Musikgeschichte und Fairness – mit Bonus für U25-Künstler.</p>
+    
+    <!-- Visuelle Darstellung: Einfache Balken (oder Pie-Chart via JS später) -->
+    <div class="criteria-chart">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <h5>Historischer Bezug & Sampling</h5>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <h5>Kreativität & Originalität</h5>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <h5>Technische Qualität & Sound</h5>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 15%;" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100">15%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <h5>Community & Authentizität</h5>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 10%;" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">10%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bonus-Box -->
+    <div class="alert alert-warning text-dark" role="alert">
+        +10 Punkte Bonus für Künstler unter 25 – Die nächste Generation pushen!
+    </div>
+    
+    <!-- Erweiterung aus KRITERIEN_MUSIKGESCHICHTE2: Füge hier Inhalte ein, z.B. Bilder oder weitere Texte -->
+    <p>Weitere Details: [Inhalte aus deinem Ordner, z.B. Sampling-Beispiele]</p>
+</section>
+
+<!-- Call-to-Action -->
+<section class="section text-center">
+    <a href="/submit" class="cta-button">Jetzt Track einreichen</a>
+    <a href="/tracks" class="cta-button">Alle Tracks ansehen</a>
+    <!-- Optional: <a href="/mentor" class="cta-button">Werde Mentor</a> -->
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2026 Jumper | <a href="https://github.com/Carlo39-coder/Jumper-Music-Eval">GitHub</a> | #Jumper2026 #MusikgeschichteLebt</p>
+</footer>
+
+<!-- Bootstrap JS für Interaktivität -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
