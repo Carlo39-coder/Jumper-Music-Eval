@@ -6,7 +6,30 @@
     <title>JUMPER - Die faire Deutschrap & Hip-Hop Plattform</title>
     <!-- Fonts, Bootstrap und CSS wie oben -->
 </head>
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUMPER – Die fairste Deutschrap & Hip-Hop Plattform</title>
+    <!-- Google Fonts laden (für Montserrat und Oswald) -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Deine korrigierte style.css verlinken -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Entferne den Inline-<style>-Block, falls du ihn hast, um Duplikate zu vermeiden -->
+</head>
 <body>
+    <div class="hero">
+        <div class="container">
+            <h1>JUMPER</h1>
+            <p style="font-size: 1.2rem; margin: 2em 0; color: #cccccc;">
+                Bewertung nach <strong>Musikwissen</strong> statt Klicks.<br>
+                Monatliche Wettbewerbe • Open Source • Community-driven
+            </p>
+            <!-- Füge hier ggf. dein hero.jpg als <img> ein, wenn du es nicht als Hintergrund nutzt -->
+            <img src="{{ url_for('static', filename='hero.jpg') }}" alt="Hero Image" style="width: 100%; max-width: 900px;">
+        </div>
+    </div>
+    <!-- Rest deiner Seite (Manifest, Kriterien usw.) -->
+</body>
 
 <!-- Hero-Bereich -->
 <section class="hero">
