@@ -1,5 +1,5 @@
-from flask import Flask, request, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import cloudinary
 import cloudinary.uploader
@@ -7,6 +7,40 @@ from datetime import datetime
 
 app = Flask(__name__)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+# User Model (für Artists und Mentoren)
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
+    alter = db.Column(db.Integer)  # Für Artists
+    is_mentor = db.Column(db.Boolean, default=False)  # Rolle: True für Bewertungsrechte
+    verified = db.Column(db.Boolean, default=False)  # Verifikation (z.B. nach Email-Confirm)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+# Erweitertes Track Model (füge technische_qualitaet & genre hinzu)
+class Track(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    artist_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Link zu User
+    genre = db.Column(db.String(50), default="Deutschrap")  # Wählbar: Deutschrap oder Hip-Hop
+    url = db.Column(db.String(500), nullable=False)
+    bonus = db.Column(db.Integer, default=0)  # +10 für U25
+    datum = db.Column(db.String(50), nullable=False)
+    historischer_bezug = db.Column(db.Integer, default=0)
+    kreativitaet = db.Column(db.Integer, default=0)
+    technische_qualitaet = db.Column(db.Integer, default=0)  # Neu: 15%
+    community = db.Column(db.Integer, default=0)
+    gesamt_score = db.Column(db.Float, default=0.0)
+    mentor_feedback = db.Column(db.Text)
+    
 # Database Configuration (Render-compatible)
 db_uri = os.environ.get('DATABASE_URL')
 if db_uri and db_uri.startswith('postgres://'):
