@@ -55,8 +55,8 @@ with app.app_context():
     db.create_all()
 
 @app.route('/')
-def home():
-    return f'''
+def index():
+    return render_template('index.html')
     <!DOCTYPE html>
     <html lang="de">
     <head>
