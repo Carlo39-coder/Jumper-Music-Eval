@@ -7,23 +7,22 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# Database Konfiguration (Render-kompatibel)
+# Database Configuration (Render-compatible)
 db_uri = os.environ.get('DATABASE_URL')
 if db_uri and db_uri.startswith('postgres://'):
     db_uri = db_uri.replace('postgres://', 'postgresql://', 1)
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri or 'sqlite:///jumper.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db = SQLAlchemy(app)
 
-# Cloudinary Konfiguration
+# Cloudinary Configuration
 cloudinary.config(
     cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
     api_key=os.environ.get('CLOUDINARY_API_KEY'),
     api_secret=os.environ.get('CLOUDINARY_API_SECRET')
 )
 
-# Track Modell
+# Track Model
 class Track(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -38,7 +37,7 @@ class Track(db.Model):
     gesamt_score = db.Column(db.Float, default=0.0)
     mentor_feedback = db.Column(db.Text)
 
-# Gemeinsames CSS
+# Common CSS
 common_css = """
 body { font-family: 'Arial', sans-serif; margin: 0; padding: 20px; background: #f9f9f9; text-align: center; }
 h1, h2 { color: #333; }
@@ -50,14 +49,13 @@ hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
 @media (max-width: 600px) { body { padding: 10px; } form { padding: 15px; } }
 """
 
-# Datenbank erstellen
+# Create database tables
 with app.app_context():
     db.create_all()
 
 @app.route('/')
 def index():
-    return render_template('index.html')
-    
+    return f'''
     <!DOCTYPE html>
     <html lang="de">
     <head>
@@ -77,19 +75,23 @@ def index():
 
 @app.route('/submit', methods=['GET', 'POST'])
 def submit():
-   @app.route('/submit', methods=['GET', 'POST'])
-def submit():
     if request.method == 'POST':
-        # Form-Daten verarbeiten
-        title = request.form.get('title')
-        artist = request.form.get('artist')
-        # File-Upload handhaben (später implementieren)
-        tracks.append({'title': title, 'artist': artist, 'score': None})  # Zum Testen hinzufügen
-        return redirect(url_for('tracks'))
-    return render_template('submit.html')
+        try:
+            name = request.form['name']
+            alter = int(request.form['alter'])
+            link = request.form.get('link')
+            track_url = ''
+
+            if 'track' in request.files and request.files['track'].filename != '':
+                file = request.files['track']
+                upload_result = cloudinary.uploader.upload(file, resource_type="video")  # Audio uploads use 'video' resource_type in Cloudinary
+                track_url = upload_result['secure_url']
+            elif link:
+                track_url = link
+            else:
+                return "<h2>Fehler: Keine Datei oder Link angegeben.</h2><p><a href='/submit'>Zurück</a></p>"
 
             bonus_text = " (U25-Bonus)" if alter < 25 else ""
-
             new_track = Track(
                 name=name,
                 alter=alter,
@@ -100,7 +102,6 @@ def submit():
             )
             db.session.add(new_track)
             db.session.commit()
-
             return f'''
             <!DOCTYPE html>
             <html lang="de">
@@ -115,7 +116,6 @@ def submit():
             '''
         except Exception as e:
             return f"<h2>Fehler: {str(e)}</h2><p><a href='/submit'>Zurück</a></p>"
-
     return f'''
     <!DOCTYPE html>
     <html lang="de">
@@ -140,8 +140,7 @@ def submit():
 
 @app.route('/tracks')
 def tracks_view():
-    return render_template('tracks.html', tracks=tracks)
-
+    all_tracks = Track.query.all()
     if not all_tracks:
         return f'''
         <!DOCTYPE html>
@@ -154,7 +153,6 @@ def tracks_view():
         </body>
         </html>
         '''
-
     liste = "<h1>Eingereichte Tracks</h1><ol style='text-align:left; max-width:600px; margin:0 auto;'>"
     for track in all_tracks:
         score = f"{track.gesamt_score:.1f}" if track.gesamt_score > 0 else "Nicht bewertet"
@@ -163,12 +161,11 @@ def tracks_view():
             <b>{track.name}</b> ({track.alter} Jahre{track.bonus})<br>
             Eingereicht: {track.datum}<br>
             Score: <b>{score}</b><br>
-            <a href='{track.url}' target='_blank'>Anhören</a> | 
+            <a href='{track.url}' target='_blank'>Anhören</a> |
             <a href='/rate/{track.id}'>Bewerten</a>
         </li>
         """
     liste += "</ol><p><a href='/submit'>Weiter einreichen</a> | <a href='/'>Startseite</a></p>"
-
     return f'''
     <!DOCTYPE html>
     <html lang="de">
@@ -180,28 +177,23 @@ def tracks_view():
 @app.route('/rate/<int:track_id>', methods=['GET', 'POST'])
 def rate(track_id):
     track = Track.query.get_or_404(track_id)
-
     if request.method == 'POST':
         try:
             h = int(request.form['historischer_bezug'])
             k = int(request.form['kreativitaet'])
             c = int(request.form['community'])
-
             if not all(0 <= x <= 10 for x in [h, k, c]):
                 return "Fehler: Werte müssen zwischen 0 und 10 liegen."
-
             bonus = 5 if track.alter < 25 else 0
             track.historischer_bezug = h
             track.kreativitaet = k
             track.community = c
             track.gesamt_score = (h * 2 + k + c + bonus) / 5.0
             track.mentor_feedback = request.form.get('feedback', '')
-
             db.session.commit()
-            return redirect(url_for('tracks'))
+            return redirect(url_for('tracks_view'))
         except:
             return "Fehler bei der Eingabe."
-
     return f'''
     <!DOCTYPE html>
     <html lang="de">
