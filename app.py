@@ -57,6 +57,7 @@ with app.app_context():
 @app.route('/')
 def index():
     return render_template('index.html')
+    
     <!DOCTYPE html>
     <html lang="de">
     <head>
@@ -76,20 +77,16 @@ def index():
 
 @app.route('/submit', methods=['GET', 'POST'])
 def submit():
+   @app.route('/submit', methods=['GET', 'POST'])
+def submit():
     if request.method == 'POST':
-        try:
-            name = request.form['name']
-            alter = int(request.form['alter'])
-            track_file = request.files.get('track')
-            link = request.form.get('link', '').strip()
-
-            if track_file and track_file.filename:
-                upload_result = cloudinary.uploader.upload(track_file, resource_type="video")
-                track_url = upload_result['secure_url']
-            elif link:
-                track_url = link
-            else:
-                return "<h2>Fehler: Bitte MP3 hochladen oder Link angeben</h2><a href='/submit'>Zurück</a>"
+        # Form-Daten verarbeiten
+        title = request.form.get('title')
+        artist = request.form.get('artist')
+        # File-Upload handhaben (später implementieren)
+        tracks.append({'title': title, 'artist': artist, 'score': None})  # Zum Testen hinzufügen
+        return redirect(url_for('tracks'))
+    return render_template('submit.html')
 
             bonus_text = " (U25-Bonus)" if alter < 25 else ""
 
@@ -142,8 +139,8 @@ def submit():
     '''
 
 @app.route('/tracks')
-def tracks():
-    all_tracks = Track.query.order_by(Track.id.desc()).all()
+def tracks_view():
+    return render_template('tracks.html', tracks=tracks)
 
     if not all_tracks:
         return f'''
@@ -224,5 +221,4 @@ def rate(track_id):
     '''
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(debug=True)
