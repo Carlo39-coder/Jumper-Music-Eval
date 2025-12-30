@@ -4,3 +4,4 @@ gunicorn
 numpy
 pandas
 cloudinary
+flask_login
