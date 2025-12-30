@@ -36,30 +36,35 @@ with open('kriterien.json') as f:
     KRITERIEN = json.load(f)
 
 # User Model
+# User Model (für Artists/Mentoren)
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     alter = db.Column(db.Integer, nullable=False)
-    is_mentor = db.Column(db.Boolean, default=False)
-    verified = db.Column(db.Boolean, default=True)  # Sofort verified
+    is_mentor = db.Column(db.Boolean, default=False)  # Für Bewertungsrechte
+    verified = db.Column(db.Boolean, default=True)  # Sofort verified nach Registrierung
 
-# Track Model (nur eine Definition: mit artist_id, genre, technische_qualitaet)
+# Track Model
 class Track(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     artist_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    genre = db.Column(db.String(50), default="Deutschrap")
+    genre = db.Column(db.String(50), default="Deutschrap")  # Neu: Genre
     url = db.Column(db.String(500), nullable=False)
-    bonus = db.Column(db.Integer, default=0)
+    bonus = db.Column(db.Integer, default=0)  # Neu: Integer für +10 U25
     datum = db.Column(db.String(50), nullable=False)
     historischer_bezug = db.Column(db.Integer, default=0)
     kreativitaet = db.Column(db.Integer, default=0)
-    technische_qualitaet = db.Column(db.Integer, default=0)
+    technische_qualitaet = db.Column(db.Integer, default=0)  # Neu: 15%
     community = db.Column(db.Integer, default=0)
     gesamt_score = db.Column(db.Float, default=0.0)
     mentor_feedback = db.Column(db.Text)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 @login_manager.user_loader
 def load_user(user_id):
