@@ -106,6 +106,70 @@ def index():
     </body>
     </html>
     '''
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        alter = int(request.form['alter'])
+        password = request.form['password']
+        hashed_pw = generate_password_hash(password, method='pbkdf2:sha256')
+        new_user = User(username=username, email=email, alter=alter, password_hash=hashed_pw, verified=True)  # Sofort verified
+        db.session.add(new_user)
+        db.session.commit()
+        login_user(new_user)
+        return redirect(url_for('submit'))
+    return f'''
+    <!DOCTYPE html>
+    <html lang="de">
+    <head><meta name="viewport" content="width=device-width, initial-scale=1"><title>Registrieren</title><style>{common_css}</style></head>
+    <body>
+        <h1>Artist registrieren</h1>
+        <form method="post">
+            <p>Username:<br><input type="text" name="username" required></p>
+            <p>Email:<br><input type="email" name="email" required></p>
+            <p>Alter:<br><input type="number" name="alter" min="10" max="100" required></p>
+            <p>Passwort:<br><input type="password" name="password" required></p>
+            <p><input type="submit" value="Registrieren"></p>
+        </form>
+        <p>Bereits registriert? <a href="/login">Login</a></p>
+    </body>
+    </html>
+    '''
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username=username).first()
+        if user and check_password_hash(user.password_hash, password):
+            login_user(user)
+            return redirect(url_for('submit'))
+        return "Falsche Credentials. <a href='/login'>Versuch erneut</a>"
+    return f'''
+    <!DOCTYPE html>
+    <html lang="de">
+    <head><meta name="viewport" content="width=device-width, initial-scale=1"><title>Login</title><style>{common_css}</style></head>
+    <body>
+        <h1>Artist Login</h1>
+        <form method="post">
+            <p>Username:<br><input type="text" name="username" required></p>
+            <p>Passwort:<br><input type="password" name="password" required></p>
+            <p><input type="submit" value="Login"></p>
+        </form>
+        <p>Noch kein Account? <a href="/register">Registrieren</a></p>
+    </body>
+    </html>
+    '''
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+
 
 @app.route('/submit', methods=['GET', 'POST'])
 def submit():
