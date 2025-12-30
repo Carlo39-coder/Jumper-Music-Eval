@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for, render_template
+from flask import Flask, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -9,9 +9,9 @@ from datetime import datetime
 import json
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY') or 'your_secret_key'
+app.secret_key = os.environ.get('SECRET_KEY') or 'your_secret_key'  # Für Sessions/Login
 
-# Database Configuration
+# Database Configuration (Render-compatible)
 db_uri = os.environ.get('DATABASE_URL')
 if db_uri and db_uri.startswith('postgres://'):
     db_uri = db_uri.replace('postgres://', 'postgresql://', 1)
@@ -31,7 +31,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# Lade Kriterien (füge das hinzu, falls fehlend)
+# Lade Kriterien
 with open('kriterien.json') as f:
     KRITERIEN = json.load(f)
 
