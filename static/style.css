@@ -24,9 +24,10 @@ a:hover {
 
 /* Hero-Bereich */
 .hero {
-    background-color: #000000;
-    padding: 50px 20px;
-    text-align: center;
+  .hero {
+    background-image: url('/static/images/vinyl_background.jpg');
+    background-size: cover;  /* Deckt den Bereich ab */
+    background-position: center;
 }
 
 /* Manifest und Kriterien */
