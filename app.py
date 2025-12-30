@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for
+from flask import Flask, request, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -9,9 +9,9 @@ from datetime import datetime
 import json
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY') or 'your_secret_key'  # Für Sessions/Login
+app.secret_key = os.environ.get('SECRET_KEY') or 'your_secret_key'
 
-# Database Configuration (Render-compatible)
+# Database Configuration
 db_uri = os.environ.get('DATABASE_URL')
 if db_uri and db_uri.startswith('postgres://'):
     db_uri = db_uri.replace('postgres://', 'postgresql://', 1)
@@ -31,33 +31,32 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# Lade Kriterien
+# Lade Kriterien (füge das hinzu, falls fehlend)
 with open('kriterien.json') as f:
     KRITERIEN = json.load(f)
 
 # User Model
-# User Model (für Artists/Mentoren)
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     alter = db.Column(db.Integer, nullable=False)
-    is_mentor = db.Column(db.Boolean, default=False)  # Für Bewertungsrechte
-    verified = db.Column(db.Boolean, default=True)  # Sofort verified nach Registrierung
+    is_mentor = db.Column(db.Boolean, default=False)
+    verified = db.Column(db.Boolean, default=True)  # Sofort verified
 
-# Track Model
+# Track Model (nur eine Definition: mit artist_id, genre, technische_qualitaet)
 class Track(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     artist_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    genre = db.Column(db.String(50), default="Deutschrap")  # Neu: Genre
+    genre = db.Column(db.String(50), default="Deutschrap")
     url = db.Column(db.String(500), nullable=False)
-    bonus = db.Column(db.Integer, default=0)  # Neu: Integer für +10 U25
+    bonus = db.Column(db.Integer, default=0)
     datum = db.Column(db.String(50), nullable=False)
     historischer_bezug = db.Column(db.Integer, default=0)
     kreativitaet = db.Column(db.Integer, default=0)
-    technische_qualitaet = db.Column(db.Integer, default=0)  # Neu: 15%
+    technische_qualitaet = db.Column(db.Integer, default=0)
     community = db.Column(db.Integer, default=0)
     gesamt_score = db.Column(db.Float, default=0.0)
     mentor_feedback = db.Column(db.Text)
@@ -170,6 +169,9 @@ def rate(track_id):
         db.session.commit()
         return redirect(url_for('tracks'))
     return render_template('rate.html', track=track)  # Erstelle rate.html (kopiere inline Form)
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
