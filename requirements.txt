@@ -5,3 +5,4 @@ numpy
 pandas
 cloudinary
 flask_login
+flask
