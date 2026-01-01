@@ -13,7 +13,7 @@
             <h2>Jumper</h2>
             <nav>
                 <ul>
-                    <li><a href="{{ url_for('index') }}">Startseite</a></li>
+                    <li><a href="{{ url_for('kriterien_info') }}">Bewertungskriterien erklärt</a></li>
                     
                     {% if not current_user.is_authenticated %}
                         <li><a href="{{ url_for('register') }}">Registrieren</a></li>
