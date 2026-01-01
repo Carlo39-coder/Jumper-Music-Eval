@@ -219,4 +219,8 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # Erstellt Tabellen, falls noch nicht vorhanden
     app.run(debug=True)
-    
+
+@app.route('/init-db')
+def init_db():
+    db.create_all()
+    return "Datenbank-Tabellen erfolgreich angelegt! Du kannst diese Route jetzt wieder löschen."
