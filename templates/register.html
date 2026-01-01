@@ -1,1 +1,20 @@
-
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrieren - Jumper</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Registrieren</h1>
+    <form method="POST">
+        <label>Username: <input type="text" name="username" required></label><br><br>
+        <label>E-Mail: <input type="email" name="email" required></label><br><br>
+        <label>Alter: <input type="number" name="alter" required></label><br><br>
+        <label>Passwort: <input type="password" name="password" required></label><br><br>
+        <button type="submit">Registrieren</button>
+    </form>
+    <p>Schon einen Account? <a href="/login">Login</a></p>
+    <a href="/">Zurück zur Startseite</a>
+</body>
+</html>
