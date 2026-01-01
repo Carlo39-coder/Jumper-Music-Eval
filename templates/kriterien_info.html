@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Detaillierte Bewertungskriterien - Jumper{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1>Detaillierte Bewertungskriterien</h1>
+        <p class="lead">Hier erklären wir genau, worauf es bei Jumper ankommt – transparent und fair.</p>
+
+        <hr>
+
+        <h2>1. Historischer Bezug & Sampling (50%)</h2>
+        <p>
+            Der wichtigste Punkt. Wir prüfen, ob der Track auf der Geschichte des Deutschrap/Hip-Hop aufbaut.<br>
+            <strong>Beispiele für hohe Punktzahl:</strong>
+        </p>
+        <ul>
+            <li>Kreatives Sampling von Klassikern (z. B. Fanta 4, Kool Savas, Absolute Beginner, Eins Zwo)</li>
+            <li>Beats oder Lines, die an alte Äras erinnern</li>
+            <li>Referenzen zu alten Battles, Alben oder Künstlern</li>
+        </ul>
+        <p>Kein Sampling oder nur aktuelle TikTok-Sounds → niedrige Wertung.</p>
+
+        <h2>2. Kreativität & Originalität (25%)</h2>
+        <p>
+            Geht es um eigene Ideen? Ist der Flow, Text oder Beat einzigartig?<br>
+            Kopierte Hooks oder Trends bringen hier wenig.
+        </p>
+
+        <h2>3. Technische Qualität & Sound (15%)</h2>
+        <p>
+            Klarer Mix, guter Mastering, saubere Aufnahme.<br>
+            Rauschen, übersteuerte Vocals oder schlechte Abmischung kosten Punkte.
+        </p>
+
+        <h2>4. Community & Authentizität (10%)</h2>
+        <p>
+            Fühlt sich der Track echt an? Passt er zur Person des Künstlers?<br>
+            Keine aufgesetzte Persona oder reine Algo-Optimierung.
+        </p>
+
+        <hr>
+
+        <h2>Score-Berechnung</h2>
+        <p>
+            Jede Kategorie wird von 0–10 bewertet.<br>
+            Gesamtscore = 
+            (Historischer Bezug × 5) + 
+            (Kreativität × 2.5) + 
+            (Technische Qualität × 1.5) + 
+            (Community × 1) +
+            <strong>Bonus (+10 bei unter 25 Jahren)</strong>
+        </p>
+
+        <p class="mt-5">
+            <a href="{{ url_for('tracks') }}" class="cta-button">Zu allen Tracks</a>
+            <a href="{{ url_for('index') }}" class="cta-button secondary">Zurück zur Startseite</a>
+        </p>
+    </div>
+{% endblock %}
