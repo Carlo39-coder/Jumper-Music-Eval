@@ -29,9 +29,9 @@ login_manager.login_view = 'login'
 
 # Cloudinary
 cloudinary.config(
-    cloud_name="dein_cloud_name",
-    api_key="dein_api_key",
-    api_secret="dein_api_secret"
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
 )  
 
 
