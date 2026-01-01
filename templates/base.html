@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Jumper Music Eval{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Linke Sidebar -->
+        <aside class="sidebar">
+            <h2>Jumper</h2>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Startseite</a></li>
+                    
+                    {% if not current_user.is_authenticated %}
+                        <li><a href="{{ url_for('register') }}">Registrieren</a></li>
+                        <li><a href="{{ url_for('login') }}">Login</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('submit') }}">Track einreichen</a></li>
+                        <li><a href="{{ url_for('tracks') }}">Alle Tracks ansehen</a></li>
+                        <li><a href="{{ url_for('logout') }}">Logout ({{ current_user.username }})</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Hauptinhalt rechts -->
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>
