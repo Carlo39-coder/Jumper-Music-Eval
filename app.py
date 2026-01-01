@@ -11,56 +11,46 @@ import cloudinary.uploader
 app = Flask(__name__)
 
 # --------------------- Konfiguration ---------------------
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dein-lokaler-fallback-secret')
 
-# SECRET_KEY sicher aus Environment Variable holen (Render + lokal)
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dein-super-geheimer-lokaler-fallback-key-123')
-
-# Datenbank-URI intelligent setzen (Render PostgreSQL + lokaler SQLite-Fallback)
+# Datenbank (Render PostgreSQL + lokaler SQLite)
 database_url = os.getenv('DATABASE_URL')
-
-if database_url:
-    # Render gibt manchmal "postgres://" statt "postgresql://" aus → korrigieren
-    if database_url.startswith('postgres://'):
-        database_url = database_url.replace('postgres://', 'postgresql://', 1)
-    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-else:
-    # Lokal: SQLite
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jumper.db'
-
+if database_url and database_url.startswith('postgres://'):
+    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///jumper.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialisiere Erweiterungen
 db = SQLAlchemy(app)
+
+# Login Manager
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# Cloudinary Konfiguration
+# Cloudinary
 cloudinary.config(
-    cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    api_key=os.environ.get('CLOUDINARY_API_KEY'),
-    api_secret=os.environ.get('CLOUDINARY_API_SECRET')
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
 )
 
-# Lade Bewertungskriterien aus JSON
+# Kriterien laden
 with open('kriterien.json') as f:
     KRITERIEN = json.load(f)
 
 # --------------------- Models ---------------------
-
 class User(db.Model, UserMixin):
-    __tablename__ = 'user'
+    __tablename__ = 'user'  # Wichtig für PostgreSQL!
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     alter = db.Column(db.Integer, nullable=False)
     is_mentor = db.Column(db.Boolean, default=False)
-    verified = db.Column(db.Boolean, default=True)  # Sofort verifiziert
-
+    verified = db.Column(db.Boolean, default=True)
 
 class Track(db.Model):
-    __tablename__ = 'track'
+    __tablename__ = 'track'  # Wichtig für PostgreSQL!
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     artist_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -75,42 +65,44 @@ class Track(db.Model):
     gesamt_score = db.Column(db.Float, default=0.0)
     mentor_feedback = db.Column(db.Text)
 
-
-# User Loader für Flask-Login
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
 # --------------------- Routen ---------------------
-
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
-        alter = int(request.form['alter'])
+        alter = request.form.get('alter')
         password = request.form['password']
 
-        # Prüfe, ob User schon existiert
-        if User.query.filter_by(username=username).first() or User.query.filter_by(email=email).first():
-            flash('Username oder E-Mail bereits vergeben.')
+        if User.query.filter_by(username=username).first():
+            flash('Username bereits vergeben.')
+            return redirect(url_for('register'))
+        if User.query.filter_by(email=email).first():
+            flash('E-Mail bereits vergeben.')
+            return redirect(url_for('register'))
+
+        try:
+            alter = int(alter)
+        except:
+            flash('Alter muss eine Zahl sein.')
             return redirect(url_for('register'))
 
         hashed_pw = generate_password_hash(password, method='pbkdf2:sha256')
-        new_user = User(username=username, email=email, alter=alter, password_hash=hashed_pw, verified=True)
+        new_user = User(username=username, email=email, alter=alter, password_hash=hashed_pw)
         db.session.add(new_user)
         db.session.commit()
-        login_user(new_user)
-        return redirect(url_for('submit'))
+        flash('Registrierung erfolgreich! Du kannst dich jetzt einloggen.')
+        return redirect(url_for('login'))
 
     return render_template('register.html')
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -124,50 +116,37 @@ def login():
             next_page = request.args.get('next')
             return redirect(next_page or url_for('submit'))
         else:
-            flash('Falscher Username oder Passwort.')  # Zeigt rote Meldung
+            flash('Falscher Username oder Passwort.')
 
     return render_template('login.html')  # Immer Formular zeigen
-    
 
-    <form method="POST">
-        <label>Username:</label>
-        <input type="text" name="username" required class="form-control"><br><br>
-
-        <label>Passwort:</label>
-        <input type="password" name="password" required class="form-control"><br><br>
-
-        <button type="submit" class="cta-button">Einloggen</button>
-    </form>
-
-    <p class="mt-4">Noch kein Account? <a href="{{ url_for('register') }}">Jetzt registrieren</a></p>
-    <p><a href="{{ url_for('index') }}">Zurück zur Startseite</a></p>
-     {% endblock %}
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('Erfolgreich ausgeloggt.')
+    return redirect(url_for('index'))
 
 @app.route('/submit', methods=['GET', 'POST'])
 @login_required
 def submit():
-    if not current_user.verified:
-        return "Bitte verifiziere deinen Account zuerst."
-
     if request.method == 'POST':
         name = request.form['name']
         genre = request.form['genre']
         link = request.form.get('link')
         track_url = ''
 
-        # Datei-Upload oder Link
-        if 'track' in request.files and request.files['track'].filename != '':
+        if 'track' in request.files and request.files['track'].filename:
             file = request.files['track']
             upload_result = cloudinary.uploader.upload(file, resource_type="video")
             track_url = upload_result['secure_url']
         elif link:
             track_url = link
         else:
-            flash('Bitte eine Datei hochladen oder einen Link angeben.')
+            flash('Bitte Datei hochladen oder Link angeben.')
             return redirect(url_for('submit'))
 
         bonus = 10 if current_user.alter < 25 else 0
-
         new_track = Track(
             name=name,
             artist_id=current_user.id,
@@ -178,22 +157,22 @@ def submit():
         )
         db.session.add(new_track)
         db.session.commit()
+        flash('Track erfolgreich eingereicht!')
         return redirect(url_for('tracks'))
 
     return render_template('submit.html')
-
 
 @app.route('/tracks')
 def tracks():
     all_tracks = Track.query.all()
     return render_template('tracks.html', tracks=all_tracks)
-    
 
 @app.route('/rate/<int:track_id>', methods=['GET', 'POST'])
 @login_required
 def rate(track_id):
     if not current_user.is_mentor:
-        return "Nur Mentoren dürfen Tracks bewerten."
+        flash('Nur Mentoren dürfen bewerten.')
+        return redirect(url_for('tracks'))
 
     track = Track.query.get_or_404(track_id)
 
@@ -204,29 +183,21 @@ def rate(track_id):
         c = int(request.form['community'])
 
         weights = KRITERIEN.get(track.genre, KRITERIEN['Deutschrap'])
-
         track.historischer_bezug = h
         track.kreativitaet = k
         track.technische_qualitaet = t
         track.community = c
-        track.gesamt_score = (
-            h * weights['historischer_bezug'] * 10 +
-            k * weights['kreativitaet'] * 10 +
-            t * weights['technische_qualitaet'] * 10 +
-            c * weights['community'] * 10 +
-            track.bonus
-        )
+        track.gesamt_score = (h * weights['historischer_bezug'] * 10 +
+                             k * weights['kreativitaet'] * 10 +
+                             t * weights['technische_qualitaet'] * 10 +
+                             c * weights['community'] * 10 +
+                             track.bonus)
         track.mentor_feedback = request.form.get('feedback', '')
         db.session.commit()
+        flash('Bewertung gespeichert!')
         return redirect(url_for('tracks'))
 
     return render_template('rate.html', track=track)
 
-
-    
-# Nur für lokales Testen: Tabellen anlegen
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()  # Erstellt Tabellen, falls noch nicht vorhanden
+  if __name__ == '__main__':
     app.run(debug=True)
-
