@@ -2,37 +2,18 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Track einreichen - JUMPER</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Track einreichen - Jumper</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <section class="section">
-        <h2>Track einreichen</h2>
-        <!-- Optionales Bild -->
-        <img src="{{ url_for('static', filename='images/submit_icon.jpg') }}" alt="Track hochladen" class="img-fluid mb-3">
-        <!-- Grundlegendes Formular (passe an deine app.py-Logik an, z.B. mit Flask-WTF für Sicherheit) -->
-        <form method="POST" action="/submit">
-            <div class="mb-3">
-                <label for="title" class="form-label">Track-Titel</label>
-                <input type="text" class="form-control" id="title" name="title" required>
-            </div>
-            <div class="mb-3">
-                <label for="artist" class="form-label">Künstler</label>
-                <input type="text" class="form-control" id="artist" name="artist" required>
-            </div>
-            <div class="mb-3">
-                <label for="file" class="form-label">Track hochladen (MP3 oder Link)</label>
-                <input type="file" class="form-control" id="file" name="file">
-            </div>
-            <button type="submit" class="btn cta-button">Einreichen</button>
-        </form>
-    </section>
-    <footer>
-        <p>&copy; 2026 Jumper | <a href="https://github.com/Carlo39-coder/Jumper-Music-Eval">GitHub</a> | #Jumper2026 #MusikgeschichteLebt</p>
-    </footer>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <h1>Track einreichen</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <label>Track-Name: <input type="text" name="name" required></label><br><br>
+        <label>Genre: <input type="text" name="genre" value="Deutschrap"></label><br><br>
+        <label>Datei hochladen (MP3/Video): <input type="file" name="track"></label><br><br>
+        <label>Oder Link (z.B. YouTube/SoundCloud): <input type="text" name="link"></label><br><br>
+        <button type="submit">Absenden</button>
+    </form>
+    <a href="/tracks">Zu den Tracks</a> | <a href="/logout">Logout</a>
 </body>
 </html>
