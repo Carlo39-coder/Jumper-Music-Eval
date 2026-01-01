@@ -199,5 +199,6 @@ def rate(track_id):
 
     return render_template('rate.html', track=track)
 
-  if __name__ == '__main__':
+if __name__ == '__main__':
     app.run(debug=True)
+    /recreate-db
