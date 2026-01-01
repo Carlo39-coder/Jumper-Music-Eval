@@ -1,19 +1,24 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <title>Track einreichen - Jumper</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Track einreichen - Jumper{% endblock %}
+
+{% block content %}
     <h1>Track einreichen</h1>
+    <p>Willkommen, {{ current_user.username }}! Du hast {% if current_user.alter < 25 %}+10 Punkte Bonus ({% endif %}{{ current_user.alter }} Jahre)</p>
+
     <form method="POST" enctype="multipart/form-data">
-        <label>Track-Name: <input type="text" name="name" required></label><br><br>
-        <label>Genre: <input type="text" name="genre" value="Deutschrap"></label><br><br>
-        <label>Datei hochladen (MP3/Video): <input type="file" name="track"></label><br><br>
-        <label>Oder Link (z.B. YouTube/SoundCloud): <input type="text" name="link"></label><br><br>
-        <button type="submit">Absenden</button>
+        <label>Track-Name:</label>
+        <input type="text" name="name" required class="form-control"><br><br>
+
+        <label>Genre (Standard: Deutschrap):</label>
+        <input type="text" name="genre" value="Deutschrap" class="form-control"><br><br>
+
+        <label>Datei hochladen (Audio/Video):</label>
+        <input type="file" name="track" accept="audio/*,video/*" class="form-control"><br><br>
+
+        <p><strong>Oder</strong> Link einfügen (z.B. YouTube, SoundCloud):</p>
+        <input type="text" name="link" placeholder="https://..." class="form-control"><br><br>
+
+        <button type="submit" class="cta-button">Track absenden</button>
     </form>
-    <a href="/tracks">Zu den Tracks</a> | <a href="/logout">Logout</a>
-</body>
-</html>
+{% endblock %}
