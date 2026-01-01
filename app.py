@@ -32,14 +32,8 @@ cloudinary.config(
     cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
     api_key=os.getenv('CLOUDINARY_API_KEY'),
     api_secret=os.getenv('CLOUDINARY_API_SECRET')
-)  
+)
 
-
-
-@app.route('/')
-def index():
-    return render_template('base.html')
-           
 # Kriterien laden
 with open('kriterien.json') as f:
     KRITERIEN = json.load(f)
@@ -76,9 +70,10 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 # --------------------- Routen ---------------------
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html')  # Hauptstartseite
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -97,7 +92,7 @@ def register():
 
         try:
             alter = int(alter)
-        except:
+        except (TypeError, ValueError):
             flash('Alter muss eine Zahl sein.')
             return redirect(url_for('register'))
 
@@ -124,7 +119,7 @@ def login():
         else:
             flash('Falscher Username oder Passwort.')
 
-    return render_template('login.html')  # Immer Formular zeigen
+    return render_template('login.html')
 
 @app.route('/logout')
 @login_required
@@ -183,10 +178,14 @@ def rate(track_id):
     track = Track.query.get_or_404(track_id)
 
     if request.method == 'POST':
-        h = int(request.form['historischer_bezug'])
-        k = int(request.form['kreativitaet'])
-        t = int(request.form['technische_qualitaet'])
-        c = int(request.form['community'])
+        try:
+            h = int(request.form['historischer_bezug'])
+            k = int(request.form['kreativitaet'])
+            t = int(request.form['technische_qualitaet'])
+            c = int(request.form['community'])
+        except (KeyError, ValueError):
+            flash('Bitte alle Bewertungsfelder ausfüllen.')
+            return redirect(url_for('rate', track_id=track_id))
 
         weights = KRITERIEN.get(track.genre, KRITERIEN['Deutschrap'])
         track.historischer_bezug = h
@@ -194,22 +193,21 @@ def rate(track_id):
         track.technische_qualitaet = t
         track.community = c
         track.gesamt_score = (h * weights['historischer_bezug'] * 10 +
-                             k * weights['kreativitaet'] * 10 +
-                             t * weights['technische_qualitaet'] * 10 +
-                             c * weights['community'] * 10 +
-                             track.bonus)
+                              k * weights['kreativitaet'] * 10 +
+                              t * weights['technische_qualitaet'] * 10 +
+                              c * weights['community'] * 10 +
+                              track.bonus)
         track.mentor_feedback = request.form.get('feedback', '')
         db.session.commit()
         flash('Bewertung gespeichert!')
+        return redirect(url_for('tracks'))
 
-@app.route('/')
-def index():
-    return render_template('base.html')
-    
+    return render_template('rate.html', track=track)  # Falls du ein separates Template für die Bewertung hast
+
 @app.route('/kriterien-info')
 def kriterien_info():
     return render_template('kriterien_info.html')
-    
-    if __name__ == '__main__':
-       app.run(debug=True)
-      
+
+# --------------------- Start der App ---------------------
+if __name__ == '__main__':
+    app.run(debug=True)
