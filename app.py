@@ -126,14 +126,37 @@ def login():
         flash('Falscher Username oder Passwort.')
     
     return render_template('login.html')
+    {% extends "base.html" %}
 
+{% block title %}Login - Jumper{% endblock %}
 
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('index'))
+{% block content %}
+    <h1>Login</h1>
 
+    <!-- Zeige Fehlermeldungen (z. B. falsches Passwort) -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-danger">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <label>Username:</label>
+        <input type="text" name="username" required class="form-control"><br><br>
+
+        <label>Passwort:</label>
+        <input type="password" name="password" required class="form-control"><br><br>
+
+        <button type="submit" class="cta-button">Einloggen</button>
+    </form>
+
+    <p class="mt-4">Noch kein Account? <a href="{{ url_for('register') }}">Jetzt registrieren</a></p>
+    <p><a href="{{ url_for('index') }}">Zurück zur Startseite</a></p>
+     {% endblock %}
 
 @app.route('/submit', methods=['GET', 'POST'])
 @login_required
