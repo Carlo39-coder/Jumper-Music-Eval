@@ -212,7 +212,11 @@ def rate(track_id):
 
     return render_template('rate.html', track=track)
 
-
+@app.route('/init-db')
+def init_db():
+    db.create_all()
+    return "Datenbank-Tabellen erfolgreich angelegt! Du kannst diese Route jetzt wieder löschen."
+    
 # Nur für lokales Testen: Tabellen anlegen
 if __name__ == '__main__':
     with app.app_context():
