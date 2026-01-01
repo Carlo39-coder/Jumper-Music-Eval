@@ -179,7 +179,12 @@ def submit():
 def tracks():
     all_tracks = Track.query.all()
     return render_template('tracks.html', tracks=all_tracks)
-
+    
+@app.route('/recreate-db')
+def recreate_db():
+    db.drop_all()    # Löscht alte Tabellen
+    db.create_all()  # Legt neue (lowercase) an
+    return "Datenbank neu erstellt (Tabellen: user & track)! Route jetzt löschen."
 
 @app.route('/rate/<int:track_id>', methods=['GET', 'POST'])
 @login_required
