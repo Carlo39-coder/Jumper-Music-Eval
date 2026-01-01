@@ -197,8 +197,7 @@ def rate(track_id):
         flash('Bewertung gespeichert!')
         return redirect(url_for('tracks'))
 
-    return render_template('rate.html', track=track)
 
-if __name__ == '__main__':
-    app.run(debug=True)
-    /recreate-db
+    if __name__ == '__main__':
+       app.run(debug=True)
+       /recreate-db
