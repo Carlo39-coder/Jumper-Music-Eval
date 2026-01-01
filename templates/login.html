@@ -1,1 +1,18 @@
-
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Jumper</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Login</h1>
+    <form method="POST">
+        <label>Username: <input type="text" name="username" required></label><br><br>
+        <label>Passwort: <input type="password" name="password" required></label><br><br>
+        <button type="submit">Einloggen</button>
+    </form>
+    <p>Noch kein Account? <a href="/register">Registrieren</a></p>
+    <a href="/">Zurück</a>
+</body>
+</html>
