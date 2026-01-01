@@ -1,1 +1,20 @@
-
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ track.name }} bewerten</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>{{ track.name }} bewerten</h1>
+    <form method="POST">
+        <label>Historischer Bezug (0-10): <input type="number" name="historischer_bezug" min="0" max="10" required></label><br><br>
+        <label>Kreativität (0-10): <input type="number" name="kreativitaet" min="0" max="10" required></label><br><br>
+        <label>Technische Qualität (0-10): <input type="number" name="technische_qualitaet" min="0" max="10" required></label><br><br>
+        <label>Community (0-10): <input type="number" name="community" min="0" max="10" required></label><br><br>
+        <label>Feedback (optional): <textarea name="feedback"></textarea></label><br><br>
+        <button type="submit">Bewertung absenden</button>
+    </form>
+    <a href="/tracks">Zurück</a>
+</body>
+</html>
