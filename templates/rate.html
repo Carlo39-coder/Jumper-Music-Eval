@@ -1,20 +1,29 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ track.name }} bewerten</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <h1>{{ track.name }} bewerten</h1>
+{% extends "base.html" %}
+
+{% block title %}Bewerten: {{ track.name }} - Jumper{% endblock %}
+
+{% block content %}
+    <h1>Bewertung: {{ track.name }}</h1>
+    <p><strong>Künstler:</strong> User ID {{ track.artist_id }} | <strong>Datum:</strong> {{ track.datum }}</p>
+
     <form method="POST">
-        <label>Historischer Bezug (0-10): <input type="number" name="historischer_bezug" min="0" max="10" required></label><br><br>
-        <label>Kreativität (0-10): <input type="number" name="kreativitaet" min="0" max="10" required></label><br><br>
-        <label>Technische Qualität (0-10): <input type="number" name="technische_qualitaet" min="0" max="10" required></label><br><br>
-        <label>Community (0-10): <input type="number" name="community" min="0" max="10" required></label><br><br>
-        <label>Feedback (optional): <textarea name="feedback"></textarea></label><br><br>
-        <button type="submit">Bewertung absenden</button>
+        <label>Historischer Bezug & Sampling (0–10):</label>
+        <input type="number" name="historischer_bezug" min="0" max="10" required class="form-control"><br><br>
+
+        <label>Kreativität & Originalität (0–10):</label>
+        <input type="number" name="kreativitaet" min="0" max="10" required class="form-control"><br><br>
+
+        <label>Technische Qualität & Sound (0–10):</label>
+        <input type="number" name="technische_qualitaet" min="0" max="10" required class="form-control"><br><br>
+
+        <label>Community & Authentizität (0–10):</label>
+        <input type="number" name="community" min="0" max="10" required class="form-control"><br><br>
+
+        <label>Feedback (optional):</label><br>
+        <textarea name="feedback" rows="5" class="form-control"></textarea><br><br>
+
+        <button type="submit" class="cta-button">Bewertung absenden</button>
     </form>
-    <a href="/tracks">Zurück</a>
-</body>
-</html>
+
+    <a href="{{ url_for('tracks') }}" class="btn btn-outline-light mt-3">Zurück zur Übersicht</a>
+{% endblock %}
