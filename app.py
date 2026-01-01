@@ -195,9 +195,8 @@ def rate(track_id):
         track.mentor_feedback = request.form.get('feedback', '')
         db.session.commit()
         flash('Bewertung gespeichert!')
-        return redirect(url_for('tracks'))
 
-
+    
     if __name__ == '__main__':
        app.run(debug=True)
       
