@@ -196,6 +196,9 @@ def rate(track_id):
         db.session.commit()
         flash('Bewertung gespeichert!')
 
+@app.route('/kriterien-info')
+def kriterien_info():
+    return render_template('kriterien_info.html')
     
     if __name__ == '__main__':
        app.run(debug=True)
