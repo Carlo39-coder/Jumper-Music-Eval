@@ -32,8 +32,12 @@ cloudinary.config(
     cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
     api_key=os.getenv('CLOUDINARY_API_KEY'),
     api_secret=os.getenv('CLOUDINARY_API_SECRET')
-)
 
+
+@app.route('/')
+def index():
+    return render_template('base.html')
+           
 # Kriterien laden
 with open('kriterien.json') as f:
     KRITERIEN = json.load(f)
