@@ -123,26 +123,11 @@ def login():
             login_user(user)
             next_page = request.args.get('next')
             return redirect(next_page or url_for('submit'))
-        flash('Falscher Username oder Passwort.')
+        else:
+            flash('Falscher Username oder Passwort.')  # Zeigt rote Meldung
+
+    return render_template('login.html')  # Immer Formular zeigen
     
-    return render_template('login.html')
-    {% extends "base.html" %}
-
-{% block title %}Login - Jumper{% endblock %}
-
-{% block content %}
-    <h1>Login</h1>
-
-    <!-- Zeige Fehlermeldungen (z. B. falsches Passwort) -->
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <div class="alert alert-danger">
-                {% for message in messages %}
-                    {{ message }}
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
 
     <form method="POST">
         <label>Username:</label>
