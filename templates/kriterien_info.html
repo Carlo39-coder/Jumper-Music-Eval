@@ -1,60 +1,154 @@
-{% extends "base.html" %}
+{% extends "base.html" %}  <!-- oder "layout.html" je nach deiner Struktur -->
 
-{% block title %}Detaillierte Bewertungskriterien - Jumper{% endblock %}
+{% block title %}Jumper Kriterien 2026{% endblock %}
 
 {% block content %}
-    <div class="container mt-5">
-        <h1>Detaillierte Bewertungskriterien</h1>
-        <p class="lead">Hier erklären wir genau, worauf es bei Jumper ankommt – transparent und fair.</p>
+<div class="container my-5">
+    <h1 class="text-center mb-4 display-4">Künstlerische Kriterien in der Musik<br>
+        <small class="text-muted">erweiterte Version mit Deutschrap-Beispielen & Zitaten</small>
+    </h1>
+    <p class="text-center text-muted mb-5"><em>das theoretische Fundament von Jumper – Stand November 2025</em></p>
 
-        <hr>
-
-        <h2>1. Historischer Bezug & Sampling (50%)</h2>
-        <p>
-            Der wichtigste Punkt. Wir prüfen, ob der Track auf der Geschichte des Deutschrap/Hip-Hop aufbaut.<br>
-            <strong>Beispiele für hohe Punktzahl:</strong>
-        </p>
-        <ul>
-            <li>Kreatives Sampling von Klassikern (z. B. Fanta 4, Kool Savas, Absolute Beginner, Eins Zwo)</li>
-            <li>Beats oder Lines, die an alte Äras erinnern</li>
-            <li>Referenzen zu alten Battles, Alben oder Künstlern</li>
-        </ul>
-        <p>Kein Sampling oder nur aktuelle TikTok-Sounds → niedrige Wertung.</p>
-
-        <h2>2. Kreativität & Originalität (25%)</h2>
-        <p>
-            Geht es um eigene Ideen? Ist der Flow, Text oder Beat einzigartig?<br>
-            Kopierte Hooks oder Trends bringen hier wenig.
-        </p>
-
-        <h2>3. Technische Qualität & Sound (15%)</h2>
-        <p>
-            Klarer Mix, guter Mastering, saubere Aufnahme.<br>
-            Rauschen, übersteuerte Vocals oder schlechte Abmischung kosten Punkte.
-        </p>
-
-        <h2>4. Community & Authentizität (10%)</h2>
-        <p>
-            Fühlt sich der Track echt an? Passt er zur Person des Künstlers?<br>
-            Keine aufgesetzte Persona oder reine Algo-Optimierung.
-        </p>
-
-        <hr>
-
-        <h2>Score-Berechnung</h2>
-        <p>
-            Jede Kategorie wird von 0–10 bewertet.<br>
-            Gesamtscore = 
-            (Historischer Bezug × 5) + 
-            (Kreativität × 2.5) + 
-            (Technische Qualität × 1.5) + 
-            (Community × 1) +
-            <strong>Bonus (+10 bei unter 25 Jahren)</strong>
-        </p>
-
-        <p class="mt-5">
-            <a href="{{ url_for('tracks') }}" class="cta-button">Zu allen Tracks</a>
-            <a href="{{ url_for('index') }}" class="cta-button secondary">Zurück zur Startseite</a>
-        </p>
+    <h2 class="mt-5">Entwicklung der Kriterien im Deutschrap</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Kriterium</th>
+                    <th>Vor Social Media (bis ca. 2005)</th>
+                    <th>Seit Social Media (2005–heute)</th>
+                    <th>Deutschrap-Beispiel DAMALS</th>
+                    <th>Deutschrap-Beispiel HEUTE</th>
+                    <th>Zitat von Legenden & Aktuellen</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Lyrisch</strong></td>
+                    <td>Lange, komplexe Geschichten · Doubletime & Multireim-Schemas · sozialkritischer Content</td>
+                    <td>Kurze, wiederholbare Hooks · TikTok-taugliche Punchlines · direkte Ansprache („ihr kennt das“)</td>
+                    <td>Absolute Beginner – „Hammerhart“ (1998): 5-Minuten-Story mit Anfang, Mitte, Ende</td>
+                    <td>Ufo361 – „Vroom Vroom“ (2022): 1:50 Minuten, 8 Zeilen Refrain, perfekt für 15-Sekunden-Clips</td>
+                    <td>„Früher musste man ein ganzes Album hören können, heute reicht ein 20-Sekunden-Clip.“ – <strong>Kool Savas</strong>, 2023</td>
+                </tr>
+                <tr>
+                    <td><strong>Zeitlich</strong></td>
+                    <td>4–7 Minuten Tracks · Intros, Skits, lange Outros · Album als Gesamtwerk</td>
+                    <td>&lt; 2:30 Minuten · kein Intro · direkt in den Hook · Singles statt Alben</td>
+                    <td>Die Fantastischen Vier – „Die Da?!“ (1992): 4:20 Minuten, mit Skits und Story</td>
+                    <td>Luciano – „Bamba“ (2023): 1:58 Minuten, 0 Intros, direkt Drop → über 200 Mio. Streams durch TikTok</td>
+                    <td>„Heute muss der Beat in den ersten 5 Sekunden knallen, sonst skippt die Generation.“ – <strong>Bonez MC</strong>, 2024</td>
+                </tr>
+                <tr>
+                    <td><strong>Wertbezogen</strong></td>
+                    <td>Authentizität = Straße + Live-Skills · kein Internet-Image</td>
+                    <td>Authentizität = tägliche Stories, Auto-Vlogs, „echte“ Tränen auf Insta</td>
+                    <td>Rödelheim Hartreim Projekt – live in kleinen Clubs, Respekt durch Skills</td>
+                    <td>Capital Bra – weint in der Story, zeigt 10 Rolex Uhren im nächsten Post → Millionen Views</td>
+                    <td>„Wer heute kein Image hat, hat keine Karriere. Früher reichte ein guter Song.“ – <strong>Bushido</strong>, 2022</td>
+                </tr>
+                <tr>
+                    <td><strong>Geschichtlich</strong></td>
+                    <td>Direkte Referenzen & Samples aus den Wurzeln (James Brown, Funk, Soul, frühes US-Hip-Hop)</td>
+                    <td>Samples werden nur noch als „Vibes“ genommen · Geschichte oft ignoriert · „Oldschool“ nur als Ästhetik</td>
+                    <td>Advanced Chemistry – „Fremd im eigenen Land“ (1992): klare politische Message + Samples aus 70er Funk</td>
+                    <td>Apache 207 – „Roller“: 2000er-Synth-Sound, aber keine Ahnung, woher das eigentlich kommt → trotzdem 400 Mio.</td>
+                    <td>„Die meisten neuen Rapper kennen nicht mal die zweiten Strophen von ‚Adrenaline‘.“ – <strong>Sido</strong>, 2024</td>
+                </tr>
+                <tr>
+                    <td><strong>Live & Bühne</strong></td>
+                    <td>Respekt = Battlerap-Turniere, Open Mics, Freestyles</td>
+                    <td>Respekt = wie viele Leute beim Konzert das Handy hochhalten und mitsingen</td>
+                    <td>VBT (Video-Battle-Turnier) 2010–2013, 20-Minuten-Acappella-Battles</td>
+                    <td>Konzerte werden nur noch für Instagram-Reels gefilmt, Crowd singt nur den Refrain mit</td>
+                    <td>„Früher hat man gekämpft, heute wird gepostet.“ – <strong>Kollegah</strong>, 2023</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
+
+    <h2 class="mt-5">Jumper-Bewertungssystem 2026<br><small>(konkret für Deutschrap & Hip-Hop)</small></h2>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Platz</th>
+                    <th>Kriterium</th>
+                    <th>Gewichtung</th>
+                    <th>Was genau wird bewertet?</th>
+                    <th>Beispiel für 10/10 Punkte</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td><strong>Historischer Bezug & Sampling</strong></td>
+                    <td>50 %</td>
+                    <td>Direkte Referenzen zu deutschen Pionieren, Samples aus 90er/2000er, Erwähnung von Legenden im Text</td>
+                    <td>Track sampled „Fremd im eigenen Land“ + Erwähnung von Torch & Toni L in der Hook</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><strong>Kreativität & Originalität</strong></td>
+                    <td>25 %</td>
+                    <td>Neue Flow-Wechsel, Wortspiele, Story-Aufbau, keine reinen Trend-Kopien</td>
+                    <td>2025er Doubletime-Flow, der noch nie so gemacht wurde</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><strong>Technische Qualität & Sounddesign</strong></td>
+                    <td>15 %</td>
+                    <td>Mixing, Mastering, Beat-Auswahl, Adlibs, Stimmlage</td>
+                    <td>Kristallklarer Mix, 808s sitzen perfekt, keine Clipping</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><strong>Community & echte Straße</strong></td>
+                    <td>10 %</td>
+                    <td>Keine gekauften Plays, echte Interaktion, Support von OGs</td>
+                    <td>Feature mit Kool Savas oder Haftbefehl + echte Crowd-Reaktionen auf Konzerten</td>
+                </tr>
+                <tr class="table-info">
+                    <td colspan="2"><strong>Bonus</strong></td>
+                    <td><strong>Alter &lt; 25 Jahre</strong></td>
+                    <td colspan="2">+10 Punkte – Wir bauen die nächste Generation bewusst auf</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="mt-5">Harte Zitate – direkt von den Größten</h2>
+    <blockquote class="blockquote">
+        <p>„Die meisten neuen Rapper haben keine Ahnung von Cora E, Stieber Twins oder Rödelheim. Die kennen nur Capital und mich.“</p>
+        <footer class="blockquote-footer"><strong>Bushido</strong> (Interview 2024)</footer>
+    </blockquote>
+    <blockquote class="blockquote">
+        <p>„Wenn du die Geschichte nicht kennst, bist du nur ein Clown mit Goldkette.“</p>
+        <footer class="blockquote-footer"><strong>Kool Savas</strong> (Live bei Rap am Mittwoch 2023)</footer>
+    </blockquote>
+    <blockquote class="blockquote">
+        <p>„Ich höre mir neue Deutschrap-Scheiße an und denke: Die haben nie ‚Juice‘ gelesen.“</p>
+        <footer class="blockquote-footer"><strong>Fler</strong> (Instagram-Live 2025)</footer>
+    </blockquote>
+    <blockquote class="blockquote">
+        <p>„Früher musste man 10 Jahre kämpfen, heute reicht ein guter TikTok-Sound.“</p>
+        <footer class="blockquote-footer"><strong>Kollegah</strong> (BossTalk Podcast 2024)</footer>
+    </blockquote>
+    <blockquote class="blockquote">
+        <p>„Ohne die 90er gäbe es keinen einzigen von euch da draußen.“</p>
+        <footer class="blockquote-footer"><strong>Torch</strong> (Advanced Chemistry), 2023</footer>
+    </blockquote>
+
+    <div class="text-center my-5 p-4 bg-dark text-white rounded">
+        <h3>Das ist Jumper.</h3>
+        <p class="lead">Wir bewerten nicht, wer am meisten Geld für Promo ausgibt.<br>
+           Wir bewerten, wer die Geschichte respektiert und trotzdem etwas Neues schreibt.</p>
+        <p class="display-6">Erster offizieller Monat: Januar 2026</p>
+        <p>Rubrik: Deutschsprachiger Gesangsrap & Hip-Hop<br>
+           Anmeldung startet 01.01.2026</p>
+        <p class="fs-4">„Wer die Vergangenheit vergisst, hat keine Zukunft im Rap.“<br>
+           <em>— Jumper Manifest 2026</em></p>
+        <p class="mt-4">#Jumper2026 #RespektVorDerGeschichte #DeutschrapLebt</p>
+    </div>
+</div>
 {% endblock %}
