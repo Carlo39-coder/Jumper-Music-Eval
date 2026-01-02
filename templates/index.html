@@ -168,14 +168,15 @@
         <div class="container">
             <h2 class="display-5 fw-bold mb-4">Bereit für faire Battles?</h2>
             <p class="lead mb-4">Reiche deinen Track ein oder bewertete als Experte mit</p>
-            <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
-                <a href="{{ url_for('upload') }}" class="btn btn-warning btn-lg">
-                    <i class="fas fa-upload me-2"></i>Track hochladen
-                </a>
-                <a href="{{ url_for('register') }}" class="btn btn-outline-light btn-lg">
-                    <i class="fas fa-user-plus me-2"></i>Als Experte joinen
-                </a>
-            </div>
+           <!-- CTA Section – Zeile ~172 -->
+        <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+      <a href="{{ url_for('submit') }}" class="btn btn-warning btn-lg">  <!-- war 'upload' -->
+        <i class="fas fa-upload me-2"></i>Track hochladen
+    </a>
+    <a href="{{ url_for('register') }}" class="btn btn-outline-light btn-lg">
+        <i class="fas fa-user-plus me-2"></i>Als Experte joinen
+    </a>
+</div>
             <p class="mt-4">
                 <small>👥 Schon <strong>127</strong> Experten | 🔥 <strong>43</strong> Tracks diese Woche | 🏆 <strong>Next Battle: 15.01.2026</strong></small>
             </p>
@@ -193,11 +194,11 @@
                 <div class="col-md-6">
                     <h5>Schnellstart</h5>
                     <ul class="list-unstyled">
-                        <li><a href="{{ url_for('kriterien_theorie') }}" class="text-light text-decoration-none">→ Theorie & Kriterien</a></li>
-                        <li><a href="{{ url_for('leaderboard') }}" class="text-light text-decoration-none">→ Leaderboard</a></li>
-                        <li><a href="{{ url_for('current_battle') }}" class="text-light text-decoration-none">→ Aktueller Battle</a></li>
-                        <li><a href="https://github.com/deinusername/jumper" class="text-light text-decoration-none" target="_blank">→ GitHub (Open Source)</a></li>
-                    </ul>
+    <li><a href="{{ url_for('kriterien_theorie') }}" class="text-light text-decoration-none">→ Theorie & Kriterien</a></li>
+    <li><a href="{{ url_for('tracks') }}" class="text-light text-decoration-none">→ Alle Tracks</a></li>  <!-- statt 'leaderboard' -->
+    <li><a href="{{ url_for('tracks') }}" class="text-light text-decoration-none">→ Aktueller Battle</a></li>  <!-- oder später eigene Route -->
+    <li><a href="https://github.com/deinusername/jumper" class="text-light text-decoration-none" target="_blank">→ GitHub (Open Source)</a></li>
+</ul>
                 </div>
             </div>
         </div>
