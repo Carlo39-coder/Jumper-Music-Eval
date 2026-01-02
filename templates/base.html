@@ -3,32 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Jumper Music Eval{% endblock %}</title>
     
+    <!-- Der title-Block mit Default-Wert – NUR HIER definieren! -->
+    <title>{% block title %}Jumper Music Eval{% endblock %}</title>
+   
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-   
+  
     <!-- Font Awesome für Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-   
-    <!-- Dein eigenes CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+    <!-- Eigenes CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-    <!-- =============== HORizontale Top-Navbar =============== -->
+
+<body>
+    <!-- =============== Horizontale Top-Navbar =============== -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">Jumper 2026</a>
-            
+           
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
+           
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('index') }}">Home</a>
                     </li>
-                    
+                   
                     {% if current_user.is_authenticated %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('submit') }}">Track einreichen</a>
@@ -47,10 +53,11 @@
                             <a class="nav-link" href="{{ url_for('register') }}">Registrieren</a>
                         </li>
                     {% endif %}
-                    
+                   
                     <!-- Kriterien Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="kriterienDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="kriterienDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
                             Kriterien
                         </a>
                         <ul class="dropdown-menu">
@@ -64,7 +71,7 @@
     </nav>
 
     <!-- =============== Hauptinhalt mit Abstand zur fixed Navbar =============== -->
-    <div class="container mt-5 pt-4">  <!-- mt-5 und pt-4 verhindern Überlappung durch fixed-top -->
+    <div class="container mt-5 pt-5">
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 <div class="alert alert-info alert-dismissible fade show mt-3">
@@ -77,11 +84,11 @@
         {% endwith %}
 
         {% block content %}
-        <!-- Hier kommt der Inhalt der jeweiligen Seite rein -->
+        <!-- Der Inhalt der jeweiligen Seite wird hier eingefügt -->
         {% endblock %}
     </div>
 
-    <!-- Bootstrap JS (für Dropdown, Toggler usw.) -->
+    <!-- Bootstrap JS (am Ende des Body für bessere Performance) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
