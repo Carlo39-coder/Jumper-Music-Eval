@@ -72,17 +72,16 @@
 
     <!-- =============== Hauptinhalt mit Abstand zur fixed Navbar =============== -->
     <div class="container mt-5 pt-5">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="alert alert-info alert-dismissible fade show mt-3">
-                    {% for message in messages %}
-                        {{ message }}<br>
-                    {% endfor %}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endif %}
-        {% endwith %}
-
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Schließen"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
         {% block content %}
         <!-- Der Inhalt der jeweiligen Seite wird hier eingefügt -->
         {% endblock %}
