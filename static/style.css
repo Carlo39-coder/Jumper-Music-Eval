@@ -1,75 +1,29 @@
-/* Grundstyles */
 body {
-    background-color: #121212; /* Dunkelgrau */
-    color: #ffffff; /* Weißer Text */
-    font-family: 'Montserrat', sans-serif; /* Body-Font */
-    margin: 0;
-    padding: 0;
+    background-color: #0c0c0c;
+    color: #e0e0e0;
 }
 
-h1, h2, h3 {
-    font-family: 'Oswald', sans-serif; /* Heading-Font für Hip-Hop-Feeling */
-    color: #FFD700; /* Gold */
+.bg-gradient {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d1b69 100%);
 }
 
-a {
-    color: #E6B800; /* Gold-Akzente */
-    text-decoration: none;
-}
-
-a:hover {
-    color: #ffffff;
-    text-decoration: underline;
-}
-
-/* Hero-Bereich */
 .hero {
-    background-image: url('/static/vinyl_background.jpg');
-    background-size: cover;  /* Deckt den Bereich ab */
-    background-position: center;
-}
-
-/* Manifest und Kriterien */
-.section {
-    padding: 40px 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.criteria-chart {
+    min-height: 80vh;
     display: flex;
-    justify-content: center;
-    margin: 20px 0;
+    align-items: center;
+    background: rgba(0,0,0,0.4);
 }
 
-/* CTA-Buttons */
-.cta-button {
-    background-color: #FFD700;
-    color: #000000;
-    padding: 15px 30px;
-    border-radius: 5px;
-    font-weight: bold;
-    margin: 10px;
-    display: inline-block;
+.card {
+    border: none;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.cta-button:hover {
-    background-color: #E6B800;
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
 }
 
-/* Footer */
-footer {
-    background-color: #000000;
-    padding: 20px;
-    text-align: center;
-    font-size: 0.8em;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .section { padding: 20px 10px; }
-}
-/* Responsive */
-@media (max-width: 768px) {
-    .section { padding: 20px 10px; }
+.feature-icon i {
+    color: #ffd700;
 }
