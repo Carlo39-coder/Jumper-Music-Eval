@@ -253,7 +253,30 @@ def kriterien():
 @app.route('/kriterien-theorie')
 def kriterien_theorie():
     return render_template('kriterien_theorie.html')
+    
+# ==================== TEMPORÄRE ADMIN-ROUTE ====================
+# Diese Route macht deinen Account zum Admin.
+# WICHTIG: Nur lokal oder kurz auf Render aufrufen!
+# Danach wieder löschen und neu deployen!
 
+@app.route('/make_me_admin')
+def make_me_admin():
+    if not current_user.is_authenticated:
+        flash('Du musst eingeloggt sein, um Admin zu werden.')
+        return redirect(url_for('login'))
+    
+    # ÄNDERE HIER DEINEN USERNAME ODER DEINE EMAIL AUF DEINEN ECHTEN ACCOUNT!
+    if current_user.username == 'Carlo39-coder' or current_user.email == 'deine@email.de':  # <-- passe das an!
+        current_user.is_admin = True
+        db.session.commit()
+        flash(f'{current_user.username} ist jetzt Admin! 🎉')
+        return redirect(url_for('index'))
+    else:
+        flash('Nur der Hauptaccount darf Admin werden.')
+        return redirect(url_for('index'))
+
+
+# ============================================================
 
 # --------------------- Start der App ---------------------
 if __name__ == '__main__':
