@@ -7,6 +7,7 @@ from datetime import datetime
 import json
 import cloudinary
 import cloudinary.uploader
+from app import db
 
 app = Flask(__name__)
 
@@ -39,16 +40,18 @@ with open('kriterien.json') as f:
     KRITERIEN = json.load(f)
 
 # --------------------- Models ---------------------
-class User(db.Model, UserMixin):
-    __tablename__ = 'user'  # Wichtig für PostgreSQL!
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
-    alter = db.Column(db.Integer, nullable=False)
-    is_mentor = db.Column(db.Boolean, default=False)
-    verified = db.Column(db.Boolean, default=True)
+    username = db.Column(db.String(64), unique=True)
+    email = db.Column(db.String(120), unique=True)
+    password_hash = db.Column(db.String(128))
+    is_admin = db.Column(db.Boolean, default=False)  # Neu: Admin-Flag, default False
+    # ... andere Felder
 
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    
 class Track(db.Model):
     __tablename__ = 'track'  # Wichtig für PostgreSQL!
     id = db.Column(db.Integer, primary_key=True)
@@ -84,6 +87,9 @@ def index():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    class User(UserMixin, db.Model):
+    # ... deine Felder
+    is_admin = db.Column(db.Boolean, default=False)
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
