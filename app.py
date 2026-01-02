@@ -204,6 +204,11 @@ def rate(track_id):
 
     return render_template('rate.html', track=track)  # Falls du ein separates Template für die Bewertung hast
 
+@app.route('/kriterien-info')
+def kriterien_info():
+    return render_template('kriterien_info.html')
+
+# === NEUE ROUTEN HIER ===
 @app.route('/kriterien')
 def kriterien():
     return render_template('kriterien.html')
@@ -211,6 +216,11 @@ def kriterien():
 @app.route('/kriterien-theorie')
 def kriterien_theorie():
     return render_template('kriterien_theorie.html')
+# === ENDE NEUE ROUTEN ===
+
+# --------------------- Start der App ---------------------
+if __name__ == '__main__':
+    app.run(debug=True)
     
 # --------------------- Start der App ---------------------
 if __name__ == '__main__':
