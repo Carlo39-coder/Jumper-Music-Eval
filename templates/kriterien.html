@@ -1,5 +1,4 @@
-{% extends "base.html" %}  <!-- oder "layout.html" je nach deiner Struktur -->
-
+{% extends "base.html" %}
 {% block title %}Jumper Kriterien 2026{% endblock %}
 
 {% block content %}
@@ -7,12 +6,57 @@
     <h1 class="text-center mb-4 display-4">Künstlerische Kriterien in der Musik<br>
         <small class="text-muted">erweiterte Version mit Deutschrap-Beispielen & Zitaten</small>
     </h1>
-    <p class="text-center text-muted mb-5"><em>das theoretische Fundament von Jumper – Stand November 2025</em></p>
+    <p class="text-center text-muted mb-5"><em>das theoretische Fundament von Jumper – Stand Januar 2026</em></p>
+
+    <!-- Chronologie Slideboard – oben als Einstieg -->
+    <section class="my-5">
+        <h3 class="text-center mb-4 fw-bold">Chronologie der Kriterien – Jumper Slideboard</h3>
+        <div id="kriterienSlider" class="carousel slide shadow-lg" data-bs-ride="carousel">
+            <div class="carousel-inner rounded">
+                <div class="carousel-item active">
+                    <img src="https://thumbs.dreamstime.com/z/close-up-dj-turntable-needle-vinyl-record-lights-background-create-atmosphere-hip-hop-party-music-professional-audio-421908021.jpg" class="d-block w-100" alt="Oldschool Turntable & Vinyl – Die Ära vor Social Media">
+                    <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-75 rounded">
+                        <h5>Vor Social Media (bis 2005)</h5>
+                        <p>Lange Tracks · Album-Konzepte · Authentizität durch Live-Skills & Geschichte</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://external-preview.redd.it/gw5BXr0Zy2sPvkirGzIhRjVLeUg7OHeLf5qlTRRKQXc.jpg?width=640&crop=smart&auto=webp&s=ffb869aa1d4b4ccfc612338118763580406fbabd" class="d-block w-100" alt="Smartphones beim Konzert – Die Social-Media-Ära">
+                    <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-75 rounded">
+                        <h5>Seit Social Media (2005–heute)</h5>
+                        <p>Kurze Hooks · TikTok-Clips · Persona & virale Stories</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://free-sample-packs.com/wp-content/uploads/2025/11/Audiotent-Samples.jpg" class="d-block w-100" alt="Producer beim Sampling alter Klassiker">
+                    <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-75 rounded">
+                        <h5>Jumper Bewertung 2026</h5>
+                        <p>50% Historischer Bezug · 25% Kreativität · +10 Punkte Bonus U25</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="http://images.complex.com/complex/image/upload/v1727110876/2024_Complex-Music_13-Best-Rappers-in-Their-Teens_Site_Lead-2.jpg" class="d-block w-100" alt="Junge Newcomer – Die nächste Generation">
+                    <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-75 rounded">
+                        <h5>Die Zukunft: Neue Generation</h5>
+                        <p>„Wer die Vergangenheit vergisst, hat keine Zukunft im Rap.“</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#kriterienSlider" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#kriterienSlider" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </section>
 
     <h2 class="mt-5">Entwicklung der Kriterien im Deutschrap</h2>
     <div class="table-responsive">
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
+        <table class="table table-bordered table-striped table-dark">
+            <thead class="table-light">
                 <tr>
                     <th>Kriterium</th>
                     <th>Vor Social Media (bis ca. 2005)</th>
@@ -69,8 +113,8 @@
 
     <h2 class="mt-5">Jumper-Bewertungssystem 2026<br><small>(konkret für Deutschrap & Hip-Hop)</small></h2>
     <div class="table-responsive">
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
+        <table class="table table-bordered table-striped table-dark">
+            <thead class="table-light">
                 <tr>
                     <th>Platz</th>
                     <th>Kriterium</th>
@@ -118,82 +162,49 @@
     </div>
 
     <h2 class="mt-5">Harte Zitate – direkt von den Größten</h2>
-    <blockquote class="blockquote">
-        <p>„Die meisten neuen Rapper haben keine Ahnung von Cora E, Stieber Twins oder Rödelheim. Die kennen nur Capital und mich.“</p>
-        <footer class="blockquote-footer"><strong>Bushido</strong> (Interview 2024)</footer>
-    </blockquote>
-    <blockquote class="blockquote">
-        <p>„Wenn du die Geschichte nicht kennst, bist du nur ein Clown mit Goldkette.“</p>
-        <footer class="blockquote-footer"><strong>Kool Savas</strong> (Live bei Rap am Mittwoch 2023)</footer>
-    </blockquote>
-    <blockquote class="blockquote">
-        <p>„Ich höre mir neue Deutschrap-Scheiße an und denke: Die haben nie ‚Juice‘ gelesen.“</p>
-        <footer class="blockquote-footer"><strong>Fler</strong> (Instagram-Live 2025)</footer>
-    </blockquote>
-    <blockquote class="blockquote">
-        <p>„Früher musste man 10 Jahre kämpfen, heute reicht ein guter TikTok-Sound.“</p>
-        <footer class="blockquote-footer"><strong>Kollegah</strong> (BossTalk Podcast 2024)</footer>
-    </blockquote>
-    <blockquote class="blockquote">
-        <p>„Ohne die 90er gäbe es keinen einzigen von euch da draußen.“</p>
-        <footer class="blockquote-footer"><strong>Torch</strong> (Advanced Chemistry), 2023</footer>
-    </blockquote>
+    <div class="row g-4">
+        <div class="col-md-6">
+            <blockquote class="blockquote bg-dark text-white p-4 rounded">
+                <p>„Die meisten neuen Rapper haben keine Ahnung von Cora E, Stieber Twins oder Rödelheim. Die kennen nur Capital und mich.“</p>
+                <footer class="blockquote-footer text-white-50">Bushido (Interview 2024)</footer>
+            </blockquote>
+        </div>
+        <div class="col-md-6">
+            <blockquote class="blockquote bg-dark text-white p-4 rounded">
+                <p>„Wenn du die Geschichte nicht kennst, bist du nur ein Clown mit Goldkette.“</p>
+                <footer class="blockquote-footer text-white-50">Kool Savas (Live bei Rap am Mittwoch 2023)</footer>
+            </blockquote>
+        </div>
+        <div class="col-md-6">
+            <blockquote class="blockquote bg-dark text-white p-4 rounded">
+                <p>„Ich höre mir neue Deutschrap-Scheiße an und denke: Die haben nie ‚Juice‘ gelesen.“</p>
+                <footer class="blockquote-footer text-white-50">Fler (Instagram-Live 2025)</footer>
+            </blockquote>
+        </div>
+        <div class="col-md-6">
+            <blockquote class="blockquote bg-dark text-white p-4 rounded">
+                <p>„Früher musste man 10 Jahre kämpfen, heute reicht ein guter TikTok-Sound.“</p>
+                <footer class="blockquote-footer text-white-50">Kollegah (BossTalk Podcast 2024)</footer>
+            </blockquote>
+        </div>
+        <div class="col-12">
+            <blockquote class="blockquote bg-dark text-white p-4 rounded text-center">
+                <p class="display-6">„Ohne die 90er gäbe es keinen einzigen von euch da draußen.“</p>
+                <footer class="blockquote-footer text-white-50">Torch (Advanced Chemistry), 2023</footer>
+            </blockquote>
+        </div>
+    </div>
 
-    <div class="text-center my-5 p-4 bg-dark text-white rounded">
-        <h3>Das ist Jumper.</h3>
+    <div class="text-center my-5 p-5 bg-black text-white rounded shadow">
+        <h3 class="display-5">Das ist Jumper.</h3>
         <p class="lead">Wir bewerten nicht, wer am meisten Geld für Promo ausgibt.<br>
            Wir bewerten, wer die Geschichte respektiert und trotzdem etwas Neues schreibt.</p>
         <p class="display-6">Erster offizieller Monat: Januar 2026</p>
         <p>Rubrik: Deutschsprachiger Gesangsrap & Hip-Hop<br>
-           Anmeldung startet 01.01.2026</p>
-        <p class="fs-4">„Wer die Vergangenheit vergisst, hat keine Zukunft im Rap.“<br>
+           Anmeldung ab sofort möglich!</p>
+        <p class="fs-3">„Wer die Vergangenheit vergisst, hat keine Zukunft im Rap.“<br>
            <em>— Jumper Manifest 2026</em></p>
         <p class="mt-4">#Jumper2026 #RespektVorDerGeschichte #DeutschrapLebt</p>
     </div>
 </div>
 {% endblock %}
-<div class="container my-5">
-    <h3 class="text-center mb-4">Chronologie der Kriterien – Jumper Slideboard</h3>
-    <div id="kriterienSlider" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <div class="card text-center bg-dark text-white">
-                    <div class="card-body">
-                        <h5>Vor Social Media (bis 2005)</h5>
-                        <p>Lange Tracks · Album-Konzepte · Authentizität durch Live-Skills</p>
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="card text-center bg-primary text-white">
-                    <div class="card-body">
-                        <h5>Seit Social Media (2005–heute)</h5>
-                        <p>Kurze Hooks · TikTok-Clips · Persona & Stories</p>
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="card text-center bg-success text-white">
-                    <div class="card-body">
-                        <h5>Jumper Bewertung 2026</h5>
-                        <p>50% Historischer Bezug · 25% Kreativität · Bonus U25</p>
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="card text-center bg-warning text-dark">
-                    <div class="card-body">
-                        <h5>Zitat der Legenden</h5>
-                        <p>„Wer die Vergangenheit vergisst, hat keine Zukunft im Rap.“</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#kriterienSlider" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#kriterienSlider" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
-        </button>
-    </div>
-</div>
