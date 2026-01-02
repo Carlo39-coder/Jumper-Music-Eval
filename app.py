@@ -89,8 +89,8 @@ def index():
 def register():
     class User(UserMixin, db.Model):
     # ... deine Felder
-    is_admin = db.Column(db.Boolean, default=False)
-    if request.method == 'POST':
+        is_admin = db.Column(db.Boolean, default=False)
+        if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
         alter = request.form.get('alter')
