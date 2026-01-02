@@ -222,6 +222,3 @@ def kriterien_theorie():
 if __name__ == '__main__':
     app.run(debug=True)
     
-# --------------------- Start der App ---------------------
-if __name__ == '__main__':
-    app.run(debug=True)
