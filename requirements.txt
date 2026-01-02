@@ -6,4 +6,4 @@ pandas
 cloudinary
 flask_login
 flask
-pip install Flask-BasicAuth
+Flask-BasicAuth
