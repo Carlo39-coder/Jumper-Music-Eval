@@ -11,26 +11,51 @@
         <!-- Linke Sidebar -->
         <aside class="sidebar">
             <h2>Jumper</h2>
-            <nav>
-                <ul>
-                     </a></li><li><a href="{{ url_for('kriterien_info') }}">Bewertungskriterien erklärt</a></li>
-                    tt
-                    {% if not current_user.is_authenticated %}
-                        <li><a href="{{ url_for('register') }}">Registrieren</a></li>
-                        <li><a href="{{ url_for('login') }}">Login</a></li>
-                    {% else %}
-                        <li><a href="{{ url_for('submit') }}">Track einreichen</a></li>
-                        <li><a href="{{ url_for('tracks') }}">Alle Tracks ansehen</a></li>
-                        <li><a href="{{ url_for('logout') }}">Logout ({{ current_user.username }})</a></li>
-                    {% endif %}
-                </ul>
-            </nav>
-        </aside>
-
-        <!-- Hauptinhalt rechts -->
-        <main class="content">
-            {% block content %}{% endblock %}
-        </main>
+            <nav><nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('index') }}">Jumper 2026</a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                </li>
+                
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('submit') }}">Track einreichen</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('tracks') }}">Alle Tracks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout ({{ current_user.username }})</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('register') }}">Registrieren</a>
+                    </li>
+                {% endif %}
+                
+                <!-- === NEUE KRITERIEN-LINKS === -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="kriterienDropdown" role="button" data-bs-toggle="dropdown">
+                        Kriterien
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ url_for('kriterien_theorie') }}">Theorie & Geschichte</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('kriterien') }}">Bewertungssystem 2026</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
-</body>
-</html>
+</nav>
+                
