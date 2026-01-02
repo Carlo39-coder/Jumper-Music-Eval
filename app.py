@@ -96,26 +96,37 @@ def index():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
     if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        alter = request.form.get('alter')
+        username = request.form['username'].strip()
+        email = request.form['email'].strip().lower()
+        alter_str = request.form.get('alter')
         password = request.form['password']
 
+        # Basis-Validierung
+        if not username or not email or not password or not alter_str:
+            flash('Alle Felder müssen ausgefüllt sein.', 'danger')
+            return redirect(url_for('register'))
+
         if User.query.filter_by(username=username).first():
-            flash('Username bereits vergeben.')
+            flash('Username bereits vergeben.', 'danger')
             return redirect(url_for('register'))
 
         if User.query.filter_by(email=email).first():
-            flash('E-Mail bereits vergeben.')
+            flash('E-Mail bereits registriert.', 'danger')
             return redirect(url_for('register'))
 
         try:
-            alter = int(alter)
-        except (TypeError, ValueError):
-            flash('Alter muss eine Zahl sein.')
+            alter = int(alter_str)
+            if alter < 13 or alter > 100:
+                raise ValueError
+        except ValueError:
+            flash('Alter muss eine Zahl zwischen 13 und 100 sein.', 'danger')
             return redirect(url_for('register'))
 
+        # Neuen User anlegen
         new_user = User(
             username=username,
             email=email,
@@ -125,13 +136,18 @@ def register():
         )
         new_user.set_password(password)
 
-        db.session.add(new_user)
-        db.session.commit()
-        flash('Registrierung erfolgreich! Du kannst dich jetzt einloggen.')
-        return redirect(url_for('login'))
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Registrierung erfolgreich! Du kannst dich jetzt einloggen.', 'success')
+            return redirect(url_for('login'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Fehler beim Speichern in der Datenbank: {str(e)}', 'danger')
+            app.logger.error(f"Registrierungsfehler: {str(e)}")  # Wird in Render-Logs sichtbar
+            return redirect(url_for('register'))
 
     return render_template('register.html')
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
