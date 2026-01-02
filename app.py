@@ -70,7 +70,14 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 # --------------------- Routen ---------------------
+@app.route('/upload')
+def upload_redirect():
+    return redirect(url_for('submit'))
 
+@app.route('/leaderboard')
+def leaderboard():
+    return render_template('leaderboard.html')  # oder redirect zu tracks
+    
 @app.route('/')
 def index():
     return render_template('index.html')  # Hauptstartseite
