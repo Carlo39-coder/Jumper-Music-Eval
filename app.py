@@ -7,7 +7,6 @@ from datetime import datetime
 import json
 import cloudinary
 import cloudinary.uploader
-from app import db
 
 app = Flask(__name__)
 
@@ -41,19 +40,24 @@ with open('kriterien.json') as f:
 
 # --------------------- Models ---------------------
 class User(UserMixin, db.Model):
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True)
-    email = db.Column(db.String(120), unique=True)
-    password_hash = db.Column(db.String(128))
-    is_admin = db.Column(db.Boolean, default=False)  # Neu: Admin-Flag, default False
-    # ... andere Felder
+    username = db.Column(db.String(64), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
+    alter = db.Column(db.Integer, nullable=False)
+    is_mentor = db.Column(db.Boolean, default=False)
+    is_admin = db.Column(db.Boolean, default=False)
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
 
-    
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+
 class Track(db.Model):
-    __tablename__ = 'track'  # Wichtig für PostgreSQL!
+    __tablename__ = 'track'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     artist_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -68,29 +72,31 @@ class Track(db.Model):
     gesamt_score = db.Column(db.Float, default=0.0)
     mentor_feedback = db.Column(db.Text)
 
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
 
 # --------------------- Routen ---------------------
 @app.route('/upload')
 def upload_redirect():
     return redirect(url_for('submit'))
 
+
 @app.route('/leaderboard')
 def leaderboard():
-    return render_template('leaderboard.html')  # oder redirect zu tracks
-    
+    return redirect(url_for('tracks'))  # oder render_template('leaderboard.html')
+
+
 @app.route('/')
 def index():
-    return render_template('index.html')  # Hauptstartseite
+    return render_template('index.html')
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    class User(UserMixin, db.Model):
-    # ... deine Felder
-        is_admin = db.Column(db.Boolean, default=False)
-        if request.method == 'POST':
+    if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
         alter = request.form.get('alter')
@@ -99,6 +105,7 @@ def register():
         if User.query.filter_by(username=username).first():
             flash('Username bereits vergeben.')
             return redirect(url_for('register'))
+
         if User.query.filter_by(email=email).first():
             flash('E-Mail bereits vergeben.')
             return redirect(url_for('register'))
@@ -109,14 +116,22 @@ def register():
             flash('Alter muss eine Zahl sein.')
             return redirect(url_for('register'))
 
-        hashed_pw = generate_password_hash(password, method='pbkdf2:sha256')
-        new_user = User(username=username, email=email, alter=alter, password_hash=hashed_pw)
+        new_user = User(
+            username=username,
+            email=email,
+            alter=alter,
+            is_mentor=False,
+            is_admin=False
+        )
+        new_user.set_password(password)
+
         db.session.add(new_user)
         db.session.commit()
         flash('Registrierung erfolgreich! Du kannst dich jetzt einloggen.')
         return redirect(url_for('login'))
 
     return render_template('register.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -125,7 +140,7 @@ def login():
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
 
-        if user and check_password_hash(user.password_hash, password):
+        if user and user.check_password(password):
             login_user(user)
             next_page = request.args.get('next')
             return redirect(next_page or url_for('submit'))
@@ -134,12 +149,14 @@ def login():
 
     return render_template('login.html')
 
+
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     flash('Erfolgreich ausgeloggt.')
     return redirect(url_for('index'))
+
 
 @app.route('/submit', methods=['GET', 'POST'])
 @login_required
@@ -161,6 +178,7 @@ def submit():
             return redirect(url_for('submit'))
 
         bonus = 10 if current_user.alter < 25 else 0
+
         new_track = Track(
             name=name,
             artist_id=current_user.id,
@@ -176,10 +194,12 @@ def submit():
 
     return render_template('submit.html')
 
+
 @app.route('/tracks')
 def tracks():
     all_tracks = Track.query.all()
     return render_template('tracks.html', tracks=all_tracks)
+
 
 @app.route('/rate/<int:track_id>', methods=['GET', 'POST'])
 @login_required
@@ -205,34 +225,37 @@ def rate(track_id):
         track.kreativitaet = k
         track.technische_qualitaet = t
         track.community = c
-        track.gesamt_score = (h * weights['historischer_bezug'] * 10 +
-                              k * weights['kreativitaet'] * 10 +
-                              t * weights['technische_qualitaet'] * 10 +
-                              c * weights['community'] * 10 +
-                              track.bonus)
+        track.gesamt_score = (
+            h * weights['historischer_bezug'] * 10 +
+            k * weights['kreativitaet'] * 10 +
+            t * weights['technische_qualitaet'] * 10 +
+            c * weights['community'] * 10 +
+            track.bonus
+        )
         track.mentor_feedback = request.form.get('feedback', '')
         db.session.commit()
         flash('Bewertung gespeichert!')
         return redirect(url_for('tracks'))
 
-    return render_template('rate.html', track=track)  # Falls du ein separates Template für die Bewertung hast
+    return render_template('rate.html', track=track)
+
 
 @app.route('/kriterien-info')
 def kriterien_info():
     return render_template('kriterien_info.html')
 
-# === NEUE ROUTEN HIER ===
+
 @app.route('/kriterien')
 def kriterien():
     return render_template('kriterien.html')
 
+
 @app.route('/kriterien-theorie')
 def kriterien_theorie():
     return render_template('kriterien_theorie.html')
-# === ENDE NEUE ROUTEN ===
+
 
 # --------------------- Start der App ---------------------
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
-    
