@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% block title %}JUMPER – Die fairste Deutschrap & Hip-Hop Plattform{% endblock %}
-
 {% block content %}
     <!-- Hero-Bereich -->
     <section class="hero text-center py-5 bg-dark text-white">
@@ -10,7 +9,6 @@
                 Bewertung nach <strong>Musikwissen</strong> statt Klicks.<br>
                 Monatliche Wettbewerbe • Open Source • Community-driven
             </p>
-
             <!-- Carousel mit atmosphärischen Hip-Hop-Bildern -->
             <div id="heroCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
                 <div class="carousel-inner rounded shadow">
@@ -46,7 +44,6 @@
                 <strong>Von der Zeit vor Social Media bis heute</strong><br>
                 <em>das theoretische Fundament von Jumper – Januar 2026</em>
             </p>
-
             <div class="table-responsive">
                 <table class="table table-dark table-striped table-hover">
                     <thead>
@@ -75,7 +72,6 @@
                     </tbody>
                 </table>
             </div>
-
             <p class="text-center mt-4">
                 <a href="{{ url_for('kriterien_theorie') }}" class="btn btn-outline-light">Zur vollständigen Theorie & Geschichte →</a>
             </p>
@@ -85,4 +81,126 @@
     <!-- Bewertungskriterien -->
     <section class="section py-5 bg-dark text-white">
         <div class="container">
-            <h2 class="text-center mb-5">
+            <h2 class="text-center mb-5">Unsere Bewertungskriterien</h2>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card bg-secondary text-white h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-music fa-3x mb-3 text-warning"></i>
+                            <h4>Produktion & Beat</h4>
+                            <p class="card-text">Sample-Wahl, Drum-Patterns, Mix & Mastering nach Hip-Hop-Tradition.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card bg-secondary text-white h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-pen-fancy fa-3x mb-3 text-warning"></i>
+                            <h4>Lyrics & Flow</h4>
+                            <p class="card-text">Reime, Metrum, Wortwitz, Storytelling – kein Autotune-Cheat.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card bg-secondary text-white h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-users fa-3x mb-3 text-warning"></i>
+                            <h4>Authentizität</h4>
+                            <p class="card-text">Street-Cred, Live-Fähigkeit, Community-Impact statt Fake-Follower.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="section py-5 bg-black text-white">
+        <div class="container">
+            <h2 class="text-center mb-5">Features</h2>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="feature-icon me-3">
+                            <i class="fas fa-trophy fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h4>Monatliche Wettbewerbe</h4>
+                            <p>Tracks einreichen → Community bewertet → Gewinner kriegen Exposure & Preise</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="feature-icon me-3">
+                            <i class="fas fa-chart-line fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h4>Transparente Algorithmen</h4>
+                            <p>Open Source – jeder sieht, wie Bewertungen zustande kommen</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="feature-icon me-3">
+                            <i class="fas fa-vote-yea fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h4>Experten-Community</h4>
+                            <p>Nur Nutzer mit Musikwissen (Quiz → Level) dürfen bewerten</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="feature-icon me-3">
+                            <i class="fas fa-globe fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h4>Deutschrap-Fokus</h4>
+                            <p>Von Absztraktes Denken bis Sun Diego – faire Chance für alle</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-5 bg-gradient text-white text-center">
+        <div class="container">
+            <h2 class="display-5 fw-bold mb-4">Bereit für faire Battles?</h2>
+            <p class="lead mb-4">Reiche deinen Track ein oder bewertete als Experte mit</p>
+            <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+                <a href="{{ url_for('upload') }}" class="btn btn-warning btn-lg">
+                    <i class="fas fa-upload me-2"></i>Track hochladen
+                </a>
+                <a href="{{ url_for('register') }}" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-user-plus me-2"></i>Als Experte joinen
+                </a>
+            </div>
+            <p class="mt-4">
+                <small>👥 Schon <strong>127</strong> Experten | 🔥 <strong>43</strong> Tracks diese Woche | 🏆 <strong>Next Battle: 15.01.2026</strong></small>
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer-Teaser -->
+    <section class="py-5 bg-dark text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Die Jumper-Philosophie</h5>
+                    <p class="text-muted">Hip-Hop ist Kunst. Kein Algorithmus kann das ersetzen. Deshalb bewerten bei uns Menschen mit Wissen – nach Kriterien, die seit den 80ern zählen.</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Schnellstart</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('kriterien_theorie') }}" class="text-light text-decoration-none">→ Theorie & Kriterien</a></li>
+                        <li><a href="{{ url_for('leaderboard') }}" class="text-light text-decoration-none">→ Leaderboard</a></li>
+                        <li><a href="{{ url_for('current_battle') }}" class="text-light text-decoration-none">→ Aktueller Battle</a></li>
+                        <li><a href="https://github.com/deinusername/jumper" class="text-light text-decoration-none" target="_blank">→ GitHub (Open Source)</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
