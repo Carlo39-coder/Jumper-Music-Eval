@@ -141,6 +141,11 @@ def register():
             return redirect(url_for('register'))
 
     return render_template('register.html')
+    
+@app.route('/kriterien_theorie')
+def kriterien_theorie():
+    return render_template('kriterien_theorie.html')  # Deine existierende Template-Datei
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
