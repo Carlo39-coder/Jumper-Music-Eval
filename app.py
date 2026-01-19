@@ -87,11 +87,11 @@ def leaderboard():
 def index():
     return render_template('index.html')
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-
+@app.route('/register', methods=['GET', 'POST'])  # Or whatever path/methods you use
+def register():  # Function name should match the endpoint
+    # Your registration logic here
+    return render_template('register.html')  # Or whatever
+    
     if request.method == 'POST':
         username = request.form['username'].strip()
         email = request.form['email'].strip().lower()
