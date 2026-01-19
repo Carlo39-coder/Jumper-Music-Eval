@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from werkzeug.exceptions import BuildError
 import json
 import cloudinary
 import cloudinary.uploader
@@ -164,6 +165,11 @@ def logout():
     logout_user()
     flash('Erfolgreich ausgeloggt.')
     return redirect(url_for('index'))
+
+@app.errorhandler(BuildError)
+def handle_build_error(error):
+    app.logger.error(f"BuildError: Could not build url for endpoint '{error.endpoint}' with values {error.values}")
+    return "URL-Build-Fehler – überprüfe deine Endpoints!", 500
 
 @app.route('/submit', methods=['GET', 'POST'])
 @login_required
