@@ -174,30 +174,35 @@ def submit():
         link = request.form.get('link')
         track_url = ''
 
-        if 'track' in request.files and request.files['track'].filename:
-            file = request.files['track']
-            upload_result = cloudinary.uploader.upload(file, resource_type="video")
-            track_url = upload_result['secure_url']
-        elif link:
-            track_url = link
-        else:
-            flash('Bitte Datei hochladen oder Link angeben.')
-            return redirect(url_for('submit'))
+        try:
+            if 'track' in request.files and request.files['track'].filename:
+                file = request.files['track']
+                upload_result = cloudinary.uploader.upload(file, resource_type="video")
+                track_url = upload_result['secure_url']
+            elif link:
+                track_url = link
+            else:
+                flash('Bitte Datei hochladen oder Link angeben.')
+                return redirect(url_for('submit'))
 
-        bonus = 10 if current_user.alter < 25 else 0
+            bonus = 10 if current_user.alter < 25 else 0
 
-        new_track = Track(
-            name=name,
-            artist_id=current_user.id,
-            genre=genre,
-            url=track_url,
-            bonus=bonus,
-            datum=datetime.now().strftime("%d.%m.%Y")
-        )
-        db.session.add(new_track)
-        db.session.commit()
-        flash('Track erfolgreich eingereicht!')
-        return redirect(url_for('tracks'))
+            new_track = Track(
+                name=name,
+                artist_id=current_user.id,
+                genre=genre,
+                url=track_url,
+                bonus=bonus,
+                datum=datetime.now().strftime("%d.%m.%Y")
+            )
+            db.session.add(new_track)
+            db.session.commit()
+            flash('Track erfolgreich eingereicht!')
+            return redirect(url_for('tracks'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Fehler beim Upload: {str(e)}', 'danger')
+            app.logger.error(f"Submit-Fehler: {str(e)}")
 
     return render_template('submit.html')
 
@@ -209,7 +214,7 @@ def tracks():
     all_tracks = Track.query.all()
     return render_template('tracks.html', tracks=all_tracks)
 
-# Beispiel für eine Admin-Only-Route (falls du eine brauchst, z.B. für User-Übersicht)
+# Beispiel für eine Admin-Only-Route (für User-Übersicht)
 @app.route('/admin/users')
 @login_required
 def admin_users():
@@ -218,15 +223,26 @@ def admin_users():
     all_users = User.query.all()
     return render_template('admin_users.html', users=all_users)  # Erstelle eine neue Template dafür
 
-# (Deine weitere Route '/rate/' – falls unvollständig, ergänze sie hier)
+# Rate-Route (ergänzt mit Beispiel-Logik für Bewertungen – passe an deine Needs an)
 @app.route('/rate/<int:track_id>', methods=['GET', 'POST'])
 @login_required
 def rate(track_id):
-    if not current_user.is_mentor:  # Beispiel: Nur Mentoren/Admin dürfen bewerten
+    if not current_user.is_mentor and not current_user.is_admin:  # Nur Mentoren oder Admin dürfen bewerten
         abort(403)
     track = Track.query.get_or_404(track_id)
-    # ... Deine Bewertungs-Logik hier (aus deinem Originalcode ergänzen)
-    # z.B. Form verarbeiten, Scores speichern usw.
+
+    if request.method == 'POST':
+        # Beispiel für Bewertungs-Logik – erweitere das mit Form-Daten
+        track.historischer_bezug = int(request.form.get('historischer_bezug', 0))
+        track.kreativitaet = int(request.form.get('kreativitaet', 0))
+        track.technische_qualitaet = int(request.form.get('technische_qualitaet', 0))
+        track.community = int(request.form.get('community', 0))
+        track.mentor_feedback = request.form.get('feedback', '')
+        track.gesamt_score = (track.historischer_bezug + track.kreativitaet + track.technische_qualitaet + track.community + track.bonus) / 5.0  # Beispiel-Berechnung
+        db.session.commit()
+        flash('Bewertung gespeichert!')
+        return redirect(url_for('tracks'))
+
     return render_template('rate.html', track=track, kriterien=KRITERIEN)
 
 # Starte die App
@@ -234,3 +250,7 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
+
+    
+       
+    
