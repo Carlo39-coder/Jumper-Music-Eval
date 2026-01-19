@@ -251,9 +251,7 @@ def rate(track_id):
 
     return render_template('rate.html', track=track, kriterien=KRITERIEN)
 
-@app.route('/kriterien_theorie')
-def kriterien_theorie():
-    return render_template('kriterien_theorie.html')
+
 
 # Starte die App
 if __name__ == '__main__':
