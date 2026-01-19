@@ -9,5 +9,5 @@ services:
     autoDeploy: true
     disks:
       - name: data
-        mountPath: /opt/render/project/src
+        mountPath: /data  
         sizeGB: 1
