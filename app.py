@@ -19,7 +19,6 @@ if database_url and database_url.startswith('postgres://'):
     database_url = database_url.replace('postgres://', 'postgresql://', 1)
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///jumper.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db = SQLAlchemy(app)
 
 # Login Manager
@@ -101,7 +100,7 @@ def register():
 
         # Basis-Validierung
         if not username or not email or not password or not alter_str:
-            flash('Alle Felder müssen ausgefült sein.', 'danger')
+            flash('Alle Felder müssen ausgefüllt sein.', 'danger')
             return redirect(url_for('register'))
 
         if User.query.filter_by(username=username).first():
@@ -235,4 +234,3 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
-
