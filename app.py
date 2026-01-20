@@ -7,7 +7,7 @@ from datetime import datetime
 import json
 import cloudinary
 import cloudinary.uploader
-import markdown
+from markupsafe import Markup
 from flask import Markup
 
 app = Flask(__name__)
