@@ -7,6 +7,8 @@ from datetime import datetime
 import json
 import cloudinary
 import cloudinary.uploader
+import markdown
+from flask import Markup
 
 app = Flask(__name__)
 
@@ -83,6 +85,13 @@ def load_user(user_id):
 @app.route('/upload')
 def upload_redirect():
     return redirect(url_for('submit'))
+
+@app.route('/musikgeschichte')
+def musikgeschichte():
+    with open('KRITERIEN_MUSIKGESCHICHTE.md', 'r', encoding='utf-8') as f:
+        md_text = f.read()
+    html = markdown.markdown(md_text, extensions=['tables', 'fenced_code'])
+    return render_template('musikgeschichte.html', content=Markup(html))
 
 @app.route('/leaderboard')
 def leaderboard():
