@@ -244,4 +244,33 @@ def admin_users():
     return render_template('admin_users.html', users=all_users)
 
 # Rate-Route
-@app.route('/rate/<int:track_id
+@app.route('/rate/<int:track_id>', methods=['GET', 'POST'])
+@login_required
+def rate(track_id):
+    if not current_user.is_mentor and not current_user.is_admin:  # Nur Mentoren oder Admin dürfen bewerten
+        abort(403)
+    track = Track.query.get_or_404(track_id)
+    if request.method == 'POST':
+        try:
+            track.historischer_bezug = int(request.form.get('historischer_bezug', 0))
+            track.kreativitaet = int(request.form.get('kreativitaet', 0))
+            track.technische_qualitaet = int(request.form.get('technische_qualitaet', 0))
+            track.community = int(request.form.get('community', 0))
+            # Validierung: Scores zwischen 0 und 10 (angenommen basierend auf KRITERIEN)
+            if any(score < 0 or score > 10 for score in [track.historischer_bezug, track.kreativitaet, track.technische_qualitaet, track.community]):
+                raise ValueError("Scores müssen zwischen 0 und 10 liegen.")
+            track.mentor_feedback = request.form.get('feedback', '')
+            track.gesamt_score = (track.historischer_bezug + track.kreativitaet + track.technische_qualitaet + track.community + track.bonus) / 5.0
+            db.session.commit()
+            flash('Bewertung gespeichert!', 'success')
+            return redirect(url_for('tracks'))
+        except ValueError as e:
+            flash(f'Ungültige Eingabe: {str(e)}', 'danger')
+    
+    return render_template('rate.html', track=track, kriterien=KRITERIEN)
+
+# Starte die App (nur lokal; für Render nutze Gunicorn)
+if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()  # Nur für Dev; in Prod migrieren
+    app.run(debug=True)
