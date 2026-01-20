@@ -361,7 +361,15 @@ def upload_redirect():
 def leaderboard():
     return redirect(url_for('tracks'))
 
-
+@app.route('/init-db-secure123')   # ← ändere 'secure123' zu etwas Eigenem (Passwort-ähnlich)
+def init_db_secure():
+    try:
+        with app.app_context():
+            db.create_all()
+            db.session.commit()   # sicherheitshalber
+        return "Datenbank-Tabellen wurden erstellt! (User & Track existieren jetzt)"
+    except Exception as e:
+        return f"Fehler beim Erstellen: {str(e)}", 500
 # ==================================================
 # Start
 # ==================================================
