@@ -8,7 +8,7 @@ import json
 import cloudinary
 import cloudinary.uploader
 from markupsafe import Markup
-from flask import Markup
+
 
 app = Flask(__name__)
 
@@ -158,8 +158,23 @@ def register():
 
 @app.route('/kriterien_theorie')
 def kriterien_theorie():
-    return render_template('kriterien_theorie.html')
-
+    @app.route('/kriterien_theorie')
+def kriterien_theorie():
+    try:
+        # Dein Code
+        with open('kriterien.json', encoding='utf-8') as f:
+            data = json.load(f)
+        return render_template('kriterien_theorie.html', data=data)
+    except FileNotFoundError:
+        flash('Kriterien-Datei nicht gefunden', 'danger')
+        return render_template('kriterien_theorie.html', data={})
+    except json.JSONDecodeError:
+        flash('Fehler in der Kriterien-Datei (JSON ungültig)', 'danger')
+        return render_template('kriterien_theorie.html', data={})
+    except Exception as e:
+        app.logger.error(f"Fehler in kriterien_theorie: {e}")
+        flash('Interner Fehler – bitte später erneut versuchen', 'danger')
+        return render_template('error.html'), 500
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
