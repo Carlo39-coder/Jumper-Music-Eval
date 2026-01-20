@@ -7,3 +7,4 @@ cloudinary
 flask_login
 flask
 Flask-BasicAuth
+markdown
