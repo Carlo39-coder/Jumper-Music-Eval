@@ -132,6 +132,11 @@ def load_user(user_id):
 def index():
     return render_template('index.html')
 
+@app.route('/init-db')
+def init_db():
+    with app.app_context():
+        db.create_all()
+    return "Datenbank initialisiert – nur einmal ausführen!"
 
 @app.route('/kriterien_theorie')
 def kriterien_theorie():
