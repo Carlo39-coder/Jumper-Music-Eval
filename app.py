@@ -48,8 +48,7 @@ class User(UserMixin, db.Model):
     is_mentor = db.Column(db.Boolean, default=False)
     is_admin = db.Column(db.Boolean, default=False)
 
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
+    
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
@@ -83,9 +82,7 @@ def upload_redirect():
 def leaderboard():
     return redirect(url_for('tracks'))  # oder render_template('leaderboard.html')
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+
 
 @app.route('/register', methods=['GET', 'POST'])  # Or whatever path/methods you use
 def register():  # Function name should match the endpoint
@@ -107,10 +104,7 @@ def register():  # Function name should match the endpoint
             flash('Username bereits vergeben.', 'danger')
             return redirect(url_for('register'))
 
-        if User.query.filter_by(email=email).first():
-            flash('E-Mail bereits registriert.', 'danger')
-            return redirect(url_for('register'))
-
+    
         try:
             alter = int(alter_str)
             if alter < 13 or alter > 100:
