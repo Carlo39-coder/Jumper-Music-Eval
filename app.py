@@ -132,6 +132,16 @@ def load_user(user_id):
 def index():
     return render_template('index.html')
 
+@app.route('/fix-password-hash-column')
+def fix_password_hash():
+    try:
+        from sqlalchemy import text
+        with db.engine.connect() as conn:
+            conn.execute(text('ALTER TABLE "user" ALTER COLUMN password_hash TYPE VARCHAR(255);'))
+            conn.commit()
+        return "Spalte password_hash erfolgreich auf VARCHAR(255) erweitert!"
+    except Exception as e:
+        return f"Fehler: {str(e)}", 500
 
 @app.route('/kriterien_theorie')
 def kriterien_theorie():
