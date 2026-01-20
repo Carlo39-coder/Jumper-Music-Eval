@@ -26,12 +26,14 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# Cloudinary
+# Cloudinary (mit Logging, falls Keys fehlen)
 cloudinary.config(
     cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
     api_key=os.getenv('CLOUDINARY_API_KEY'),
     api_secret=os.getenv('CLOUDINARY_API_SECRET')
 )
+if not all([cloudinary.config().cloud_name, cloudinary.config().api_key, cloudinary.config().api_secret]):
+    app.logger.warning("Cloudinary-Keys fehlen – Uploads werden fehlschlagen.")
 
 # Kriterien laden (mit Fehlerhandling)
 try:
@@ -242,14 +244,4 @@ def admin_users():
     return render_template('admin_users.html', users=all_users)
 
 # Rate-Route
-@app.route('/rate/<int:track_id>', methods=['GET', 'POST'])
-@login_required
-def rate(track_id):
-    if not current_user.is_mentor and not current_user.is_admin:  # Nur Mentoren oder Admin dürfen bewerten
-        abort(403)
-    track = Track.query.get_or_404(track_id)
-    if request.method == 'POST':
-        # Bewertungs-Logik (erweitert mit Validierung)
-        try:
-            track.historischer_bezug = int(request.form.get('historischer_bezug', 0))
-            track.kreat
+@app.route('/rate/<int:track_id
