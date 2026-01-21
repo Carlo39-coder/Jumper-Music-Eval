@@ -1,27 +1,42 @@
 {% extends "base.html" %}
-
-{% block title %}Login - Jumper{% endblock %}
+{% block title %}Login – Jumper{% endblock %}
 
 {% block content %}
-    <section class="min-vh-100 d-flex align-items-center" style="
-        background: linear-gradient(rgba(0,0,0,0.80), rgba(0,0,0,0.80)),
-                    url('{{ url_for('static', filename='jonathan-cooper-icOpDZTraZc-unsplash.jpg') }}') 
-                    center / cover no-repeat fixed;
-    ">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-6 col-lg-5">
-                    <div class="card bg-dark text-white shadow-lg border-0 p-4">
-                        <h2 class="text-center mb-4 text-warning">{% block page_title %}{% endblock %}</h2>
-                        
-                        <!-- Dein bestehendes Login- oder Register-Formular hier einfügen -->
-                        <!-- Beispiel für Login: -->
-                        <form method="POST">
-                            <!-- ... deine Form-Felder ... -->
-                        </form>
-                    </div>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card bg-dark text-white shadow-lg p-4">
+                    <h2 class="text-center mb-4 text-warning">Login</h2>
+
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control bg-dark text-white" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Passwort</label>
+                            <input type="password" class="form-control bg-dark text-white" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100">Einloggen</button>
+                    </form>
+
+                    <p class="text-center mt-3">
+                        Noch kein Account? <a href="{{ url_for('register') }}" class="text-warning">Registrieren</a>
+                    </p>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 {% endblock %}
