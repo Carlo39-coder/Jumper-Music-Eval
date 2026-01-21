@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}User-Übersicht (Admin){% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1>Registrierte User (Admin-View)</h1>
+    
+    {% if users %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Alter</th>
+                    <th>Mentor</th>
+                    <th>Admin</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.alter }}</td>
+                    <td>{{ 'Ja' if user.is_mentor else 'Nein' }}</td>
+                    <td>{{ 'Ja' if user.is_admin else 'Nein' }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Noch keine User registriert.</p>
+    {% endif %}
+</div>
+{% endblock %}
