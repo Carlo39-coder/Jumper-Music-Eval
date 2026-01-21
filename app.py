@@ -361,16 +361,7 @@ def upload_redirect():
 def leaderboard():
     return redirect(url_for('tracks'))
 
-@app.route('/fix-pw-hash-col')
-def fix_pw_hash():
-    try:
-        from sqlalchemy import text
-        with db.engine.connect() as conn:
-            conn.execute(text('ALTER TABLE "user" ALTER COLUMN password_hash TYPE VARCHAR(255);'))
-            conn.commit()
-        return "Passwort-Hash-Spalte erfolgreich auf 255 Zeichen erweitert!"
-    except Exception as e:
-        return f"Fehler beim Ändern: {str(e)}", 500
+
 
 # ==================================================
 # Start
