@@ -361,14 +361,6 @@ def upload_redirect():
 def leaderboard():
     return redirect(url_for('tracks'))
     
-@app.route('/make-admin')
-def make_admin_temp():
-    user = User.query.filter_by(username='Datadog').first()
-    if user:
-        user.is_admin = True
-        db.session.commit()
-        return "Du bist jetzt Admin!"
-    return "User nicht gefunden"
 
 
 # ==================================================
