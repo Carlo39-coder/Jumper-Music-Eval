@@ -5,9 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Jumper Music Eval{% endblock %}</title>
 
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Eigenes CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <style>
@@ -20,38 +26,48 @@
         .navbar {
             background: #000 !important;
             border-bottom: 1px solid #222;
+            height: 56px;
         }
         .sidebar-left {
             position: fixed;
             top: 0;
             left: 0;
             bottom: 0;
-            width: 240px;
-            background: rgba(20, 20, 20, 0.95);
+            width: 260px;
+            background: linear-gradient(rgba(0,0,0,0.80), rgba(0,0,0,0.80)),
+                        url('{{ url_for("static", filename="jonathan-cooper-icOpDZTraZc-unsplash.jpg") }}') 
+                        center / cover no-repeat;
+            background-attachment: scroll;
             border-right: 1px solid #333;
-            padding-top: 80px; /* Platz für Jumper-Logo oben */
+            padding-top: 80px;
             overflow-y: auto;
             z-index: 1000;
         }
-        .sidebar-left .nav-link {
-            color: #ddd;
-            padding: 14px 24px;
-        }
-        .sidebar-left .nav-link:hover,
-        .sidebar-left .nav-link.active {
-            color: #ff6600;
-            background: rgba(255, 102, 0, 0.1);
-        }
         .sidebar-brand {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
             padding: 20px 24px;
             font-size: 1.8rem;
             font-weight: bold;
             color: #ff6600;
             text-shadow: 0 0 8px #ff6600;
             border-bottom: 1px solid #333;
+            background: rgba(0,0,0,0.6);
+        }
+        .sidebar-left .nav-link {
+            color: #ddd;
+            padding: 14px 24px;
+            transition: all 0.3s;
+        }
+        .sidebar-left .nav-link:hover,
+        .sidebar-left .nav-link.active {
+            color: #ff6600;
+            background: rgba(255, 102, 0, 0.12);
         }
         .main-content {
-            margin-left: 240px;
+            margin-left: 260px;
             padding: 70px 20px 40px;
             min-height: 100vh;
         }
@@ -71,7 +87,7 @@
 </head>
 
 <body>
-    <!-- Linke Sidebar (Jumper-Icon ganz oben) -->
+    <!-- Linke Sidebar mit deinem Hintergrundbild -->
     <div class="sidebar-left">
         <!-- Jumper-Icon + Text ganz oben -->
         <div class="sidebar-brand d-flex align-items-center">
@@ -139,7 +155,7 @@
         </ul>
     </div>
 
-    <!-- Hauptinhalt – kein rechter Rand mehr -->
+    <!-- Hauptinhalt – kein rechter Rand -->
     <div class="main-content">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
