@@ -13,47 +13,84 @@
           integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
           crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- Eigenes CSS -->
+    <!-- Eigenes CSS + MySpace-Vibes -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <style>
-        body { background-color: #000; color: #fff; margin: 0; padding: 0; }
-        .navbar { background-color: #000 !important; border-bottom: 1px solid #222; }
-        .navbar-brand { font-size: 1.6rem; font-weight: bold; }
-        .main-content { padding: 70px 15px 30px; min-height: 100vh; }
-        .sidebar-right {
+        body {
+            background: #000 url('https://wallpaperaccess.com/full/124383.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        .navbar {
+            background: rgba(0, 0, 0, 0.85) !important;
+            border-bottom: 2px solid #ff6600;
+            backdrop-filter: blur(4px);
+        }
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ff6600 !important;
+            text-shadow: 0 0 8px #ff6600;
+        }
+        .sidebar-left {
             position: fixed;
             top: 56px;
-            right: 0;
+            left: 0;
             bottom: 0;
-            width: 260px;
-            background-color: #111;
-            padding: 20px 0;
+            width: 240px;
+            background: rgba(20, 20, 20, 0.92);
+            border-right: 1px solid #333;
+            padding-top: 20px;
             overflow-y: auto;
-            border-left: 1px solid #222;
+            box-shadow: 4px 0 15px rgba(255, 102, 0, 0.15);
             z-index: 1000;
         }
-        .sidebar-right .nav-link {
-            color: #bbb;
-            padding: 12px 20px;
+        .sidebar-left .nav-link {
+            color: #ddd;
+            padding: 14px 24px;
+            transition: all 0.3s;
         }
-        .sidebar-right .nav-link:hover, .sidebar-right .nav-link.active {
-            color: white;
-            background-color: #222;
+        .sidebar-left .nav-link:hover,
+        .sidebar-left .nav-link.active {
+            color: #ff6600;
+            background: rgba(255, 102, 0, 0.1);
+            border-left: 4px solid #ff6600;
         }
-        .content-area { margin-right: 260px; padding: 0 15px; }
+        .main-content {
+            margin-left: 240px;
+            padding: 70px 20px 40px;
+            min-height: 100vh;
+        }
+        .content-wrapper {
+            background: rgba(0, 0, 0, 0.65);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 0 25px rgba(255, 102, 0, 0.12);
+        }
         @media (max-width: 992px) {
-            .sidebar-right { position: relative; width: 100%; height: auto; border-left: none; border-top: 1px solid #222; }
-            .content-area { margin-right: 0; }
+            .sidebar-left {
+                position: relative;
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #333;
+            }
+            .main-content {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Top-Navbar -->
+    <!-- Top-Navbar (MySpace-Style) -->
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container-fluid px-3 px-md-4">
-            <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ url_for('index') }}">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
                 <i class="fas fa-music me-2 text-warning"></i>
                 Jumper 2026
             </a>
@@ -64,13 +101,8 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
-                    </li>
-
-                    <!-- Kriterien Dropdown bleibt oben -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="kriterienDropdown" role="button"
+                        <a class="nav-link dropdown-toggle text-warning" href="#" id="kriterienDropdown" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
                             Kriterien
                         </a>
@@ -84,8 +116,8 @@
         </div>
     </nav>
 
-    <!-- Rechte Sidebar – immer sichtbar, aber Links abhängig von Login-Status -->
-    <div class="sidebar-right">
+    <!-- Linke Sidebar (unter dem Icon-Bereich) -->
+    <div class="sidebar-left">
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
@@ -131,7 +163,7 @@
                 </li>
             {% endif %}
 
-            <!-- Kriterien in Sidebar als ausklappbar -->
+            <!-- Kriterien in Sidebar -->
             <li class="nav-item">
                 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#kriterienSidebar">
                     <i class="fas fa-book me-2"></i> Kriterien
@@ -150,22 +182,24 @@
         </ul>
     </div>
 
-    <!-- Hauptinhalt -->
+    <!-- Hauptinhalt – MySpace-Style: viel Fläche, dunkler Hintergrund -->
     <div class="main-content">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+        <div class="content-wrapper">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
 
-        {% block content %}
-            <!-- Inhalt der Seite -->
-        {% endblock %}
+            {% block content %}
+                <!-- Inhalt der jeweiligen Seite -->
+            {% endblock %}
+        </div>
     </div>
 
     <!-- Bootstrap JS -->
