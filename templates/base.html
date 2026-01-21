@@ -35,15 +35,15 @@
                         <a class="nav-link" href="{{ url_for('index') }}">Home</a>
                     </li>
                    
-                                        {% if current_user.is_authenticated %}
+                    {% if current_user.is_authenticated %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('submit') }}">Track einreichen</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('tracks') }}">Alle Tracks</a>
                         </li>
-                        
-                        <!-- === NEU: Admin-Links nur für Admins sichtbar === -->
+                       
+                        <!-- === Admin-Links nur für Admins sichtbar === -->
                         {% if current_user.is_admin %}
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-warning" href="#" id="adminDropdown" 
@@ -61,12 +61,10 @@
                                 </ul>
                             </li>
                         {% endif %}
-                        
+                       
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('logout') }}">Logout ({{ current_user.username }})</a>
                         </li>
-                    {% else %}
-                        <!-- Login / Registrieren bleiben gleich -->
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('login') }}">Login</a>
@@ -94,18 +92,19 @@
 
     <!-- =============== Hauptinhalt mit Abstand zur fixed Navbar =============== -->
     <div class="container mt-5 pt-5">
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Schließen"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Schließen"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
         {% block content %}
-        <!-- Der Inhalt der jeweiligen Seite wird hier eingefügt -->
+            <!-- Der Inhalt der jeweiligen Seite wird hier eingefügt -->
         {% endblock %}
     </div>
 
