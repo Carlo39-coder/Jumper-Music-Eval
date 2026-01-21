@@ -3,74 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Title-Block -->
     <title>{% block title %}Jumper Music Eval{% endblock %}</title>
-
+   
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Font Awesome -->
+  
+    <!-- Font Awesome für Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
           integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
           crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <!-- Eigenes CSS + MySpace-Vibes -->
+  
+    <!-- Eigenes CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
+    <!-- === Hintergründe mit deinen drei Bildern === -->
     <style>
+        /* 1. Haupt-Hintergrund für die gesamte Seite */
         body {
-            background: #000 url('https://wallpaperaccess.com/full/124383.jpg') no-repeat center center fixed;
-            background-size: cover;
+            background: linear-gradient(rgba(0, 0, 0, 0.82), rgba(0, 0, 0, 0.82)),
+                        url('{{ url_for("static", filename="kier-in-sight-archives-EYAfw1ujabI-unsplash.jpg") }}') 
+                        center / cover no-repeat fixed;
+            background-attachment: fixed;
+            min-height: 100vh;
             color: #fff;
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif;
         }
-        .navbar {
-            background: rgba(0, 0, 0, 0.85) !important;
-            border-bottom: 2px solid #ff6600;
-            backdrop-filter: blur(4px);
+
+        /* Bessere Lesbarkeit für Inhalte (Karten, Alerts, Sections) */
+        .container, .card, .alert, section, .main-content, .content-wrapper {
+            background-color: rgba(20, 20, 20, 0.85);
+            border-radius: 10px;
+            backdrop-filter: blur(3px);
         }
-        .navbar-brand {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #ff6600 !important;
-            text-shadow: 0 0 8px #ff6600;
-        }
+
+        /* 2. Sidebar-Hintergrund (links) */
         .sidebar-left {
             position: fixed;
             top: 56px;
             left: 0;
             bottom: 0;
             width: 240px;
-            background: rgba(20, 20, 20, 0.92);
+            background: linear-gradient(rgba(0, 0, 0, 0.80), rgba(0, 0, 0, 0.80)),
+                        url('{{ url_for("static", filename="kier-in-sight-archives-GROaOafbSKY-unsplash.jpg") }}') 
+                        center / cover no-repeat;
+            background-attachment: scroll; /* oder fixed – teste beides */
             border-right: 1px solid #333;
             padding-top: 20px;
             overflow-y: auto;
-            box-shadow: 4px 0 15px rgba(255, 102, 0, 0.15);
+            box-shadow: 4px 0 15px rgba(0,0,0,0.5);
             z-index: 1000;
         }
+
         .sidebar-left .nav-link {
             color: #ddd;
             padding: 14px 24px;
             transition: all 0.3s;
+            background: rgba(0, 0, 0, 0.45);
+            border-radius: 6px;
+            margin: 6px 12px;
         }
+
         .sidebar-left .nav-link:hover,
         .sidebar-left .nav-link.active {
             color: #ff6600;
-            background: rgba(255, 102, 0, 0.1);
+            background: rgba(255, 102, 0, 0.25);
             border-left: 4px solid #ff6600;
         }
+
         .main-content {
             margin-left: 240px;
             padding: 70px 20px 40px;
             min-height: 100vh;
         }
-        .content-wrapper {
-            background: rgba(0, 0, 0, 0.65);
-            border-radius: 8px;
-            padding: 25px;
-            box-shadow: 0 0 25px rgba(255, 102, 0, 0.12);
-        }
+
         @media (max-width: 992px) {
             .sidebar-left {
                 position: relative;
@@ -87,22 +95,63 @@
 </head>
 
 <body>
-    <!-- Top-Navbar (MySpace-Style) -->
-    <nav class="navbar navbar-expand-lg fixed-top">
-        <div class="container-fluid px-3 px-md-4">
-            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+    <!-- Top-Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ url_for('index') }}">
                 <i class="fas fa-music me-2 text-warning"></i>
                 Jumper 2026
             </a>
-
+           
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
+           
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                   
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('submit') }}">Track einreichen</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('tracks') }}">Alle Tracks</a>
+                        </li>
+                       
+                        {% if current_user.is_admin %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-warning" href="#" id="adminDropdown" 
+                                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Admin
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="{{ url_for('admin_users') }}">
+                                        <i class="fas fa-users me-1"></i> User-Übersicht
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('tracks') }}">
+                                        <i class="fas fa-list me-1"></i> Alle Tracks & Bewertungen
+                                    </a></li>
+                                </ul>
+                            </li>
+                        {% endif %}
+                       
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('logout') }}">Logout ({{ current_user.username }})</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('register') }}">Registrieren</a>
+                        </li>
+                    {% endif %}
+                   
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-warning" href="#" id="kriterienDropdown" role="button"
+                        <a class="nav-link dropdown-toggle" href="#" id="kriterienDropdown" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
                             Kriterien
                         </a>
@@ -116,7 +165,7 @@
         </div>
     </nav>
 
-    <!-- Linke Sidebar (unter dem Icon-Bereich) -->
+    <!-- Linke Sidebar mit eigenem Hintergrundbild -->
     <div class="sidebar-left">
         <ul class="nav flex-column">
             <li class="nav-item">
@@ -182,7 +231,7 @@
         </ul>
     </div>
 
-    <!-- Hauptinhalt – MySpace-Style: viel Fläche, dunkler Hintergrund -->
+    <!-- Hauptinhalt -->
     <div class="main-content">
         <div class="content-wrapper">
             {% with messages = get_flashed_messages(with_categories=true) %}
