@@ -1,15 +1,16 @@
 {% extends "base.html" %}
-
-{% block title %}Jumper – Theoretisches Fundament{% endblock %}
+{% block title %}Bewertungssystem & Musikgeschichte – Jumper{% endblock %}
 
 {% block content %}
 <div class="container my-5">
-    <h1 class="display-4 text-center">Künstlerische Kriterien in der Musik</h1>
-    <h2 class="text-center text-muted mb-5">Von der Zeit vor Social Media bis heute</h2>
+    <!-- Hauptüberschrift -->
+    <h1 class="display-4 text-center fw-bold text-warning mb-4">Künstlerische Kriterien & Bewertungssystem</h1>
+    <h2 class="text-center text-muted mb-5">Von der Zeit vor Social Media bis Jumper 2026</h2>
 
+    <!-- Erste Tabelle: Künstlerische Kriterien in der Musikgeschichte -->
     <div class="table-responsive mb-5">
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
+        <table class="table table-dark table-striped table-bordered table-hover">
+            <thead class="table-warning text-dark">
                 <tr>
                     <th>Kategorie</th>
                     <th>Vor Social Media (bis ca. 2005)</th>
@@ -17,73 +18,119 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Deine Tabelle aus der MD-Datei hier einfügen -->
                 <tr>
                     <td><strong>Lyrisch</strong></td>
-                    <td>Tiefgründige, narrative Texte · Album-Konzepte · poetische & sozialkritische Inhalte · Referenzen an Vorgänger</td>
-                    <td>Kürzere, hook-lastige Texte · optimiert für 15-Sekunden-Clips · direkte Ansprache der Community · Remixe & UGC</td>
+                    <td>Tiefgründige, narrative Texte · Album-Konzepte · Gesellschaftskritik · Storytelling · Wortspiele</td>
+                    <td>Kürzere, hook-lastige Texte · optimiert für 15-Sekunden-Clips · Wiederholungen · Viralität > Tiefe</td>
                 </tr>
-                <!-- Weitere Zeilen analog -->
+                <tr>
+                    <td><strong>Flow / Delivery</strong></td>
+                    <td>Komplexe Rhythmen · Off-Beat · Double-Time · Variation · Persönlicher Stil</td>
+                    <td>Straight-forward, auf Beat · Auto-Tune-Einsatz · Melodischer Flow · Weniger Variation</td>
+                </tr>
+                <tr>
+                    <td><strong>Produktion</strong></td>
+                    <td>Sampling-Kultur · Live-Instrumente · Dusty Vinyl · Boom Bap · Vinyl-Crates</td>
+                    <td>Digitale Sounds · 808s · Plugins · Cloud-Produktion · AI-Beats · TikTok-optimierte Drops</td>
+                </tr>
+                <tr>
+                    <td><strong>Authentizität</strong></td>
+                    <td>Straße, Hood, persönliche Erfahrung · Struggle-Storys · Realness</td>
+                    <td>Personal Brand · Lifestyle-Content · Image-Pflege · Viralität als Authentizität</td>
+                </tr>
+                <tr>
+                    <td><strong>Kreativität / Originalität</strong></td>
+                    <td>Neue Flows erfinden · Genre-Grenzen sprengen · Experimente · Kollaborationen</td>
+                    <td>Sound-Alikes · Trends kopieren · Challenges · Remix-Kultur · Meme-Rap</td>
+                </tr>
+                <tr>
+                    <td><strong>Live-Performance</strong></td>
+                    <td>Block-Partys · Clubs · Freestyle-Battles · Raw Energy · Crowd-Control</td>
+                    <td>Livestreams · Instagram Live · TikTok-Lives · Virtuelle Konzerte · Short-Form-Performance</td>
+                </tr>
+                <tr>
+                    <td><strong>Community / Einfluss</strong></td>
+                    <td>Mixtape-Kultur · Word-of-Mouth · Street Cred · DJs · Radio</td>
+                    <td>Follower-Zahlen · Likes · Shares · Algorithmus-Reichweite · Collab mit Influencern</td>
+                </tr>
+                <tr>
+                    <td><strong>Kommerz / Unabhängigkeit</strong></td>
+                    <td>Major vs. Indie · Plattenfirmen · Distribution über Vinyl/CD · DIY-Ethik</td>
+                    <td>Streaming-Deals · Spotify-Playlisten · Independent mit Viralität · NFT · Web3 · Fan-Funding</td>
+                </tr>
             </tbody>
         </table>
     </div>
 
-    <h2 class="mt-5">Jumper-Bewertungssystem</h2>
-    <!-- Die Gewichtungstabelle hier -->
+    <!-- Zweite Tabelle: Jumper-Bewertungssystem 2026 -->
+    <h2 class="mt-5 text-center fw-bold text-warning">Jumper-Bewertungssystem 2026</h2>
+    <p class="text-center text-muted mb-4">(Entwurf – wird noch verfeinert)</p>
 
-    <blockquote class="blockquote text-center my-5">
-        <p class="display-6">„Wer die Geschichte nicht kennt, kann keine neue schreiben.“</p>
-        <footer class="blockquote-footer">Jumper Manifest 2026</footer>
+    <div class="table-responsive mb-5">
+        <table class="table table-dark table-striped table-bordered table-hover">
+            <thead class="table-warning text-dark">
+                <tr>
+                    <th>Kriterium</th>
+                    <th>Gewichtung</th>
+                    <th>Beschreibung / Messkriterien</th>
+                    <th>Max-Punkte</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Historischer Bezug</td>
+                    <td>20 %</td>
+                    <td>Wie stark verankert ist der Track in der Hip-Hop-Geschichte? (Samples, Referenzen, Ästhetik)</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>Kreativität</td>
+                    <td>25 %</td>
+                    <td>Originalität von Text, Flow, Produktion, Konzept – wie neu ist der Ansatz?</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>Technische Qualität</td>
+                    <td>20 %</td>
+                    <td>Mixing, Mastering, Delivery, Atemtechnik, Stimmkontrolle</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>Community Impact</td>
+                    <td>15 %</td>
+                    <td>Wie stark bewegt der Track die Szene? (Replay-Wert, Diskussionen, Shares)</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>Bonus (Alter < 25)</td>
+                    <td>10 %</td>
+                    <td>Jüngere Künstler bekommen Bonus für Mut und Frische</td>
+                    <td>+1–2</td>
+                </tr>
+                <tr class="table-active">
+                    <td><strong>Gesamt</strong></td>
+                    <td>100 %</td>
+                    <td>Summe / 5 = Endscore (max. 10.0)</td>
+                    <td><strong>10.0</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Zitat groß und zentriert -->
+    <blockquote class="blockquote text-center my-5 p-4 bg-dark rounded border border-warning">
+        <p class="display-6 fw-bold mb-0" style="color: #ff6600;">„Wer die Geschichte nicht kennt, kann keine neue schreiben.“</p>
+        <footer class="blockquote-footer text-warning mt-3">Jumper Manifest 2026</footer>
     </blockquote>
-<div class="text-center my-5 p-5 bg-dark text-white rounded">
-    <h3>Bereit für 2026?</h3>
-    <p class="lead">Die Theorie ist die Basis – hier kommt die Umsetzung:</p>
-    <a href="{{ url_for('kriterien_theorie') }}" class="btn btn-warning btn-lg">Zum aktuellen Bewertungssystem 2026 →</a>
-    <p class="mt-4">#Jumper2026 #RespektVorDerGeschichte</p>
-</div>
-{% endblock %}
-<div class="container my-5">
-    <h3 class="text-center mb-4">Chronologie der Kriterien – Jumper Slideboard</h3>
-    <div id="kriterienSlider" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <div class="card text-center bg-dark text-white">
-                    <div class="card-body">
-                        <h5>Vor Social Media (bis 2005)</h5>
-                        <p>Lange Tracks · Album-Konzepte · Authentizität durch Live-Skills</p>
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="card text-center bg-primary text-white">
-                    <div class="card-body">
-                        <h5>Seit Social Media (2005–heute)</h5>
-                        <p>Kurze Hooks · TikTok-Clips · Persona & Stories</p>
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="card text-center bg-success text-white">
-                    <div class="card-body">
-                        <h5>Jumper Bewertung 2026</h5>
-                        <p>50% Historischer Bezug · 25% Kreativität · Bonus U25</p>
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="card text-center bg-warning text-dark">
-                    <div class="card-body">
-                        <h5>Zitat der Legenden</h5>
-                        <p>„Wer die Vergangenheit vergisst, hat keine Zukunft im Rap.“</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#kriterienSlider" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#kriterienSlider" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
-        </button>
+
+    <!-- Call-to-Action am Ende -->
+    <div class="text-center my-5 p-5 bg-dark text-white rounded shadow-lg">
+        <h3 class="mb-4">Bereit für 2026?</h3>
+        <p class="lead mb-4">Die Theorie ist die Basis – hier kommt die Umsetzung:</p>
+        <a href="{{ url_for('submit') }}" class="btn btn-warning btn-lg px-5 py-3 shadow">
+            Jetzt Track einreichen →
+        </a>
+        <p class="mt-4 small">#Jumper2026 #RespektVorDerGeschichte</p>
     </div>
 </div>
+{% endblock %}
