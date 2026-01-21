@@ -33,7 +33,7 @@
             top: 0;
             left: 0;
             bottom: 0;
-            width: 200px;               /* NEU: schmaler (vorher 260px) */
+            width: 260px;
             background: url('{{ url_for("static", filename="jonathan-cooper-icOpDZTraZc-unsplash.jpg") }}') 
                         center / cover no-repeat;
             background-attachment: scroll;
@@ -47,32 +47,31 @@
             top: 0;
             left: 0;
             right: 0;
-            padding: 20px 15px 10px;   /* Weniger Padding seitlich und oben für schmalere Sidebar */
+            padding: 25px 24px 15px;
             text-align: center;
             background: rgba(0,0,0,0.5);
             border-bottom: 1px solid #333;
         }
         .sidebar-brand i {
-            font-size: 3.2rem;         /* Icon etwas kleiner, damit es nicht überläuft */
+            font-size: 3.8rem;
             color: #ff6600;
             text-shadow: 0 0 12px #ff6600;
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
         .sidebar-brand span {
-            font-size: 1.4rem;         /* Text kleiner und passt besser */
+            font-size: 1.6rem;
             font-weight: bold;
             color: #ff6600;
             text-shadow: 0 0 8px #ff6600;
         }
         .sidebar-left .nav-link {
             color: #eee;
-            padding: 12px 18px;        /* Weniger Padding, damit Links besser reinpassen */
+            padding: 14px 24px;
             background: rgba(0, 0, 0, 0.45);
             border-radius: 6px;
-            margin: 4px 8px;           /* Kleinerer Margin */
+            margin: 6px 12px;
             transition: all 0.3s;
-            font-size: 0.95rem;        /* Etwas kleinere Schrift */
         }
         .sidebar-left .nav-link:hover,
         .sidebar-left .nav-link.active {
@@ -80,7 +79,7 @@
             background: rgba(255, 102, 0, 0.25);
         }
         .main-content {
-            margin-left: 200px;         /* Angepasst an neue Sidebar-Breite */
+            margin-left: 260px;
             padding: 70px 20px 40px;
             min-height: 100vh;
         }
@@ -101,19 +100,76 @@
                 padding: 20px;
             }
         }
+        /* Buttons im Header (oben rechts) */
+        .header-buttons .btn {
+            font-size: 0.9rem;
+            padding: 6px 16px;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        .header-buttons .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .header-buttons .btn-success:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+        .header-buttons .btn-outline-warning {
+            color: #ff6600;
+            border-color: #ff6600;
+        }
     </style>
 </head>
 
 <body>
-    <!-- Linke Sidebar mit deinem Hintergrundbild -->
-    <div class="sidebar-left">
-        <!-- Jumper-Icon + Text ganz oben -->
-        <div class="sidebar-brand">
-            <i class="fas fa-music"></i>
-            <span>Jumper</span>
-        </div>
+    <!-- Top-Navbar mit Genre- & Datum-Button oben rechts -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid px-3 px-md-4">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ url_for('index') }}">
+                <i class="fas fa-music me-2 text-warning"></i>
+                Jumper
+            </a>
 
-        <ul class="nav flex-column mt-3">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto header-buttons d-flex align-items-center gap-2">
+                    <!-- Grüner Genre-Button -->
+                    <li class="nav-item">
+                        <a href="{{ url_for('submit') }}" class="btn btn-success btn-sm shadow">
+                            <i class="fas fa-leaf me-1"></i> Genres & Tracks einreichen
+                        </a>
+                    </li>
+
+                    <!-- Datum-Button -->
+                    <li class="nav-item">
+                        <button class="btn btn-outline-warning btn-sm shadow" disabled>
+                            <i class="fas fa-calendar-alt me-1"></i> Next Battle: 15.01.2026
+                        </button>
+                    </li>
+
+                    <!-- Kriterien Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-warning" href="#" id="kriterienDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            Kriterien
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('kriterien_theorie') }}">Theorie & Geschichte</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('kriterien_theorie') }}">Bewertungssystem 2026</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Linke Sidebar (bleibt erhalten, ohne Buttons) -->
+    <div class="sidebar-left">
+        <ul class="nav flex-column mt-5 pt-3">
             <li class="nav-item">
                 <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
                     <i class="fas fa-home me-2"></i> Home
