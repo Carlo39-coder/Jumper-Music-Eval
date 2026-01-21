@@ -3,22 +3,25 @@
 {% block title %}Registrieren - Jumper{% endblock %}
 
 {% block content %}
-    <h1>Registrieren</h1>
-    <form method="POST">
-        <label>Username:</label>
-        <input type="text" name="username" required class="form-control"><br><br>
-
-        <label>E-Mail:</label>
-        <input type="email" name="email" required class="form-control"><br><br>
-
-        <label>Alter:</label>
-        <input type="number" name="alter" min="13" required class="form-control"><br><br>
-
-        <label>Passwort:</label>
-        <input type="password" name="password" required class="form-control"><br><br>
-
-        <button type="submit" class="cta-button">Registrieren</button>
-    </form>
-
-    <p class="mt-3">Schon einen Account? <a href="{{ url_for('login') }}">Login</a></p>
+    <section class="min-vh-100 d-flex align-items-center" style="
+        background: linear-gradient(rgba(0,0,0,0.80), rgba(0,0,0,0.80)),
+                    url('{{ url_for('static', filename='jonathan-cooper-icOpDZTraZc-unsplash.jpg') }}') 
+                    center / cover no-repeat fixed;
+    ">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    <div class="card bg-dark text-white shadow-lg border-0 p-4">
+                        <h2 class="text-center mb-4 text-warning">{% block page_title %}{% endblock %}</h2>
+                        
+                        <!-- Dein bestehendes Login- oder Register-Formular hier einfügen -->
+                        <!-- Beispiel für Login: -->
+                        <form method="POST">
+                            <!-- ... deine Form-Felder ... -->
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}
