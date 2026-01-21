@@ -244,6 +244,12 @@ def login():
 
     return render_template('login.html')
 
+@app.route('/self-make-admin')
+@login_required
+def self_make_admin():
+    current_user.is_admin = True
+    db.session.commit()
+    return "Du bist jetzt Admin! Gehe zurück zu /tracks"
 
 @app.route('/logout')
 @login_required
