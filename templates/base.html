@@ -16,26 +16,24 @@
     <!-- Eigenes CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-    <!-- Hintergründe mit deinen Bildern -->
     <style>
         body {
-            /* Hintergrundbild für die gesamte Seite */
-            background: url('{{ url_for("static", filename="kier-in-sight-archives-EYAfw1ujabI-unsplash.jpg") }}') 
-                        center / cover no-repeat fixed;
-            background-attachment: fixed;
-            min-height: 100vh;
+            background: #000;
             color: #fff;
             margin: 0;
             padding: 0;
         }
-
-        /* Sidebar (nur links) mit jonathan-cooper-Bild als Hintergrund */
+        .navbar {
+            background: #000 !important;
+            border-bottom: 1px solid #222;
+            height: 56px;
+        }
         .sidebar-left {
             position: fixed;
             top: 0;
             left: 0;
             bottom: 0;
-            width: 260px;
+            width: 200px;               /* NEU: schmaler (vorher 260px) */
             background: url('{{ url_for("static", filename="jonathan-cooper-icOpDZTraZc-unsplash.jpg") }}') 
                         center / cover no-repeat;
             background-attachment: scroll;
@@ -44,54 +42,48 @@
             overflow-y: auto;
             z-index: 1000;
         }
-
         .sidebar-brand {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            padding: 25px 24px 15px;
+            padding: 20px 15px 10px;   /* Weniger Padding seitlich und oben für schmalere Sidebar */
             text-align: center;
             background: rgba(0,0,0,0.5);
             border-bottom: 1px solid #333;
         }
-
         .sidebar-brand i {
-            font-size: 3.8rem;
+            font-size: 3.2rem;         /* Icon etwas kleiner, damit es nicht überläuft */
             color: #ff6600;
             text-shadow: 0 0 12px #ff6600;
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
-
         .sidebar-brand span {
-            font-size: 1.6rem;
+            font-size: 1.4rem;         /* Text kleiner und passt besser */
             font-weight: bold;
             color: #ff6600;
             text-shadow: 0 0 8px #ff6600;
         }
-
         .sidebar-left .nav-link {
             color: #eee;
-            padding: 14px 24px;
+            padding: 12px 18px;        /* Weniger Padding, damit Links besser reinpassen */
             background: rgba(0, 0, 0, 0.45);
             border-radius: 6px;
-            margin: 6px 12px;
+            margin: 4px 8px;           /* Kleinerer Margin */
             transition: all 0.3s;
+            font-size: 0.95rem;        /* Etwas kleinere Schrift */
         }
-
         .sidebar-left .nav-link:hover,
         .sidebar-left .nav-link.active {
             color: #ff6600;
             background: rgba(255, 102, 0, 0.25);
         }
-
         .main-content {
-            margin-left: 260px;
+            margin-left: 200px;         /* Angepasst an neue Sidebar-Breite */
             padding: 70px 20px 40px;
             min-height: 100vh;
         }
-
         @media (max-width: 992px) {
             .sidebar-left {
                 position: relative;
@@ -113,7 +105,7 @@
 </head>
 
 <body>
-    <!-- Linke Sidebar mit jonathan-cooper-Bild als Hintergrund -->
+    <!-- Linke Sidebar mit deinem Hintergrundbild -->
     <div class="sidebar-left">
         <!-- Jumper-Icon + Text ganz oben -->
         <div class="sidebar-brand">
@@ -121,7 +113,7 @@
             <span>Jumper</span>
         </div>
 
-        <ul class="nav flex-column mt-4">
+        <ul class="nav flex-column mt-3">
             <li class="nav-item">
                 <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
                     <i class="fas fa-home me-2"></i> Home
