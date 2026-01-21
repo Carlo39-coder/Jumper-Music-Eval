@@ -2,65 +2,23 @@
 {% block title %}JUMPER – Die fairste Deutschrap & Hip-Hop Plattform{% endblock %}
 
 {% block content %}
-    <!-- Hero-Bereich mit EINEM starken Hintergrundbild -->
-<section class="hero text-center py-5 text-white position-relative" style="
-    background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), 
-                url('https://i.imgur.com/0y6pL5Q.jpeg') center/cover no-repeat fixed;
-    min-height: 90vh;
-">
-    <div class="container position-relative z-1">
-        <h1 class="display-3 fw-bold mb-4" style="text-shadow: 0 0 20px #ff6600;">
-            JUMPER
-        </h1>
-        <p class="lead mb-5 fs-4" style="text-shadow: 0 0 10px black;">
-            Bewertung nach <strong>Musikwissen</strong> statt Klicks.<br>
-            Monatliche Wettbewerbe • Open Source • Community-driven
-        </p>
+    <!-- Hero-Bereich mit festem Hintergrundbild aus static -->
+    <section class="hero text-center py-5 text-white position-relative" style="
+        background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), 
+                    url('{{ url_for('static', filename='kier-in-sight-archives-GROaOafbSKY-unsplash.jpg') }}') 
+                    center / cover no-repeat fixed;
+        min-height: 90vh;
+    ">
+        <div class="container position-relative z-1">
+            <h1 class="display-3 fw-bold mb-4" style="text-shadow: 0 0 20px #ff6600;">
+                JUMPER
+            </h1>
+            <p class="lead mb-5 fs-4" style="text-shadow: 0 0 10px black;">
+                Bewertung nach <strong>Musikwissen</strong> statt Klicks.<br>
+                Monatliche Wettbewerbe • Open Source • Community-driven
+            </p>
 
-        <!-- CTA-Buttons -->
-        <div class="d-flex flex-column flex-md-row gap-4 justify-content-center mt-5">
-            <a href="{{ url_for('submit') }}" class="btn btn-warning btn-lg shadow-lg px-5 py-3">
-                <i class="fas fa-upload me-2"></i>Track hochladen
-            </a>
-            <a href="{{ url_for('register') }}" class="btn btn-outline-warning btn-lg shadow-lg px-5 py-3">
-                <i class="fas fa-user-plus me-2"></i>Als Experte joinen
-            </a>
-        </div>
-
-        <p class="mt-5 small text-warning">
-            👥 Schon <strong>127</strong> Experten | 🔥 <strong>43</strong> Tracks diese Woche | 🏆 <strong>Next Battle: 15.01.2026</strong>
-        </p>
-    </div>
-</section>
-            <!-- Carousel -->
-            <div id="heroCarousel" class="carousel slide mb-5 rounded shadow" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img src="https://thumbs.dreamstime.com/b/microphone-spinning-vinyl-record-turntable-evoke-music-motion-generative-ai-316519388.jpg" 
-                             class="d-block w-100" alt="Oldschool Hip-Hop Vibes">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="https://www.djtechdirect.com/cdn/shop/articles/Grandmaster-Flash-SL-1200_800x.jpg?v=1610620136" 
-                             class="d-block w-100" alt="Grandmaster Flash">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="https://s11234.pcdn.co/wp-content/uploads/2016/04/history-of-the-turntable-early-djing.jpg.optimal.jpg" 
-                             class="d-block w-100" alt="Early DJing">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="https://undergroundsound.eu/wp-content/uploads/2023/05/old-school-hip-hop-vinyl-featureee-758x505.png" 
-                             class="d-block w-100" alt="Oldschool Vinyl">
-                    </div>
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon"></span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon"></span>
-                </button>
-            </div>
-
-            <!-- CTA -->
+            <!-- CTA-Buttons -->
             <div class="d-flex flex-column flex-md-row gap-4 justify-content-center mt-5">
                 <a href="{{ url_for('submit') }}" class="btn btn-warning btn-lg shadow-lg px-5 py-3">
                     <i class="fas fa-upload me-2"></i>Track hochladen
@@ -76,7 +34,7 @@
         </div>
     </section>
 
-    <!-- Zweiter Abschnitt mit zweitem 1UP Rooftop als Hintergrund -->
+    <!-- Zweiter Abschnitt (falls du ihn noch behalten möchtest – sonst einfach löschen) -->
     <section class="py-5 text-center" style="
         background: linear-gradient(rgba(0,0,0,0.78), rgba(0,0,0,0.78)), 
                     url('https://i.imgur.com/1UPRooftopBerlin.jpg') center/cover no-repeat fixed;
