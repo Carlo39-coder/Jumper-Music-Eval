@@ -398,7 +398,19 @@ def db_setup():
         return "Datenbank-Tabellen erfolgreich erstellt! (genre, battle usw.)"
     except Exception as e:
         return f"Fehler beim Erstellen der Tabellen: {str(e)}", 500
-        
+
+@app.route('/fix-tracks-table')
+def fix_tracks_table():
+    try:
+        # 1. Alte Tabelle löschen (VORSICHT: löscht ALLE Tracks!)
+        db.drop_all()  # löscht alle Tabellen – nur für Test/Reset!
+
+        # 2. Alle Tabellen neu erstellen (inkl. neuer battle_id-Spalte)
+        db.create_all()
+
+        return "Datenbank-Tabellen wurden neu erstellt! (battle_id existiert jetzt)<br>Tracks müssen neu hochgeladen werden."
+    except Exception as e:
+        return f"Fehler: {str(e)}", 500
 # ==================================================
 # Start
 # ==================================================
