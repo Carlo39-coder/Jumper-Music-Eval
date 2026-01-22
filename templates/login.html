@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% block title %}Login – Jumper{% endblock %}
 
 {% block content %}
@@ -20,15 +21,19 @@
                 {% endwith %}
 
                 <form method="POST" action="">
+                    {{ form.hidden_tag() }}  <!-- Das war der fehlende CSRF-Token – wichtig gegen CSRF-Angriffe -->
+
                     <div class="mb-3">
-                        <label class="form-label">Username</label>
-                        <input type="text" class="form-control bg-dark text-white border-secondary" name="username" required autofocus>
+                        <label class="form-label">{{ form.username.label }}</label>
+                        {{ form.username(class="form-control bg-dark text-white border-secondary", autofocus=true, required=true) }}
                     </div>
+
                     <div class="mb-3">
-                        <label class="form-label">Passwort</label>
-                        <input type="password" class="form-control bg-dark text-white border-secondary" name="password" required>
+                        <label class="form-label">{{ form.password.label }}</label>
+                        {{ form.password(class="form-control bg-dark text-white border-secondary", required=true) }}
                     </div>
-                    <button type="submit" class="btn btn-warning w-100">Einloggen</button>
+
+                    <button type="submit" class="btn btn-warning w-100">{{ form.submit.label }}</button>
                 </form>
 
                 <p class="text-center mt-3">
