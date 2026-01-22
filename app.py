@@ -391,13 +391,50 @@ def upload_redirect():
 def leaderboard():
     return redirect(url_for('tracks'))
 
-@app.route('/db-setup')
-def db_setup():
+@app.route('/db-setup-full')
+def db_setup_full():
     try:
-        db.create_all()  # Erstellt alle fehlenden Tabellen (Genre, Battle usw.)
-        return "Datenbank-Tabellen erfolgreich erstellt! (genre, battle usw.)"
+        # 1. Alle fehlenden Tabellen erstellen (Genre, Battle usw.)
+        db.create_all()
+
+        # 2. Deutschrap anlegen, falls nicht vorhanden
+        deutschrap = Genre.query.filter_by(name='Deutschrap').first()
+        if not deutschrap:
+            deutschrap = Genre(
+                name='Deutschrap',
+                description='Monatliche Battles im Genre Deutschrap',
+                active=True
+            )
+            db.session.add(deutschrap)
+            db.session.flush()  # ID verfügbar machen
+
+        # 3. Battle für Feb 2026 anlegen, falls nicht vorhanden
+        battle = Battle.query.filter_by(
+            genre_id=deutschrap.id,
+            start_date=datetime(2026, 2, 1).date()
+        ).first()
+        if not battle:
+            battle = Battle(
+                genre_id=deutschrap.id,
+                start_date=datetime(2026, 2, 1).date(),
+                end_date=datetime(2026, 2, 28).date(),
+                title='Deutschrap Battle Februar 2026',
+                status='open'  # oder 'active'
+            )
+            db.session.add(battle)
+
+        db.session.commit()
+
+        return (
+            "Erfolg!<br>"
+            "→ Alle Tabellen erstellt (genre, battle usw.)<br>"
+            "→ Genre 'Deutschrap' + Battle 01.02.–28.02.2026 angelegt.<br>"
+            "Du kannst jetzt Tracks hochladen und dich registrieren."
+        )
     except Exception as e:
-        return f"Fehler beim Erstellen der Tabellen: {str(e)}", 500
+        db.session.rollback()
+        logger.error(f"DB-Setup-Fehler: {str(e)}", exc_info=True)
+        return f"Fehler: {str(e)}", 500
 
 @app.route('/db-reset-and-setup')
 def db_reset_and_setup():
