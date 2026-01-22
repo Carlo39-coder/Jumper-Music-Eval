@@ -347,16 +347,16 @@ def upload_redirect():
 def leaderboard():
     return redirect(url_for('tracks'))
 
-@app.route('/force-reset-admin-password')
-def force_reset_admin_password():
-    # Ersetze 'dein_username' durch deinen echten Admin-Username
+@app.route('/admin-force-reset')
+def admin_force_reset():
+    # Ersetze 'dein_admin_username' durch deinen echten Admin-Username
     user = User.query.filter_by(username='Datadog').first()
     if user:
-        # Setze ein neues, starkes Passwort (ändere es danach sofort!)
-        new_password = 'SuperStarkesPasswort2026!'
-        user.set_password(new_password)
+        # Neues Passwort setzen – ändere es danach sofort!
+        new_pw = 'NeuesSuperPasswort2026!'
+        user.set_password(new_pw)
         db.session.commit()
-        return f"Passwort für {user.username} zurückgesetzt auf: {new_password}<br>Logge dich jetzt ein und ändere es sofort!"
+        return f"Passwort für {user.username} wurde auf '{new_pw}' gesetzt!<br>Logge dich jetzt ein und ändere es sofort!"
     return "Admin-User nicht gefunden. Überprüfe den Username."
 
 # ==================================================
