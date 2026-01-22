@@ -31,23 +31,28 @@
             padding-top: 0;
         }
 
-        /* Logo oben in Sidebar – OHNE goldenen Schatten/Glow, klickbar auf Theorie-Seite */
+        /* Logo oben in Sidebar – SCHWARZ mit GELBEM RAND, kein goldener Glow mehr */
         .sidebar-logo {
             text-align: center;
             padding: 40px 20px 60px;
             background: transparent;
         }
         .sidebar-logo img {
-    height: 180px;                      /* minimal größer – teste 200px wenn du willst */
-    display: block;
-    margin: 0 auto;
-    transition: transform 0.3s;
-    filter: brightness(0) saturate(0) brightness(0.4);  /* fast schwarz */
-    filter: drop-shadow(0 0 12px #ffcc00) drop-shadow(0 0 25px #ffd700); /* gelber Glow/Rand */
-}
-.sidebar-logo img:hover {
-    transform: scale(1.08);
-}
+            height: 190px;                      /* minimal größer */
+            display: block;
+            margin: 0 auto;
+            transition: transform 0.3s;
+            
+            /* Schwarz machen + gelber Rand (wie bei Buttons) */
+            filter: 
+                brightness(0) saturate(0) brightness(0.3)   /* tiefschwarz */
+                drop-shadow(0 0 8px #ffcc00)                /* gelber äußerer Rand */
+                drop-shadow(0 0 16px #ffd700);              /* zweiter gelber Glow für Tiefe */
+        }
+        .sidebar-logo img:hover {
+            transform: scale(1.05);
+        }
+
         .main-content {
             margin-left: 220px;
             padding: 90px 30px 40px;
@@ -71,7 +76,7 @@
         @media (max-width: 992px) {
             .sidebar-left { position: relative; width: 100%; border-bottom: 1px solid #333; }
             .main-content { margin-left: 0; }
-            .sidebar-logo img { height: 120px; }
+            .sidebar-logo img { height: 140px; }
         }
 
         .header-buttons .btn {
@@ -123,9 +128,9 @@
         </div>
     </nav>
 
-    <!-- Sidebar mit deinem Logo ganz oben – klickbar auf /kriterien_theorie -->
+    <!-- Sidebar mit deinem Logo ganz oben -->
     <div class="sidebar-left">
-        <!-- Logo – klickbar auf Theorie-Seite, OHNE goldenen Schatten -->
+        <!-- Logo – klickbar auf Theorie-Seite, SCHWARZ mit GELBEM RAND -->
         <div class="sidebar-logo">
             <a href="{{ url_for('kriterien_theorie') }}">
                 <img src="{{ url_for('static', filename='944b8f32-b8af-43ca-bfe4-7df6a20c3435_preview_rev_1.png') }}"
