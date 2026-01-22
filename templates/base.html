@@ -26,7 +26,7 @@
         .navbar {
             background: transparent !important;
             border-bottom: none;
-            height: 70px;
+            height: 80px; /* mehr Platz für größeres Logo */
             z-index: 1030;
         }
         .sidebar-left {
@@ -44,14 +44,16 @@
         }
         .main-content {
             margin-left: 220px;
-            padding: 80px 20px 40px;
+            padding: 90px 20px 40px;
             min-height: 100vh;
         }
+        /* Neues Logo oben links – größer, golden, ohne grauen Hintergrund */
         .navbar-brand img {
-            height: 50px;
-            filter: brightness(1.1) hue-rotate(20deg) saturate(1.5);
-            mix-blend-mode: screen;
-            box-shadow: 0 0 15px #ffd700;
+            height: 60px; /* größer als vorher */
+            filter: brightness(1.2) hue-rotate(25deg) saturate(1.8); /* stark goldener Look */
+            mix-blend-mode: screen; /* entfernt grauen Hintergrund */
+            box-shadow: 0 0 20px #ffd700, 0 0 40px #ffcc00;
+            margin-top: -5px; /* leicht nach oben verschoben für besseren Fluss */
         }
         .sidebar-left .nav-link {
             color: #eee;
@@ -77,6 +79,9 @@
             .main-content {
                 margin-left: 0;
             }
+            .navbar-brand img {
+                height: 50px;
+            }
         }
         .header-buttons .btn {
             font-size: 0.9rem;
@@ -100,13 +105,14 @@
 </head>
 
 <body>
-    <!-- Top-Navbar mit neuem goldenem Logo -->
+    <!-- Top-Navbar mit neuem Logo oben links -->
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container-fluid px-3 px-md-4">
+            <!-- Neues Logo (944b8f32-b8af-43ca-bfe4-7df6a20c3435_preview_rev_1.jpg) -->
             <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
-                <img src="{{ url_for('static', filename='944b8f32-b8af-43ca-bfe4-7df6a20c3435.jpg') }}"
+                <img src="{{ url_for('static', filename='944b8f32-b8af-43ca-bfe4-7df6a20c3435_preview_rev_1.jpg') }}"
                      alt="Jumper Music Eval Logo"
-                     height="50">
+                     height="60">
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -140,7 +146,7 @@
         </div>
     </nav>
 
-    <!-- Linke Sidebar – ohne Kriterien -->
+    <!-- Linke Sidebar -->
     <div class="sidebar-left">
         <ul class="nav flex-column mt-5 pt-3">
             <li class="nav-item">
