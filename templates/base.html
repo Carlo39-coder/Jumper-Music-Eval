@@ -26,15 +26,15 @@
         .navbar {
             background: transparent !important;
             border-bottom: none;
-            height: 70px; /* etwas höher für besseres Logo */
+            height: 70px;
             z-index: 1030;
         }
         .sidebar-left {
             position: fixed;
-            top: 0; /* bis ganz oben */
+            top: 0;
             left: 0;
             bottom: 0;
-            width: 220px; /* schmaler gemacht */
+            width: 220px;
             background: url('{{ url_for("static", filename="jonathan-cooper-icOpDZTraZc-unsplash.jpg") }}') 
                         center / cover no-repeat;
             background-attachment: scroll;
@@ -47,11 +47,10 @@
             padding: 80px 20px 40px;
             min-height: 100vh;
         }
-        /* Goldenes Logo oben links (nur Notenkopf, grauer Hintergrund abgeschnitten) */
         .navbar-brand img {
-            height: 50px; /* gleiche Größe wie auf deiner aktuellen Seite */
-            filter: brightness(1.1) hue-rotate(20deg) saturate(1.5); /* macht es goldener */
-            mix-blend-mode: screen; /* entfernt grauen Hintergrund optisch */
+            height: 50px;
+            filter: brightness(1.1) hue-rotate(20deg) saturate(1.5);
+            mix-blend-mode: screen;
             box-shadow: 0 0 15px #ffd700;
         }
         .sidebar-left .nav-link {
@@ -79,7 +78,6 @@
                 margin-left: 0;
             }
         }
-        /* Buttons im Header (oben rechts) */
         .header-buttons .btn {
             font-size: 0.9rem;
             padding: 6px 16px;
@@ -102,10 +100,9 @@
 </head>
 
 <body>
-    <!-- Top-Navbar mit neuem goldenem Logo oben links -->
+    <!-- Top-Navbar mit neuem goldenem Logo -->
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container-fluid px-3 px-md-4">
-            <!-- Neues Logo (nur Notenkopf in Gold, grauer Hintergrund entfernt) -->
             <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
                 <img src="{{ url_for('static', filename='944b8f32-b8af-43ca-bfe4-7df6a20c3435.jpg') }}"
                      alt="Jumper Music Eval Logo"
@@ -118,21 +115,16 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto header-buttons d-flex align-items-center gap-2">
-                    <!-- Grüner Genre-Button -->
                     <li class="nav-item">
                         <a href="{{ url_for('submit') }}" class="btn btn-success btn-sm shadow">
                             <i class="fas fa-leaf me-1"></i> Genres & Tracks einreichen
                         </a>
                     </li>
-
-                    <!-- Datum-Button -->
                     <li class="nav-item">
                         <button class="btn btn-outline-warning btn-sm shadow" disabled>
                             <i class="fas fa-calendar-alt me-1"></i> Next Battle: 15.01.2026
                         </button>
                     </li>
-
-                    <!-- Kriterien Dropdown -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-warning" href="#" id="kriterienDropdown" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
@@ -148,7 +140,7 @@
         </div>
     </nav>
 
-    <!-- Linke Sidebar mit durchgehendem Hintergrundbild bis ganz oben -->
+    <!-- Linke Sidebar – ALLE if-Blöcke korrekt geschlossen -->
     <div class="sidebar-left">
         <ul class="nav flex-column mt-5 pt-3">
             <li class="nav-item">
@@ -160,4 +152,72 @@
             {% if current_user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link {% if request.endpoint == 'submit' %}active{% endif %}" href="{{ url_for('submit') }}">
-                        <i class="fas fa-upload me-2"></i>
+                        <i class="fas fa-upload me-2"></i> Track einreichen
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'tracks' %}active{% endif %}" href="{{ url_for('tracks') }}">
+                        <i class="fas fa-list me-2"></i> Alle Tracks
+                    </a>
+                </li>
+
+                {% if current_user.is_admin %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'admin_users' %}active{% endif %}" href="{{ url_for('admin_users') }}">
+                            <i class="fas fa-users-cog me-2"></i> Admin: User-Übersicht
+                        </a>
+                    </li>
+                {% endif %}
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('logout') }}">
+                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                    </a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('login') }}">
+                        <i class="fas fa-sign-in-alt me-2"></i> Login
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('register') }}">
+                        <i class="fas fa-user-plus me-2"></i> Registrieren
+                    </a>
+                </li>
+            {% endif %}
+
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#kriterienSidebar">
+                    <i class="fas fa-book me-2"></i> Kriterien
+                </a>
+                <div class="collapse" id="kriterienSidebar">
+                    <ul class="nav flex-column ms-4">
+                        <li><a class="nav-link" href="{{ url_for('kriterien_theorie') }}">Theorie & Geschichte</a></li>
+                        <li><a class="nav-link" href="{{ url_for('kriterien_theorie') }}">Bewertungssystem 2026</a></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Hauptinhalt -->
+    <div class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
