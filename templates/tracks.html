@@ -20,10 +20,15 @@
                                 <strong>Bonus-Punkte:</strong> {{ track.bonus }}
                             </p>
 
-                            <!-- Audio-Player – spielt direkt auf der Seite -->
-                            <audio controls class="w-100 mt-3">
-                                <source src="{{ track.url }}" type="audio/mpeg">
-                                Dein Browser unterstützt das Audio-Element nicht.
+                            <!-- Audio-Player mit mehreren Formaten – spielt direkt auf der Seite -->
+                            <audio controls class="w-100 mt-3" style="max-height: 60px;">
+                                <source src="{{ track.url }}" type="audio/mpeg">     <!-- MP3 -->
+                                <source src="{{ track.url }}" type="audio/mp4">      <!-- MP4/AAC -->
+                                <source src="{{ track.url }}" type="audio/ogg">      <!-- OGG Vorbis -->
+                                <source src="{{ track.url }}" type="audio/wav">      <!-- WAV, falls vorhanden -->
+                                <!-- Fallback, falls nichts unterstützt wird -->
+                                Dein Browser unterstützt das Audio-Element nicht.<br>
+                                <a href="{{ track.url }}" target="_blank" class="text-warning">Track direkt öffnen</a>
                             </audio>
 
                             <!-- Optional: Download-Link -->
