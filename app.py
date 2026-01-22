@@ -475,7 +475,7 @@ def db_full_reset_and_setup():
 @app.route('/set-admin')
 def set_admin():
     # Ersetze 'dein_neuer_username' durch den Username, den du gleich neu registrieren wirst!
-    user = User.query.filter_by(username='dein_neuer_username').first()
+    user = User.query.filter_by(username='Datadog').first()
     if user:
         user.is_admin = True
         db.session.commit()
