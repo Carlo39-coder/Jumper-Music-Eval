@@ -389,6 +389,14 @@ def upload_redirect():
 def leaderboard():
     return redirect(url_for('tracks'))
 
+@app.route('/db-setup')
+def db_setup():
+    try:
+        db.create_all()  # Erstellt alle fehlenden Tabellen (Genre, Battle usw.)
+        return "Datenbank-Tabellen erfolgreich erstellt! (genre, battle usw.)"
+    except Exception as e:
+        return f"Fehler beim Erstellen der Tabellen: {str(e)}", 500
+        
 # ==================================================
 # Start
 # ==================================================
