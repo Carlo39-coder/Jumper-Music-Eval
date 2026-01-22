@@ -140,7 +140,7 @@
         </div>
     </nav>
 
-    <!-- Linke Sidebar – ALLE if-Blöcke korrekt geschlossen -->
+    <!-- Linke Sidebar – ohne Kriterien -->
     <div class="sidebar-left">
         <ul class="nav flex-column mt-5 pt-3">
             <li class="nav-item">
@@ -186,18 +186,6 @@
                     </a>
                 </li>
             {% endif %}
-
-            <li class="nav-item">
-                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#kriterienSidebar">
-                    <i class="fas fa-book me-2"></i> Kriterien
-                </a>
-                <div class="collapse" id="kriterienSidebar">
-                    <ul class="nav flex-column ms-4">
-                        <li><a class="nav-link" href="{{ url_for('kriterien_theorie') }}">Theorie & Geschichte</a></li>
-                        <li><a class="nav-link" href="{{ url_for('kriterien_theorie') }}">Bewertungssystem 2026</a></li>
-                    </ul>
-                </div>
-            </li>
         </ul>
     </div>
 
