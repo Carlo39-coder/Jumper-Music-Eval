@@ -347,15 +347,6 @@ def upload_redirect():
 def leaderboard():
     return redirect(url_for('tracks'))
 
-@app.route('/admin-force-reset-password')
-def admin_force_reset_password():
-    user = User.query.filter_by(username='Datadog').first()  # ← deinen echten Admin-Username eintragen!
-    if user:
-        new_password = 'NeuesSuperPasswort2026!'
-        user.set_password(new_password)
-        db.session.commit()
-        return f"Passwort für {user.username} zurückgesetzt auf: {new_password}<br>Logge dich jetzt ein!"
-    return "User nicht gefunden."
 
 # ==================================================
 # Start
