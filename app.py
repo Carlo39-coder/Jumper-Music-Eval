@@ -194,6 +194,28 @@ def kriterien_theorie():
             title="Fehler"
         ), 500
 
+@app.route('/setup-initial-genre')
+def setup_initial_genre():
+    if Genre.query.filter_by(name='Deutschrap').first():
+        return "Deutschrap existiert bereits."
+    
+    deutschrap = Genre(name='Deutschrap', description='Monatliche Battles im Genre Deutschrap')
+    db.session.add(deutschrap)
+    db.session.commit()
+    
+    # Erstes Battle erstellen
+    battle = Battle(
+        genre_id=deutschrap.id,
+        start_date=datetime(2026, 2, 1).date(),
+        end_date=datetime(2026, 2, 28).date(),
+        title='Deutschrap Battle Februar 2026',
+        status='active'
+    )
+    db.session.add(battle)
+    db.session.commit()
+    
+    return "Deutschrap + erstes Battle erfolgreich angelegt!"
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
