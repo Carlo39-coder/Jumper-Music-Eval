@@ -8,3 +8,4 @@ flask_login
 flask
 Flask-BasicAuth
 markdown
+flask-wtf
