@@ -123,8 +123,8 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, default=False)
 
     def set_password(self, password):
-    # Immer dieselbe Methode – aktuell empfohlen und sicher
-    self.password_hash = generate_password_hash(password, method='pbkdf2:sha256:600000')
+        # Korrekte Einrückung + explizite Hash-Methode
+        self.password_hash = generate_password_hash(password, method='pbkdf2:sha256:600000')
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
@@ -144,7 +144,6 @@ class Track(db.Model):
     community = db.Column(db.Integer, default=0)
     gesamt_score = db.Column(db.Float, default=0.0)
     mentor_feedback = db.Column(db.Text)
-
     artist = db.relationship('User', backref='tracks')
 
 @login_manager.user_loader
@@ -347,7 +346,6 @@ def upload_redirect():
 @app.route('/leaderboard')
 def leaderboard():
     return redirect(url_for('tracks'))
-
 
 # ==================================================
 # Start
