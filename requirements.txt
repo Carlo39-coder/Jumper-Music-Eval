@@ -10,3 +10,4 @@ Flask-BasicAuth
 markdown
 flask-wtf
 email-validator
+flask-migrate
