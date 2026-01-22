@@ -11,28 +11,30 @@
             {% for track in tracks %}
                 <div class="col-md-6 col-lg-4">
                     <div class="card bg-dark text-white shadow-lg h-100">
-                        <div class="card-body">
+                        <div class="card-body d-flex flex-column">
                             <h5 class="card-title text-warning">{{ track.name }}</h5>
-                            <p class="card-text">
+                            <p class="card-text mb-3">
                                 <strong>Von:</strong> {{ track.artist.username }}<br>
                                 <strong>Genre:</strong> {{ track.genre }}<br>
                                 <strong>Eingereicht am:</strong> {{ track.datum.strftime('%d.%m.%Y') }}<br>
                                 <strong>Bonus-Punkte:</strong> {{ track.bonus }}
                             </p>
 
-                            <!-- Audio-Player mit mehreren Formaten – spielt direkt auf der Seite -->
-                            <audio controls class="w-100 mt-3" style="max-height: 60px;">
+                            <!-- Erweiterter Audio-Player mit mehreren Formaten -->
+                            <audio controls class="w-100 mt-2 mb-3" style="max-height: 60px; border-radius: 8px;">
                                 <source src="{{ track.url }}" type="audio/mpeg">     <!-- MP3 -->
                                 <source src="{{ track.url }}" type="audio/mp4">      <!-- MP4/AAC -->
                                 <source src="{{ track.url }}" type="audio/ogg">      <!-- OGG Vorbis -->
-                                <source src="{{ track.url }}" type="audio/wav">      <!-- WAV, falls vorhanden -->
-                                <!-- Fallback, falls nichts unterstützt wird -->
-                                Dein Browser unterstützt das Audio-Element nicht.<br>
-                                <a href="{{ track.url }}" target="_blank" class="text-warning">Track direkt öffnen</a>
+                                <source src="{{ track.url }}" type="audio/wav">      <!-- WAV -->
+                                <!-- Fallback-Text + direkter Link -->
+                                Dein Browser kann das Audio nicht direkt abspielen.<br>
+                                <a href="{{ track.url }}" target="_blank" class="text-warning small">
+                                    Track in neuem Tab öffnen / herunterladen
+                                </a>
                             </audio>
 
-                            <!-- Optional: Download-Link -->
-                            <div class="mt-3 text-center">
+                            <!-- Download-Button -->
+                            <div class="mt-auto text-center">
                                 <a href="{{ track.url }}" class="btn btn-outline-light btn-sm" download>
                                     <i class="fas fa-download me-1"></i> Download
                                 </a>
