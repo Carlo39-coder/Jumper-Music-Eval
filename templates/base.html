@@ -31,19 +31,20 @@
             padding-top: 0;
         }
 
-        /* Dein Logo genau oben links in der Sidebar – groß, golden, ohne grauen Hintergrund */
+        /* Logo oben in Sidebar – OHNE goldenen Schatten/Glow, klickbar auf Theorie-Seite */
         .sidebar-logo {
             text-align: center;
             padding: 40px 20px 60px;
             background: transparent;
         }
         .sidebar-logo img {
-            height: 160px; /* groß und dominant, wie gewünscht */
-            filter: drop-shadow(0 0 25px #ffd700) brightness(1.15) saturate(1.6);
-            transition: transform 0.4s;
+            height: 160px;
+            display: block;
+            margin: 0 auto;
+            transition: transform 0.3s;
         }
         .sidebar-logo img:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
         .main-content {
@@ -121,15 +122,17 @@
         </div>
     </nav>
 
-    <!-- Sidebar mit deinem Logo ganz oben -->
+    <!-- Sidebar mit deinem Logo ganz oben – klickbar auf /kriterien_theorie -->
     <div class="sidebar-left">
-        <!-- DEIN LOGO HIER – exakt wie gewünscht -->
+        <!-- Logo – klickbar auf Theorie-Seite, OHNE goldenen Schatten -->
         <div class="sidebar-logo">
-            <img src="{{ url_for('static', filename='944b8f32-b8af-43ca-bfe4-7df6a20c3435_preview_rev_1.png') }}"
-                 alt="Jumper Logo">
+            <a href="{{ url_for('kriterien_theorie') }}">
+                <img src="{{ url_for('static', filename='944b8f32-b8af-43ca-bfe4-7df6a20c3435_preview_rev_1.png') }}"
+                     alt="Jumper Logo">
+            </a>
         </div>
 
-        <ul class="nav flex-column mt-2">
+        <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
                     <i class="fas fa-home me-2"></i> Home
