@@ -9,3 +9,4 @@ flask
 Flask-BasicAuth
 markdown
 flask-wtf
+email-validator
