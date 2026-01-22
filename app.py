@@ -128,6 +128,14 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+        
+class Genre(db.Model):
+    __tablename__ = 'genre'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)  # z.B. "Deutschrap"
+    description = db.Column(db.Text, nullable=True)
+    active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Track(db.Model):
     __tablename__ = 'track'
@@ -145,6 +153,18 @@ class Track(db.Model):
     gesamt_score = db.Column(db.Float, default=0.0)
     mentor_feedback = db.Column(db.Text)
     artist = db.relationship('User', backref='tracks')
+    battle_id = db.Column(db.Integer, db.ForeignKey('battle.id'), nullable=True)
+    battle = db.relationship('Battle', backref='tracks')
+    
+class Battle(db.Model):
+    __tablename__ = 'battle'
+    id = db.Column(db.Integer, primary_key=True)
+    genre_id = db.Column(db.Integer, db.ForeignKey('genre.id'), nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
+    title = db.Column(db.String(100), nullable=False)  # z.B. "Deutschrap Battle Feb 2026"
+    status = db.Column(db.String(20), default="active")  # active, voting, finished
+    genre = db.relationship('Genre', backref='battles')
 
 @login_manager.user_loader
 def load_user(user_id):
