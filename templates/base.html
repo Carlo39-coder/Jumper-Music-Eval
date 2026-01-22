@@ -26,72 +26,51 @@
         .navbar {
             background: transparent !important;
             border-bottom: none;
-            height: 56px;
-            z-index: 1030; /* über Sidebar */
+            height: 70px; /* etwas höher für besseres Logo */
+            z-index: 1030;
         }
         .sidebar-left {
             position: fixed;
-            top: -56px;                    /* zieht sich über die Navbar */
+            top: 0; /* bis ganz oben */
             left: 0;
-            width: 100%;                   /* erweitert nach rechts */
-            max-width: 380px;              /* Begrenzung, damit Buttons rechts sichtbar bleiben */
-            height: calc(100vh + 56px);    /* bis ganz unten + Navbar-Höhe */
+            bottom: 0;
+            width: 220px; /* schmaler gemacht */
             background: url('{{ url_for("static", filename="jonathan-cooper-icOpDZTraZc-unsplash.jpg") }}') 
-                        top center / cover no-repeat;
+                        center / cover no-repeat;
             background-attachment: scroll;
             border-right: 1px solid #333;
             overflow-y: auto;
             z-index: 1000;
         }
-        /* Goldenes Logo oben in der Sidebar (fließend nach unten) */
-        .sidebar-logo {
-            position: relative;
-            top: 56px;                     /* passt zur Navbar-Höhe */
-            text-align: center;
-            padding: 30px 0 60px 0;
-            margin-bottom: -40px;          /* lässt es in die Sidebar einfließen */
+        .main-content {
+            margin-left: 220px;
+            padding: 80px 20px 40px;
+            min-height: 100vh;
         }
-        .sidebar-logo i {
-            font-size: 5.5rem;             /* deutlich größer */
-            color: #ffd700;                /* echtes Gold */
-            text-shadow: 
-                0 0 15px #ffd700,
-                0 0 30px #ffcc00,
-                0 0 50px #ffaa00;          /* starker Glow */
-            display: block;
+        /* Goldenes Logo oben links (nur Notenkopf, grauer Hintergrund abgeschnitten) */
+        .navbar-brand img {
+            height: 50px; /* gleiche Größe wie auf deiner aktuellen Seite */
+            filter: brightness(1.1) hue-rotate(20deg) saturate(1.5); /* macht es goldener */
+            mix-blend-mode: screen; /* entfernt grauen Hintergrund optisch */
+            box-shadow: 0 0 15px #ffd700;
         }
         .sidebar-left .nav-link {
             color: #eee;
-            padding: 14px 24px;
-            background: rgba(0, 0, 0, 0.45);
+            padding: 12px 18px;
+            background: rgba(0, 0, 0, 0.5);
             border-radius: 6px;
-            margin: 6px 12px;
+            margin: 6px 10px;
             transition: all 0.3s;
         }
         .sidebar-left .nav-link:hover,
         .sidebar-left .nav-link.active {
             color: #ffd700;
-            background: rgba(255, 215, 0, 0.18);
+            background: rgba(255, 215, 0, 0.2);
         }
-        .main-content {
-            margin-left: 0;                /* Sidebar geht über den ganzen linken Bereich */
-            padding: 70px 20px 40px;
-            min-height: 100vh;
-        }
-        @media (min-width: 992px) {
-            .main-content {
-                margin-left: 380px;        /* Platz für erweiterte Sidebar */
-            }
-            .sidebar-left {
-                max-width: 380px;
-            }
-        }
-        @media (max-width: 991px) {
+        @media (max-width: 992px) {
             .sidebar-left {
                 position: relative;
-                top: 0;
                 width: 100%;
-                max-width: none;
                 height: auto;
                 border-right: none;
                 border-bottom: 1px solid #333;
@@ -99,18 +78,13 @@
             .main-content {
                 margin-left: 0;
             }
-            .sidebar-logo {
-                top: 0;
-                padding: 20px 0 40px 0;
-            }
         }
-        /* Buttons im Header (oben rechts) – bleiben sichtbar */
+        /* Buttons im Header (oben rechts) */
         .header-buttons .btn {
             font-size: 0.9rem;
             padding: 6px 16px;
             border-radius: 6px;
             transition: all 0.3s;
-            z-index: 1040; /* über allem */
         }
         .header-buttons .btn-success {
             background-color: #28a745;
@@ -128,11 +102,15 @@
 </head>
 
 <body>
-    <!-- Top-Navbar (transparent, Inhalte rechts bleiben sichtbar) -->
+    <!-- Top-Navbar mit neuem goldenem Logo oben links -->
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container-fluid px-3 px-md-4">
-            <!-- Leer links – Logo kommt jetzt aus Sidebar -->
-            <div class="navbar-brand" style="visibility: hidden; width: 1px;"></div>
+            <!-- Neues Logo (nur Notenkopf in Gold, grauer Hintergrund entfernt) -->
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='944b8f32-b8af-43ca-bfe4-7df6a20c3435.jpg') }}"
+                     alt="Jumper Music Eval Logo"
+                     height="50">
+            </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -170,14 +148,9 @@
         </div>
     </nav>
 
-    <!-- Linke Sidebar mit goldenem Logo oben und durchgehendem Hintergrund -->
+    <!-- Linke Sidebar mit durchgehendem Hintergrundbild bis ganz oben -->
     <div class="sidebar-left">
-        <!-- Goldenes Logo (fließend nach unten) -->
-        <div class="sidebar-logo">
-            <i class="fas fa-music"></i>
-        </div>
-
-        <ul class="nav flex-column mt-4 pt-5">
+        <ul class="nav flex-column mt-5 pt-3">
             <li class="nav-item">
                 <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
                     <i class="fas fa-home me-2"></i> Home
@@ -218,41 +191,3 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('register') }}">
                         <i class="fas fa-user-plus me-2"></i> Registrieren
-                    </a>
-                </li>
-            {% endif %}
-
-            <li class="nav-item">
-                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#kriterienSidebar">
-                    <i class="fas fa-book me-2"></i> Kriterien
-                </a>
-                <div class="collapse" id="kriterienSidebar">
-                    <ul class="nav flex-column ms-4">
-                        <li><a class="nav-link" href="{{ url_for('kriterien_theorie') }}">Theorie & Geschichte</a></li>
-                        <li><a class="nav-link" href="{{ url_for('kriterien_theorie') }}">Bewertungssystem 2026</a></li>
-                    </ul>
-                </div>
-            </li>
-        </ul>
-    </div>
-
-    <!-- Hauptinhalt -->
-    <div class="main-content">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        {% block content %}{% endblock %}
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
