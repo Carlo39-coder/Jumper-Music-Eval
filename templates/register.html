@@ -9,6 +9,7 @@
             <div class="card bg-dark text-white shadow-lg p-4">
                 <h2 class="text-center mb-4 text-warning">Registrieren</h2>
 
+                <!-- Flash-Nachrichten (Erfolg / Fehler) -->
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                         {% for category, message in messages %}
@@ -20,17 +21,30 @@
                     {% endif %}
                 {% endwith %}
 
+                <!-- WTForms-Fehleranzeige (zeigt Validierungsfehler direkt im Formular an) -->
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            {% for field, errors in form.errors.items() %}
+                                {% for error in errors %}
+                                    <li><strong>{{ field | capitalize }}:</strong> {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
                 <form method="POST" action="">
-                    {{ form.hidden_tag() }}  <!-- Das war der fehlende CSRF-Token – jetzt hinzugefügt -->
+                    {{ form.hidden_tag() }}  <!-- CSRF-Token – absolut notwendig! -->
 
                     <div class="mb-3">
                         <label class="form-label">{{ form.username.label }}</label>
-                        {{ form.username(class="form-control bg-dark text-white border-secondary", required=true) }}
+                        {{ form.username(class="form-control bg-dark text-white border-secondary", placeholder="Dein Username", required=true) }}
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">{{ form.email.label }}</label>
-                        {{ form.email(class="form-control bg-dark text-white border-secondary", required=true) }}
+                        {{ form.email(class="form-control bg-dark text-white border-secondary", placeholder="deine@email.de", required=true) }}
                     </div>
 
                     <div class="mb-3">
@@ -40,7 +54,7 @@
 
                     <div class="mb-3">
                         <label class="form-label">{{ form.password.label }}</label>
-                        {{ form.password(class="form-control bg-dark text-white border-secondary", required=true) }}
+                        {{ form.password(class="form-control bg-dark text-white border-secondary", placeholder="Mindestens 6 Zeichen", required=true) }}
                     </div>
 
                     <button type="submit" class="btn btn-warning w-100">{{ form.submit.label }}</button>
