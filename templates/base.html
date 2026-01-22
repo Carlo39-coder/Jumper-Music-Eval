@@ -31,23 +31,22 @@
             padding-top: 0;
         }
 
-        /* Logo oben in Sidebar – SCHWARZ mit GELBEM RAND, kein goldener Glow mehr */
         .sidebar-logo {
             text-align: center;
             padding: 40px 20px 60px;
             background: transparent;
         }
         .sidebar-logo img {
-            height: 190px;                      /* minimal größer */
+            height: 190px;
             display: block;
             margin: 0 auto;
             transition: transform 0.3s;
             
-            /* Schwarz machen + gelber Rand (wie bei Buttons) */
+            /* Schwarz + gelber Rand (kein goldener Schatten) */
             filter: 
-                brightness(0) saturate(0) brightness(0.3)   /* tiefschwarz */
-                drop-shadow(0 0 8px #ffcc00)                /* gelber äußerer Rand */
-                drop-shadow(0 0 16px #ffd700);              /* zweiter gelber Glow für Tiefe */
+                brightness(0) saturate(0) brightness(0.3)
+                drop-shadow(0 0 8px #ffcc00)
+                drop-shadow(0 0 16px #ffd700);
         }
         .sidebar-logo img:hover {
             transform: scale(1.05);
@@ -101,10 +100,9 @@
 </head>
 
 <body>
-    <!-- Top-Navbar (transparent, ohne Logo – Logo ist jetzt in Sidebar) -->
+    <!-- Top-Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container-fluid px-4">
-            <!-- Leer links – Platz für Sidebar-Logo -->
             <div style="width: 220px; visibility: hidden;"></div>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -128,9 +126,8 @@
         </div>
     </nav>
 
-    <!-- Sidebar mit deinem Logo ganz oben -->
+    <!-- Sidebar -->
     <div class="sidebar-left">
-        <!-- Logo – klickbar auf Theorie-Seite, SCHWARZ mit GELBEM RAND -->
         <div class="sidebar-logo">
             <a href="{{ url_for('kriterien_theorie') }}">
                 <img src="{{ url_for('static', filename='944b8f32-b8af-43ca-bfe4-7df6a20c3435_preview_rev_1.png') }}"
