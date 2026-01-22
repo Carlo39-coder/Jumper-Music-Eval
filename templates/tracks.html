@@ -1,35 +1,46 @@
 {% extends "base.html" %}
 
-{% block title %}Alle Tracks - Jumper{% endblock %}
+{% block title %}Alle Tracks – Jumper{% endblock %}
 
 {% block content %}
-    <h1>Alle eingereichten Tracks</h1>
+<div class="container mt-5">
+    <h2 class="text-center mb-5 text-warning">Alle eingereichten Tracks</h2>
 
     {% if tracks %}
-        <div class="row">
+        <div class="row g-4">
             {% for track in tracks %}
-                <div class="col-md-6 mb-4">
-                    <div class="card bg-dark text-white">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card bg-dark text-white shadow-lg h-100">
                         <div class="card-body">
-                            <h5>{{ track.name }}</h5>
-                            <p><strong>Künstler:</strong> User ID {{ track.artist_id }}<br>
-                               <strong>Datum:</strong> {{ track.datum }}<br>
-                               <strong>Genre:</strong> {{ track.genre }}<br>
-                               <strong>Score:</strong> {{ track.gesamt_score|round(1) }} Punkte
-                               {% if track.bonus > 0 %} (+{{ track.bonus }} Bonus){% endif %}</p>
+                            <h5 class="card-title text-warning">{{ track.name }}</h5>
+                            <p class="card-text">
+                                <strong>Von:</strong> {{ track.artist.username }}<br>
+                                <strong>Genre:</strong> {{ track.genre }}<br>
+                                <strong>Eingereicht am:</strong> {{ track.datum.strftime('%d.%m.%Y') }}<br>
+                                <strong>Bonus-Punkte:</strong> {{ track.bonus }}
+                            </p>
 
-                            <a href="{{ track.url }}" target="_blank" class="btn btn-warning">Anhören/Ansehen</a>
+                            <!-- Audio-Player – spielt direkt auf der Seite -->
+                            <audio controls class="w-100 mt-3">
+                                <source src="{{ track.url }}" type="audio/mpeg">
+                                Dein Browser unterstützt das Audio-Element nicht.
+                            </audio>
 
-                            {% if current_user.is_mentor %}
-                                <a href="{{ url_for('rate', track_id=track.id) }}" class="btn btn-outline-light mt-2">Bewerten</a>
-                            {% endif %}
+                            <!-- Optional: Download-Link -->
+                            <div class="mt-3 text-center">
+                                <a href="{{ track.url }}" class="btn btn-outline-light btn-sm" download>
+                                    <i class="fas fa-download me-1"></i> Download
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             {% endfor %}
         </div>
     {% else %}
-        <p>Noch keine Tracks eingereicht. Sei der Erste!</p>
-        <a href="{{ url_for('submit') }}" class="cta-button">Jetzt einreichen</a>
+        <div class="alert alert-info text-center">
+            Noch keine Tracks eingereicht.
+        </div>
     {% endif %}
+</div>
 {% endblock %}
