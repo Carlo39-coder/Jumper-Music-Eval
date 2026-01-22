@@ -6,18 +6,21 @@ from flask import Flask, render_template, request, redirect, url_for, flash, abo
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_wtf import FlaskForm
+from wtforms import StringField, IntegerField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Email, NumberRange, Length
 import cloudinary
 import cloudinary.uploader
-from markupsafe import Markup          # ← korrekt seit Flask 3.0+
+from markupsafe import Markup
 
-# Logging einrichten (besser lesbar + strukturierter als app.logger allein)
+# Logging einrichten
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
 # ==================================================
-# 3. Sicherheit – Secret Key & Production-Settings
+# Sicherheit – Secret Key & Production-Settings
 # ==================================================
 app.secret_key = os.environ.get('SECRET_KEY')
 if not app.secret_key:
@@ -28,10 +31,10 @@ if not app.secret_key:
     )
 
 # Produktionssichere Session-Cookie-Einstellungen
-app.config['SESSION_COOKIE_SECURE'] = True           # Nur HTTPS (Render erzwingt HTTPS)
-app.config['SESSION_COOKIE_HTTPONLY'] = True         # Kein JavaScript-Zugriff
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'        # CSRF-Schutz
-app.config['PERMANENT_SESSION_LIFETIME'] = 3600      # 1 Stunde
+app.config['SESSION_COOKIE_SECURE'] = True  # Nur HTTPS (Render erzwingt HTTPS)
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 Stunde
 
 # ==================================================
 # Datenbank-Konfiguration
@@ -41,7 +44,6 @@ if database_url and database_url.startswith('postgres://'):
     database_url = database_url.replace('postgres://', 'postgresql://', 1)
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///jumper.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db = SQLAlchemy(app)
 
 # Login Manager
@@ -57,17 +59,14 @@ cloudinary.config(
     api_key=os.getenv('CLOUDINARY_API_KEY'),
     api_secret=os.getenv('CLOUDINARY_API_SECRET')
 )
-
 if not all([cloudinary.config().cloud_name, cloudinary.config().api_key, cloudinary.config().api_secret]):
     logger.warning("Cloudinary-Keys fehlen – Uploads werden fehlschlagen.")
 
 # ==================================================
-# 4. Robuster Dateipfad + globales Cachen der Kriterien
+# Robuster Dateipfad + globales Cachen der Kriterien
 # ==================================================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
 KRITERIEN_DATA = None
-
 try:
     json_path = os.path.join(BASE_DIR, 'kriterien.json')
     with open(json_path, 'r', encoding='utf-8') as f:
@@ -82,6 +81,33 @@ except json.JSONDecodeError as e:
 except Exception as e:
     logger.error(f"Unerwarteter Fehler beim Laden von kriterien.json: {e}")
     KRITERIEN_DATA = {}
+
+# ==================================================
+# WTForms für Register & Login
+# ==================================================
+class RegistrationForm(FlaskForm):
+    username = StringField('Username', validators=[
+        DataRequired(message='Username ist erforderlich'),
+        Length(min=3, max=64, message='Username muss zwischen 3 und 64 Zeichen haben')
+    ])
+    email = StringField('Email', validators=[
+        DataRequired(message='Email ist erforderlich'),
+        Email(message='Ungültige Email-Adresse')
+    ])
+    alter = IntegerField('Alter', validators=[
+        DataRequired(message='Alter ist erforderlich'),
+        NumberRange(min=13, max=100, message='Alter muss zwischen 13 und 100 liegen')
+    ])
+    password = PasswordField('Passwort', validators=[
+        DataRequired(message='Passwort ist erforderlich'),
+        Length(min=6, message='Passwort muss mindestens 6 Zeichen haben')
+    ])
+    submit = SubmitField('Registrieren')
+
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Passwort', validators=[DataRequired()])
+    submit = SubmitField('Einloggen')
 
 # ==================================================
 # Models
@@ -101,7 +127,6 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
 
 class Track(db.Model):
     __tablename__ = 'track'
@@ -132,13 +157,12 @@ def load_user(user_id):
 def index():
     return render_template('index.html')
 
-
 @app.route('/kriterien_theorie')
 def kriterien_theorie():
     try:
         return render_template(
             'kriterien_theorie.html',
-            kriterien=KRITERIEN_DATA,           # ← jetzt aus globalem Cache
+            kriterien=KRITERIEN_DATA,
             title="Bewertungskriterien Theorie"
         )
     except Exception as e:
@@ -150,54 +174,26 @@ def kriterien_theorie():
             title="Fehler"
         ), 500
 
-
-@app.route('/musikgeschichte')
-def musikgeschichte():
-    try:
-        md_path = os.path.join(BASE_DIR, 'KRITERIEN_MUSIKGESCHICHTE.md')
-        with open(md_path, 'r', encoding='utf-8') as f:
-            md_text = f.read()
-        html = markdown.markdown(md_text, extensions=['tables', 'fenced_code'])
-        return render_template('musikgeschichte.html', content=Markup(html))
-    except FileNotFoundError:
-        logger.error(f"Markdown-Datei nicht gefunden: {md_path}")
-        flash("Musikgeschichte-Dokument nicht verfügbar.", "warning")
-        return render_template('musikgeschichte.html', content="<p>Datei nicht gefunden.</p>")
-    except Exception as e:
-        logger.error(f"Fehler in musikgeschichte: {e}")
-        return "Interner Fehler", 500
-
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
 
-    if request.method == 'POST':
-        username = request.form['username'].strip()
-        email = request.form['email'].strip().lower()
-        alter_str = request.form.get('alter')
-        password = request.form['password']
+    form = RegistrationForm()
 
-        if not username or not email or not password or not alter_str:
-            flash('Alle Felder müssen ausgefüllt sein.', 'danger')
-            return redirect(url_for('register'))
+    if form.validate_on_submit():
+        username = form.username.data.strip()
+        email = form.email.data.strip().lower()
+        alter = form.alter.data
+        password = form.password.data
 
         if User.query.filter_by(username=username).first():
             flash('Username bereits vergeben.', 'danger')
-            return redirect(url_for('register'))
+            return render_template('register.html', form=form)
 
         if User.query.filter_by(email=email).first():
             flash('E-Mail bereits registriert.', 'danger')
-            return redirect(url_for('register'))
-
-        try:
-            alter = int(alter_str)
-            if alter < 13 or alter > 100:
-                raise ValueError("Alter außerhalb des Bereichs")
-        except ValueError:
-            flash('Alter muss eine Zahl zwischen 13 und 100 sein.', 'danger')
-            return redirect(url_for('register'))
+            return render_template('register.html', form=form)
 
         new_user = User(
             username=username,
@@ -215,26 +211,25 @@ def register():
             return redirect(url_for('login'))
         except Exception as e:
             db.session.rollback()
-            logger.error(f"Registrierungsfehler: {str(e)}")
+            logger.error(f"Registrierungsfehler: {str(e)}", exc_info=True)
             flash('Fehler beim Speichern. Bitte später erneut versuchen.', 'danger')
-            return redirect(url_for('register'))
+            return render_template('register.html', form=form)
 
-    return render_template('register.html')
-
-
-# Die weiteren Routen (login, logout, submit, tracks, rate, admin_users, …)
-# bleiben inhaltlich gleich – ich habe sie hier nur kurz eingefügt, damit der Code vollständig ist.
-# Du kannst sie 1:1 übernehmen oder später noch mit try/except erweitern.
+    return render_template('register.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
 
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        username = form.username.data.strip()
+        password = form.password.data
+
         user = User.query.filter_by(username=username).first()
+
         if user and user.check_password(password):
             login_user(user)
             next_page = request.args.get('next')
@@ -242,8 +237,7 @@ def login():
         else:
             flash('Falscher Username oder Passwort.', 'danger')
 
-    return render_template('login.html')
-
+    return render_template('login.html', form=form)
 
 @app.route('/logout')
 @login_required
@@ -251,7 +245,6 @@ def logout():
     logout_user()
     flash('Erfolgreich ausgeloggt.', 'success')
     return redirect(url_for('index'))
-
 
 @app.route('/submit', methods=['GET', 'POST'])
 @login_required
@@ -280,6 +273,7 @@ def submit():
                 return redirect(url_for('submit'))
 
             bonus = 10 if current_user.alter < 25 else 0
+
             new_track = Track(
                 name=name,
                 artist_id=current_user.id,
@@ -294,12 +288,10 @@ def submit():
             return redirect(url_for('tracks'))
         except Exception as e:
             db.session.rollback()
-            logger.error(f"Submit-Fehler: {str(e)}")
+            logger.error(f"Submit-Fehler: {str(e)}", exc_info=True)
             flash(f'Fehler beim Upload: {str(e)}', 'danger')
-            return redirect(url_for('submit'))
 
     return render_template('submit.html')
-
 
 @app.route('/tracks')
 @login_required
@@ -308,7 +300,6 @@ def tracks():
         abort(403)
     all_tracks = Track.query.all()
     return render_template('tracks.html', tracks=all_tracks)
-
 
 @app.route('/rate/<int:track_id>', methods=['GET', 'POST'])
 @login_required
@@ -323,11 +314,9 @@ def rate(track_id):
             track.kreativitaet = int(request.form.get('kreativitaet', 0))
             track.technische_qualitaet = int(request.form.get('technische_qualitaet', 0))
             track.community = int(request.form.get('community', 0))
-
             scores = [track.historischer_bezug, track.kreativitaet, track.technische_qualitaet, track.community]
             if any(s < 0 or s > 10 for s in scores):
                 raise ValueError("Scores müssen zwischen 0 und 10 liegen.")
-
             track.mentor_feedback = request.form.get('feedback', '')
             track.gesamt_score = (sum(scores) + track.bonus) / 5.0
             db.session.commit()
@@ -336,11 +325,10 @@ def rate(track_id):
         except ValueError as e:
             flash(f'Ungültige Eingabe: {str(e)}', 'danger')
         except Exception as e:
-            logger.error(f"Rate-Fehler: {str(e)}")
+            logger.error(f"Rate-Fehler: {str(e)}", exc_info=True)
             flash('Fehler beim Speichern der Bewertung.', 'danger')
 
     return render_template('rate.html', track=track, kriterien=KRITERIEN_DATA)
-
 
 @app.route('/admin/users')
 @login_required
@@ -350,23 +338,19 @@ def admin_users():
     all_users = User.query.all()
     return render_template('admin_users.html', users=all_users)
 
-
 # Hilfsrouten
 @app.route('/upload')
 def upload_redirect():
     return redirect(url_for('submit'))
 
-
 @app.route('/leaderboard')
 def leaderboard():
     return redirect(url_for('tracks'))
-    
-
 
 # ==================================================
 # Start
 # ==================================================
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()           # Nur für lokale Entwicklung
+        db.create_all()  # Nur für lokale Entwicklung
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
