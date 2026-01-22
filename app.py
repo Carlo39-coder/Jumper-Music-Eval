@@ -429,6 +429,60 @@ def db_reset_and_setup():
         return f"Fehler beim Reset: {str(e)}", 500
 
 # ==================================================
+# Temporäre Hilfsrouten – NUR EINMAL nutzen!
+# ==================================================
+
+@app.route('/db-full-reset-and-setup')
+def db_full_reset_and_setup():
+    try:
+        # 1. ALLES löschen (User, Tracks, Genres, Battles...)
+        db.drop_all()
+        
+        # 2. Alle Tabellen neu erstellen (inkl. battle_id, genre, battle)
+        db.create_all()
+        
+        # 3. Genre "Deutschrap" anlegen
+        deutschrap = Genre(
+            name='Deutschrap',
+            description='Monatliche Battles im Genre Deutschrap',
+            active=True
+        )
+        db.session.add(deutschrap)
+        db.session.flush()  # ID verfügbar machen
+        
+        # 4. Erstes Battle für Feb 2026 anlegen
+        battle = Battle(
+            genre_id=deutschrap.id,
+            start_date=datetime(2026, 2, 1).date(),
+            end_date=datetime(2026, 2, 28).date(),
+            title='Deutschrap Battle Februar 2026',
+            status='active'
+        )
+        db.session.add(battle)
+        
+        db.session.commit()
+        
+        return (
+            "Datenbank wurde KOMPLETT zurückgesetzt und neu initialisiert!<br>"
+            "→ Genre 'Deutschrap' + Battle Feb 2026 angelegt.<br>"
+            "→ Registriere dich jetzt neu und setze dir Admin-Rechte mit /set-admin."
+        )
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"DB-Reset-Fehler: {str(e)}", exc_info=True)
+        return f"Fehler beim Reset: {str(e)}", 500
+
+@app.route('/set-admin')
+def set_admin():
+    # Ersetze 'dein_neuer_username' durch den Username, den du gleich neu registrieren wirst!
+    user = User.query.filter_by(username='dein_neuer_username').first()
+    if user:
+        user.is_admin = True
+        db.session.commit()
+        return f"Admin-Rechte für {user.username} wurden gesetzt! Du bist jetzt Admin."
+    return "User nicht gefunden – registriere dich zuerst neu!"
+
+# ==================================================
 # Start
 # ==================================================
 if __name__ == '__main__':
