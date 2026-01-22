@@ -399,6 +399,34 @@ def db_setup():
     except Exception as e:
         return f"Fehler beim Erstellen der Tabellen: {str(e)}", 500
 
+@app.route('/db-reset-and-setup')
+def db_reset_and_setup():
+    try:
+        # 1. Alles löschen
+        db.drop_all()
+        # 2. Alle Tabellen neu erstellen (inkl. battle_id, genre, battle)
+        db.create_all()
+        
+        # 3. Deutschrap-Genre anlegen
+        deutschrap = Genre(name='Deutschrap', description='Monatliche Battles im Genre Deutschrap')
+        db.session.add(deutschrap)
+        
+        # 4. Erstes Battle anlegen
+        battle = Battle(
+            genre_id=deutschrap.id,
+            start_date=datetime(2026, 2, 1).date(),
+            end_date=datetime(2026, 2, 28).date(),
+            title='Deutschrap Battle Februar 2026',
+            status='active'
+        )
+        db.session.add(battle)
+        
+        db.session.commit()
+        
+        return "Datenbank komplett zurückgesetzt und neu initialisiert! Deutschrap + Battle Feb 2026 angelegt.<br>Registriere dich jetzt neu und setze dir Admin-Rechte."
+    except Exception as e:
+        db.session.rollback()
+        return f"Fehler beim Reset: {str(e)}", 500
 
 # ==================================================
 # Start
