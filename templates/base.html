@@ -123,12 +123,15 @@
 </head>
 
 <body>
-    <!-- Top-Navbar mit Genre- & Datum-Button oben rechts -->
+    <!-- Top-Navbar mit neuem Logo oben links -->
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container-fluid px-3 px-md-4">
-            <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ url_for('index') }}">
-                <i class="fas fa-music me-2 text-warning"></i>
-                Jumper
+            <!-- Hier das neue Logo -->
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='944b8f32-b8af-43ca-bfe4-7df6a20c3435.jpg') }}"
+                     alt="Jumper Music Eval Logo"
+                     height="42"
+                     class="d-inline-block align-text-top me-2">
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
