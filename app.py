@@ -65,8 +65,8 @@ class FakeUser(UserMixin):
     is_authenticated = True
     is_active = True
     is_anonymous = False
-    is_admin = False
-    is_mentor = False
+    is_admin = True
+    is_mentor = True
 
 @login_manager.user_loader
 def load_user(user_id):
