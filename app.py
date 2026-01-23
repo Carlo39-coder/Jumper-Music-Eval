@@ -436,24 +436,6 @@ def db_reset_and_setup():
         logger.error(f"DB-Reset-Fehler: {str(e)}", exc_info=True)
         return f"Fehler beim Reset: {str(e)}", 500
         
-@app.route('/make-me-admin')
-def make_me_admin():
-    try:
-        new_admin = User(
-            username='Datadog',          # ← dein gewünschter Username
-            email='carloneu94@gmx.de',
-            alter=32,
-            is_admin=True,
-            is_mentor=True
-        )
-        new_admin.set_password('Datadoglog')  # ← ändere!
-        db.session.add(new_admin)
-        db.session.commit()
-        return "Admin-Account erstellt! Username: Datadog / Passwort: Datadoglog"
-    except Exception as e:
-        db.session.rollback()
-        logger.error(f"Admin-Erstellungsfehler: {str(e)}")
-        return f"Fehler: {str(e)} – DB-Verbindung klappt nicht.", 500
 
 # ==================================================
 # Start
