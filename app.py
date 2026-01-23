@@ -2,6 +2,7 @@ import os
 import json
 import logging
 from datetime import datetime
+
 from flask import Flask, render_template, request, redirect, url_for, flash, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -31,7 +32,7 @@ if not app.secret_key:
     )
 
 # Produktionssichere Session-Cookie-Einstellungen
-app.config['SESSION_COOKIE_SECURE'] = True  # Nur HTTPS (Render erzwingt HTTPS)
+app.config['SESSION_COOKIE_SECURE'] = True     # Nur HTTPS (Render erzwingt HTTPS)
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 Stunde
@@ -44,6 +45,7 @@ if database_url and database_url.startswith('postgres://'):
     database_url = database_url.replace('postgres://', 'postgresql://', 1)
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///jumper.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
 from flask_migrate import Migrate
 migrate = Migrate(app, db)
@@ -59,7 +61,7 @@ login_manager.login_view = 'login'
 class FakeUser(UserMixin):
     id = "999"
     username = "testuser"
-    alter = 30  # Fake-Alter → bonus = 0
+    alter = 30          # Fake-Alter → bonus = 0
     is_authenticated = True
     is_active = True
     is_anonymous = False
@@ -331,8 +333,117 @@ def submit():
             flash(f'Fehler beim Upload: {str(e)}', 'danger')
     return render_template('submit.html')
 
-# ... (der Rest deiner Routen bleibt gleich – tracks, rate, admin_users usw.)
-# Du kannst die restlichen Routen einfach drunter kopieren, ich habe sie hier ausgelassen, um den Code nicht zu lang zu machen
+@app.route('/tracks')
+@login_required
+def tracks():
+    if not current_user.is_admin:
+        abort(403)
+    all_tracks = Track.query.all()
+    return render_template('tracks.html', tracks=all_tracks)
+
+@app.route('/rate/<int:track_id>', methods=['GET', 'POST'])
+@login_required
+def rate(track_id):
+    if not current_user.is_mentor and not current_user.is_admin:
+        abort(403)
+    track = Track.query.get_or_404(track_id)
+    if request.method == 'POST':
+        try:
+            track.historischer_bezug = int(request.form.get('historischer_bezug', 0))
+            track.kreativitaet = int(request.form.get('kreativitaet', 0))
+            track.technische_qualitaet = int(request.form.get('technische_qualitaet', 0))
+            track.community = int(request.form.get('community', 0))
+            scores = [track.historischer_bezug, track.kreativitaet, track.technische_qualitaet, track.community]
+            if any(s < 0 or s > 10 for s in scores):
+                raise ValueError("Scores müssen zwischen 0 und 10 liegen.")
+            track.mentor_feedback = request.form.get('feedback', '')
+            track.gesamt_score = (sum(scores) + track.bonus) / 5.0
+            db.session.commit()
+            flash('Bewertung gespeichert!', 'success')
+            return redirect(url_for('tracks'))
+        except ValueError as e:
+            flash(f'Ungültige Eingabe: {str(e)}', 'danger')
+        except Exception as e:
+            logger.error(f"Rate-Fehler: {str(e)}", exc_info=True)
+            flash('Fehler beim Speichern der Bewertung.', 'danger')
+    return render_template('rate.html', track=track, kriterien=KRITERIEN_DATA)
+
+@app.route('/admin/users')
+@login_required
+def admin_users():
+    if not current_user.is_admin:
+        abort(403)
+    all_users = User.query.all()
+    return render_template('admin_users.html', users=all_users)
+
+# Hilfsrouten
+@app.route('/upload')
+def upload_redirect():
+    return redirect(url_for('submit'))
+
+@app.route('/leaderboard')
+def leaderboard():
+    return redirect(url_for('tracks'))
+
+@app.route('/db-setup-full')
+def db_setup_full():
+    try:
+        db.create_all()
+        deutschrap = Genre.query.filter_by(name='Deutschrap').first()
+        if not deutschrap:
+            deutschrap = Genre(
+                name='Deutschrap',
+                description='Monatliche Battles im Genre Deutschrap',
+                active=True
+            )
+            db.session.add(deutschrap)
+            db.session.flush()
+        battle = Battle.query.filter_by(
+            genre_id=deutschrap.id,
+            start_date=datetime(2026, 2, 1).date()
+        ).first()
+        if not battle:
+            battle = Battle(
+                genre_id=deutschrap.id,
+                start_date=datetime(2026, 2, 1).date(),
+                end_date=datetime(2026, 2, 28).date(),
+                title='Deutschrap Battle Februar 2026',
+                status='open'
+            )
+            db.session.add(battle)
+        db.session.commit()
+        return (
+            "Erfolg!<br>"
+            "→ Alle Tabellen erstellt (genre, battle usw.)<br>"
+            "→ Genre 'Deutschrap' + Battle 01.02.–28.02.2026 angelegt.<br>"
+            "Du kannst jetzt Tracks hochladen und dich registrieren."
+        )
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"DB-Setup-Fehler: {str(e)}", exc_info=True)
+        return f"Fehler: {str(e)}", 500
+
+@app.route('/db-reset-and-setup')
+def db_reset_and_setup():
+    try:
+        db.drop_all()
+        db.create_all()
+        deutschrap = Genre(name='Deutschrap', description='Monatliche Battles im Genre Deutschrap')
+        db.session.add(deutschrap)
+        battle = Battle(
+            genre_id=deutschrap.id,
+            start_date=datetime(2026, 2, 1).date(),
+            end_date=datetime(2026, 2, 28).date(),
+            title='Deutschrap Battle Februar 2026',
+            status='active'
+        )
+        db.session.add(battle)
+        db.session.commit()
+        return "Datenbank komplett zurückgesetzt und neu initialisiert! Deutschrap + Battle Feb 2026 angelegt.<br>Registriere dich jetzt neu und setze dir Admin-Rechte."
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"DB-Reset-Fehler: {str(e)}", exc_info=True)
+        return f"Fehler beim Reset: {str(e)}", 500
 
 # ==================================================
 # Start
