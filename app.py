@@ -263,26 +263,31 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '')
 
-    form = LoginForm()
+        # Temporärer Bypass – nur für Test!
+        if username == "testuser" and password == "test123":
+            # Fake-User erstellen (ohne DB)
+            from flask_login import UserMixin
+            class FakeUser(UserMixin):
+                id = 999
+                username = "testuser"
+                is_authenticated = True
+                is_active = True
+                is_anonymous = False
 
-    if form.validate_on_submit():
-        username = form.username.data.strip()
-        password = form.password.data
-
-        user = User.query.filter_by(username=username).first()
-
-        if user and user.check_password(password):
-            login_user(user)
+            fake_user = FakeUser()
+            login_user(fake_user)
+            flash("Login erfolgreich (Test-Modus ohne DB)!", "success")
             next_page = request.args.get('next')
             return redirect(next_page or url_for('submit'))
+
         else:
-            flash('Falscher Username oder Passwort.', 'danger')
+            flash('Falscher Username oder Passwort (Test-Modus). Probiere: testuser / test123', 'danger')
 
-    return render_template('login.html', form=form)
-
+    return render_template('login.html', form=LoginForm())
 @app.route('/logout')
 @login_required
 def logout():
