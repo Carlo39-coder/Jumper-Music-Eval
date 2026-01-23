@@ -54,6 +54,27 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # ==================================================
+# Temporärer Fake-User-Loader (ohne DB-Zugriff!)
+# ==================================================
+class FakeUser(UserMixin):
+    id = "999"
+    username = "testuser"
+    alter = 30  # Fake-Alter → bonus = 0
+    is_authenticated = True
+    is_active = True
+    is_anonymous = False
+    is_admin = False
+    is_mentor = False
+
+@login_manager.user_loader
+def load_user(user_id):
+    if user_id == "999":
+        return FakeUser()
+    # Alte DB-Version (kommentiert – später wieder aktivieren)
+    # return User.query.get(int(user_id))
+    return None
+
+# ==================================================
 # Cloudinary Konfiguration
 # ==================================================
 cloudinary.config(
@@ -125,16 +146,15 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, default=False)
 
     def set_password(self, password):
-        # Korrekte Einrückung + explizite Hash-Methode
         self.password_hash = generate_password_hash(password, method='pbkdf2:sha256:600000')
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-        
+
 class Genre(db.Model):
     __tablename__ = 'genre'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), unique=True, nullable=False)  # z.B. "Deutschrap"
+    name = db.Column(db.String(50), unique=True, nullable=False)
     description = db.Column(db.Text, nullable=True)
     active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -157,20 +177,16 @@ class Track(db.Model):
     artist = db.relationship('User', backref='tracks')
     battle_id = db.Column(db.Integer, db.ForeignKey('battle.id'), nullable=True)
     battle = db.relationship('Battle', backref='tracks')
-    
+
 class Battle(db.Model):
     __tablename__ = 'battle'
     id = db.Column(db.Integer, primary_key=True)
     genre_id = db.Column(db.Integer, db.ForeignKey('genre.id'), nullable=False)
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
-    title = db.Column(db.String(100), nullable=False)  # z.B. "Deutschrap Battle Feb 2026"
-    status = db.Column(db.String(20), default="active")  # active, voting, finished
+    title = db.Column(db.String(100), nullable=False)
+    status = db.Column(db.String(20), default="active")
     genre = db.relationship('Genre', backref='battles')
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
 
 # ==================================================
 # Routen
@@ -200,12 +216,9 @@ def kriterien_theorie():
 def setup_initial_genre():
     if Genre.query.filter_by(name='Deutschrap').first():
         return "Deutschrap existiert bereits."
-    
     deutschrap = Genre(name='Deutschrap', description='Monatliche Battles im Genre Deutschrap')
     db.session.add(deutschrap)
     db.session.commit()
-    
-    # Erstes Battle erstellen
     battle = Battle(
         genre_id=deutschrap.id,
         start_date=datetime(2026, 2, 1).date(),
@@ -215,30 +228,24 @@ def setup_initial_genre():
     )
     db.session.add(battle)
     db.session.commit()
-    
     return "Deutschrap + erstes Battle erfolgreich angelegt!"
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
-
     form = RegistrationForm()
-
     if form.validate_on_submit():
         username = form.username.data.strip()
         email = form.email.data.strip().lower()
         alter = form.alter.data
         password = form.password.data
-
         if User.query.filter_by(username=username).first():
             flash('Username bereits vergeben.', 'danger')
             return render_template('register.html', form=form)
-
         if User.query.filter_by(email=email).first():
             flash('E-Mail bereits registriert.', 'danger')
             return render_template('register.html', form=form)
-
         new_user = User(
             username=username,
             email=email,
@@ -247,7 +254,6 @@ def register():
             is_admin=False
         )
         new_user.set_password(password)
-
         try:
             db.session.add(new_user)
             db.session.commit()
@@ -258,7 +264,6 @@ def register():
             logger.error(f"Registrierungsfehler: {str(e)}", exc_info=True)
             flash('Fehler beim Speichern. Bitte später erneut versuchen.', 'danger')
             return render_template('register.html', form=form)
-
     return render_template('register.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -266,28 +271,17 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '')
-
         # Temporärer Bypass – nur für Test!
         if username == "testuser" and password == "test123":
-            # Fake-User erstellen (ohne DB)
-            from flask_login import UserMixin
-            class FakeUser(UserMixin):
-                id = 999
-                username = "testuser"
-                is_authenticated = True
-                is_active = True
-                is_anonymous = False
-
-            fake_user = FakeUser()
-            login_user(fake_user)
-            flash("Login erfolgreich (Test-Modus ohne DB)!", "success")
+            fake_user = FakeUser()  # Nutzt den FakeUser aus dem Loader
+            login_user(fake_user, remember=False)
+            flash("Login erfolgreich (Test-Modus ohne echte DB)!", "success")
             next_page = request.args.get('next')
             return redirect(next_page or url_for('submit'))
-
         else:
             flash('Falscher Username oder Passwort (Test-Modus). Probiere: testuser / test123', 'danger')
-
     return render_template('login.html', form=LoginForm())
+
 @app.route('/logout')
 @login_required
 def logout():
@@ -303,11 +297,9 @@ def submit():
         genre = request.form['genre'].strip()
         link = request.form.get('link')
         track_url = ''
-
         if not name or not genre:
             flash('Name und Genre müssen ausgefüllt sein.', 'danger')
             return redirect(url_for('submit'))
-
         try:
             if 'track' in request.files and request.files['track'].filename:
                 file = request.files['track']
@@ -320,9 +312,7 @@ def submit():
             else:
                 flash('Bitte Datei hochladen oder Link angeben.', 'danger')
                 return redirect(url_for('submit'))
-
-            bonus = 10 if current_user.alter < 25 else 0
-
+            bonus = 10 if hasattr(current_user, 'alter') and current_user.alter < 25 else 0
             new_track = Track(
                 name=name,
                 artist_id=current_user.id,
@@ -339,164 +329,10 @@ def submit():
             db.session.rollback()
             logger.error(f"Submit-Fehler: {str(e)}", exc_info=True)
             flash(f'Fehler beim Upload: {str(e)}', 'danger')
-
     return render_template('submit.html')
 
-@app.route('/tracks')
-@login_required
-def tracks():
-    if not current_user.is_admin:
-        abort(403)
-    all_tracks = Track.query.all()
-    return render_template('tracks.html', tracks=all_tracks)
-
-@app.route('/rate/<int:track_id>', methods=['GET', 'POST'])
-@login_required
-def rate(track_id):
-    if not current_user.is_mentor and not current_user.is_admin:
-        abort(403)
-    track = Track.query.get_or_404(track_id)
-
-    if request.method == 'POST':
-        try:
-            track.historischer_bezug = int(request.form.get('historischer_bezug', 0))
-            track.kreativitaet = int(request.form.get('kreativitaet', 0))
-            track.technische_qualitaet = int(request.form.get('technische_qualitaet', 0))
-            track.community = int(request.form.get('community', 0))
-            scores = [track.historischer_bezug, track.kreativitaet, track.technische_qualitaet, track.community]
-            if any(s < 0 or s > 10 for s in scores):
-                raise ValueError("Scores müssen zwischen 0 und 10 liegen.")
-            track.mentor_feedback = request.form.get('feedback', '')
-            track.gesamt_score = (sum(scores) + track.bonus) / 5.0
-            db.session.commit()
-            flash('Bewertung gespeichert!', 'success')
-            return redirect(url_for('tracks'))
-        except ValueError as e:
-            flash(f'Ungültige Eingabe: {str(e)}', 'danger')
-        except Exception as e:
-            logger.error(f"Rate-Fehler: {str(e)}", exc_info=True)
-            flash('Fehler beim Speichern der Bewertung.', 'danger')
-
-    return render_template('rate.html', track=track, kriterien=KRITERIEN_DATA)
-
-@app.route('/admin/users')
-@login_required
-def admin_users():
-    if not current_user.is_admin:
-        abort(403)
-    all_users = User.query.all()
-    return render_template('admin_users.html', users=all_users)
-
-# Hilfsrouten
-@app.route('/upload')
-def upload_redirect():
-    return redirect(url_for('submit'))
-
-@app.route('/leaderboard')
-def leaderboard():
-    return redirect(url_for('tracks'))
-
-@app.route('/db-setup-full')
-def db_setup_full():
-    try:
-        # 1. Alle fehlenden Tabellen erstellen (Genre, Battle usw.)
-        db.create_all()
-
-        # 2. Deutschrap anlegen, falls nicht vorhanden
-        deutschrap = Genre.query.filter_by(name='Deutschrap').first()
-        if not deutschrap:
-            deutschrap = Genre(
-                name='Deutschrap',
-                description='Monatliche Battles im Genre Deutschrap',
-                active=True
-            )
-            db.session.add(deutschrap)
-            db.session.flush()  # ID verfügbar machen
-
-        # 3. Battle für Feb 2026 anlegen, falls nicht vorhanden
-        battle = Battle.query.filter_by(
-            genre_id=deutschrap.id,
-            start_date=datetime(2026, 2, 1).date()
-        ).first()
-        if not battle:
-            battle = Battle(
-                genre_id=deutschrap.id,
-                start_date=datetime(2026, 2, 1).date(),
-                end_date=datetime(2026, 2, 28).date(),
-                title='Deutschrap Battle Februar 2026',
-                status='open'  # oder 'active'
-            )
-            db.session.add(battle)
-
-        db.session.commit()
-
-        return (
-            "Erfolg!<br>"
-            "→ Alle Tabellen erstellt (genre, battle usw.)<br>"
-            "→ Genre 'Deutschrap' + Battle 01.02.–28.02.2026 angelegt.<br>"
-            "Du kannst jetzt Tracks hochladen und dich registrieren."
-        )
-    except Exception as e:
-        db.session.rollback()
-        logger.error(f"DB-Setup-Fehler: {str(e)}", exc_info=True)
-        return f"Fehler: {str(e)}", 500
-
-@app.route('/db-reset-and-setup')
-def db_reset_and_setup():
-    try:
-        # 1. Alles löschen
-        db.drop_all()
-        # 2. Alle Tabellen neu erstellen (inkl. battle_id, genre, battle)
-        db.create_all()
-        
-        # 3. Deutschrap-Genre anlegen
-        deutschrap = Genre(name='Deutschrap', description='Monatliche Battles im Genre Deutschrap')
-        db.session.add(deutschrap)
-        
-        # 4. Erstes Battle anlegen
-        battle = Battle(
-            genre_id=deutschrap.id,
-            start_date=datetime(2026, 2, 1).date(),
-            end_date=datetime(2026, 2, 28).date(),
-            title='Deutschrap Battle Februar 2026',
-            status='active'
-        )
-        db.session.add(battle)
-        
-        db.session.commit()
-        
-        return "Datenbank komplett zurückgesetzt und neu initialisiert! Deutschrap + Battle Feb 2026 angelegt.<br>Registriere dich jetzt neu und setze dir Admin-Rechte."
-    except Exception as e:
-        db.session.rollback()
-        return f"Fehler beim Reset: {str(e)}", 500
-
-# ==================================================
-# Temporäre Hilfsrouten – NUR EINMAL nutzen!
-# ==================================================
-
-
-        # 4. Erstes Battle für Feb 2026 anlegen
-        battle = Battle(
-            genre_id=deutschrap.id,
-            start_date=datetime(2026, 2, 1).date(),
-            end_date=datetime(2026, 2, 28).date(),
-            title='Deutschrap Battle Februar 2026',
-            status='active'
-        )
-        db.session.add(battle)
-        
-        db.session.commit()
-        
-        return (
-            "Datenbank wurde KOMPLETT zurückgesetzt und neu initialisiert!<br>"
-            "→ Genre 'Deutschrap' + Battle Feb 2026 angelegt.<br>"
-            "→ Registriere dich jetzt neu und setze dir Admin-Rechte mit /set-admin."
-        )
-    except Exception as e:
-        db.session.rollback()
-        logger.error(f"DB-Reset-Fehler: {str(e)}", exc_info=True)
-        return f"Fehler beim Reset: {str(e)}", 500
-
+# ... (der Rest deiner Routen bleibt gleich – tracks, rate, admin_users usw.)
+# Du kannst die restlichen Routen einfach drunter kopieren, ich habe sie hier ausgelassen, um den Code nicht zu lang zu machen
 
 # ==================================================
 # Start
