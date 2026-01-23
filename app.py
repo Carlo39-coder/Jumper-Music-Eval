@@ -58,15 +58,7 @@ login_manager.login_view = 'login'
 # ==================================================
 # Temporärer Fake-User-Loader (ohne DB-Zugriff!)
 # ==================================================
-class FakeUser(UserMixin):
-    id = "999"
-    username = "testuser"
-    alter = 30          # Fake-Alter → bonus = 0
-    is_authenticated = True
-    is_active = True
-    is_anonymous = False
-    is_admin = True
-    is_mentor = True
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -444,6 +436,7 @@ def db_reset_and_setup():
         db.session.rollback()
         logger.error(f"DB-Reset-Fehler: {str(e)}", exc_info=True)
         return f"Fehler beim Reset: {str(e)}", 500
+        
 @app.route('/make-me-admin')
 def make_me_admin():
     try:
