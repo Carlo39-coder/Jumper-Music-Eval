@@ -59,13 +59,6 @@ login_manager.login_view = 'login'
 # ==================================================
 
 
-@login_manager.user_loader
-def load_user(user_id):
-    if user_id == "999":
-        return FakeUser()
-    # Alte DB-Version (kommentiert – später wieder aktivieren)
-    # return User.query.get(int(user_id))
-    return None
 
 # ==================================================
 # Cloudinary Konfiguration
@@ -101,29 +94,7 @@ except Exception as e:
 # ==================================================
 # WTForms für Register & Login
 # ==================================================
-class RegistrationForm(FlaskForm):
-    username = StringField('Username', validators=[
-        DataRequired(message='Username ist erforderlich'),
-        Length(min=3, max=64, message='Username muss zwischen 3 und 64 Zeichen haben')
-    ])
-    email = StringField('Email', validators=[
-        DataRequired(message='Email ist erforderlich'),
-        Email(message='Ungültige Email-Adresse')
-    ])
-    alter = IntegerField('Alter', validators=[
-        DataRequired(message='Alter ist erforderlich'),
-        NumberRange(min=13, max=100, message='Alter muss zwischen 13 und 100 liegen')
-    ])
-    password = PasswordField('Passwort', validators=[
-        DataRequired(message='Passwort ist erforderlich'),
-        Length(min=6, message='Passwort muss mindestens 6 Zeichen haben')
-    ])
-    submit = SubmitField('Registrieren')
 
-class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Passwort', validators=[DataRequired()])
-    submit = SubmitField('Einloggen')
 
 # ==================================================
 # Models
@@ -259,21 +230,6 @@ def register():
             return render_template('register.html', form=form)
     return render_template('register.html', form=form)
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form.get('username', '').strip()
-        password = request.form.get('password', '')
-        # Temporärer Bypass – nur für Test!
-        if username == "testuser" and password == "test123":
-            fake_user = FakeUser()  # Nutzt den FakeUser aus dem Loader
-            login_user(fake_user, remember=False)
-            flash("Login erfolgreich (Test-Modus ohne echte DB)!", "success")
-            next_page = request.args.get('next')
-            return redirect(next_page or url_for('submit'))
-        else:
-            flash('Falscher Username oder Passwort (Test-Modus). Probiere: testuser / test123', 'danger')
-    return render_template('login.html', form=LoginForm())
 
 @app.route('/logout')
 @login_required
