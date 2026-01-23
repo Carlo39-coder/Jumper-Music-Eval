@@ -370,27 +370,7 @@ def db_setup_full():
         logger.error(f"DB-Setup-Fehler: {str(e)}", exc_info=True)
         return f"Fehler: {str(e)}", 500
 
-@app.route('/db-reset-and-setup')
-def db_reset_and_setup():
-    try:
-        db.drop_all()
-        db.create_all()
-        deutschrap = Genre(name='Deutschrap', description='Monatliche Battles im Genre Deutschrap')
-        db.session.add(deutschrap)
-        battle = Battle(
-            genre_id=deutschrap.id,
-            start_date=datetime(2026, 2, 1).date(),
-            end_date=datetime(2026, 2, 28).date(),
-            title='Deutschrap Battle Februar 2026',
-            status='active'
-        )
-        db.session.add(battle)
-        db.session.commit()
-        return "Datenbank komplett zurückgesetzt und neu initialisiert! Deutschrap + Battle Feb 2026 angelegt.<br>Registriere dich jetzt neu und setze dir Admin-Rechte."
-    except Exception as e:
-        db.session.rollback()
-        logger.error(f"DB-Reset-Fehler: {str(e)}", exc_info=True)
-        return f"Fehler beim Reset: {str(e)}", 500
+
         
 
 # ==================================================
