@@ -449,7 +449,7 @@ def make_me_admin():
         new_admin.set_password('Datadoglog')  # ← ändere!
         db.session.add(new_admin)
         db.session.commit()
-        return "Admin-Account erstellt! Username: dein_username / Passwort: dein_starkes_passwort"
+        return "Admin-Account erstellt! Username: Datadog / Passwort: Datadoglog"
     except Exception as e:
         db.session.rollback()
         logger.error(f"Admin-Erstellungsfehler: {str(e)}")
