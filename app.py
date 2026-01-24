@@ -391,6 +391,51 @@ def register():
 
     return render_template('register.html', form=form)
 
+@app.route('/gast-upload', methods=['GET', 'POST'])
+def gast_upload():
+    if request.method == 'POST':
+        name = request.form['name'].strip()
+        genre = request.form['genre'].strip()
+        link = request.form.get('link')
+        track_url = ''
+
+        if not name or not genre:
+            flash('Name und Genre müssen ausgefüllt sein.', 'danger')
+            return redirect(url_for('gast_upload'))
+
+        try:
+            if 'track' in request.files and request.files['track'].filename:
+                file = request.files['track']
+                upload_result = cloudinary.uploader.upload(file, resource_type="video")
+                track_url = upload_result['secure_url']
+            elif link:
+                track_url = link
+            else:
+                flash('Bitte Datei oder Link angeben.', 'danger')
+                return redirect(url_for('gast_upload'))
+
+            temp_track = Track(
+                name=name,
+                artist_id=None,
+                genre=genre,
+                url=track_url,
+                bonus=0,
+                datum=datetime.now().date()
+            )
+            db.session.add(temp_track)
+            db.session.commit()
+
+            session['pending_track_id'] = temp_track.id
+            session['pending_genre'] = genre  # Für spätere Zuordnung
+
+            flash('Track hochgeladen! Jetzt kannst du dich registrieren.', 'success')
+            return redirect(url_for('register'))
+
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Upload-Fehler: {str(e)}', 'danger')
+
+    return render_template('gast_upload.html')
 
 @app.route('/admin/users')
 @login_required
