@@ -50,7 +50,7 @@ if database_url:
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     print("→ Verwende PostgreSQL (Render DATABASE_URL)")
 else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jumper.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///JumperDB'
     print("⚠️ WARNUNG: Keine DATABASE_URL → SQLite Fallback (nur lokal!)")
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
