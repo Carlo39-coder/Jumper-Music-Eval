@@ -454,7 +454,7 @@ def gast_upload():
             db.session.rollback()
             flash(f'Upload-Fehler: {str(e)}', 'danger')
 
-    return render_template('gast_upload.html')
+
 
 @app.route('/admin/users')
 @login_required
