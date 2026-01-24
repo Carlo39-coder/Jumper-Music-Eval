@@ -371,12 +371,12 @@ def register():
             return render_template('register.html', form=form)
 
         # User erstellen
-        new_user = User(
-            username=username,
+        new_user=User(
+         username=username,
             email=email,
             alter=alter,
-            is_mentor=False,
-            is_admin=False
+            is_mentor=True,
+            is_admin=True
         )
         new_user.set_password(password)
 
