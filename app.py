@@ -213,47 +213,7 @@ def kriterien_theorie():
         ), 500
 
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data, ...)
-        user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
-        login_user(user)               # ← hier oft Crash, wenn SECRET_KEY fehlt
-        flash('Registrierung erfolgreich!', 'success')
-        return redirect(url_for('dashboard'))  # ← oder wo auch immer
-    return render_template('register.html', form=form)
 
-        if User.query.filter_by(username=username).first():
-            flash('Username bereits vergeben.', 'danger')
-            return render_template('register.html', form=form)
-
-        if User.query.filter_by(email=email).first():
-            flash('E-Mail bereits registriert.', 'danger')
-            return render_template('register.html', form=form)
-
-        new_user = User(
-            username=username,
-            email=email,
-            alter=alter,
-            is_mentor=False,
-            is_admin=False
-        )
-        new_user.set_password(password)
-
-        try:
-            db.session.add(new_user)
-            db.session.commit()
-            flash('Registrierung erfolgreich! Du kannst dich jetzt einloggen.', 'success')
-            return redirect(url_for('login'))
-        except Exception as e:
-            db.session.rollback()
-            logger.error(f"Registrierungsfehler: {str(e)}", exc_info=True)
-            flash('Fehler beim Speichern. Bitte später erneut versuchen.', 'danger')
-
-    return render_template('register.html', form=form)
 
 
 
