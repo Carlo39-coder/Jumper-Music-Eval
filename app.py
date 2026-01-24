@@ -353,11 +353,10 @@ def register():
 
     if form.validate_on_submit():
         username = form.username.data.strip()
-        email = form.email.data.strip().lower()
-        alter = form.alter.data
+        email    = form.email.data.strip().lower()
+        alter    = form.alter.data
         password = form.password.data
 
-        # Prüfen, ob Username oder E-Mail schon existiert
         if User.query.filter_by(username=username).first():
             flash('Username bereits vergeben.', 'danger')
             return render_template('register.html', form=form)
@@ -366,11 +365,10 @@ def register():
             flash('E-Mail bereits registriert.', 'danger')
             return render_template('register.html', form=form)
 
-        # Neuen User erstellen
         new_user = User(
-            username=Datadog,
-            email=corlaher@gmx.de,
-            alter=32,
+            username=username,
+            email=email,
+            alter=alter,
             is_mentor=True,
             is_admin=True
         )
@@ -380,19 +378,19 @@ def register():
             db.session.add(new_user)
             db.session.commit()
 
-            # Direkt einloggen – das ist nutzerfreundlicher
+            # ──────────────────────────────
+            # Das fehlte komplett!
             login_user(new_user)
-            flash('Registrierung erfolgreich! Willkommen bei Jumper Music!', 'success')
-            return redirect(url_for('submit'))  # oder 'index', 'tracks' – wo du nach Login hinwillst
+            flash('Registrierung erfolgreich! Willkommen!', 'success')
+            return redirect(url_for('submit'))  # oder 'index', 'tracks', 'dashboard'
 
         except Exception as e:
             db.session.rollback()
             app.logger.error(f"Registrierungsfehler: {str(e)}", exc_info=True)
-            flash('Fehler beim Speichern. Bitte später erneut versuchen.', 'danger')
+            flash('Fehler beim Speichern des Benutzers. Bitte später erneut versuchen.', 'danger')
+            return render_template('register.html', form=form)
 
-    # Formular anzeigen (GET oder ungültig)
     return render_template('register.html', form=form)
-
 
 
 @app.route('/admin/users')
