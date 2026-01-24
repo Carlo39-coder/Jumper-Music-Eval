@@ -42,8 +42,15 @@ app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 Stunde
 # Datenbank-Konfiguration
 # ==================================================
 database_url = os.getenv('DATABASE_URL')
-if database_url and database_url.startswith('postgres://'):
-    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+if database_url:
+    # Render verwendet manchmal postgres:// statt postgresql://
+    if database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    # Fallback nur lokal – auf Render sollte das nie greifen!
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///JumperDB'
+    print("⚠️  WARNUNG: Keine DATABASE_URL gefunden → SQLite Fallback verwendet!")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///jumper.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
