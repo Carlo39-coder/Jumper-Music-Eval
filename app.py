@@ -472,7 +472,13 @@ def db_setup_full():
         logger.error(f"DB-Setup-Fehler: {str(e)}", exc_info=True)
         return f"Fehler: {str(e)}", 500
 
-
+@app.route('/create-tables')
+def create_tables():
+    try:
+        db.create_all()
+        return "Alle Tabellen wurden erfolgreich erstellt! (User, Genre, Battle, Track usw.)"
+    except Exception as e:
+        return f"Fehler beim Erstellen der Tabellen: {str(e)}", 500
 
 # ==================================================
 # Start
