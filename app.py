@@ -455,6 +455,16 @@ def db_setup_full():
         logger.error(f"DB-Setup-Fehler: {str(e)}", exc_info=True)
         return f"Fehler: {str(e)}", 500
 
+database_url = os.getenv('DATABASE_URL')
+if database_url:
+    # Render verwendet manchmal postgres:// statt postgresql://
+    if database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    # Fallback nur lokal – auf Render sollte das nie greifen!
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jumper.db'
+    print("⚠️  WARNUNG: Keine DATABASE_URL gefunden → SQLite Fallback verwendet!")
 
 # ==================================================
 # Start
