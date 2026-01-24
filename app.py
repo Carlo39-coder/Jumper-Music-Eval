@@ -215,15 +215,16 @@ def kriterien_theorie():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-
     form = RegistrationForm()
     if form.validate_on_submit():
-        username = form.username.data.strip()
-        email = form.email.data.strip().lower()
-        alter = form.alter.data
-        password = form.password.data
+        user = User(username=form.username.data, email=form.email.data, ...)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        login_user(user)               # ← hier oft Crash, wenn SECRET_KEY fehlt
+        flash('Registrierung erfolgreich!', 'success')
+        return redirect(url_for('dashboard'))  # ← oder wo auch immer
+    return render_template('register.html', form=form)
 
         if User.query.filter_by(username=username).first():
             flash('Username bereits vergeben.', 'danger')
@@ -252,6 +253,19 @@ def register():
             logger.error(f"Registrierungsfehler: {str(e)}", exc_info=True)
             flash('Fehler beim Speichern. Bitte später erneut versuchen.', 'danger')
 
+    return render_template('register.html', form=form)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data, ...)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        login_user(user)               # ← hier oft Crash, wenn SECRET_KEY fehlt
+        flash('Registrierung erfolgreich!', 'success')
+        return redirect(url_for('dashboard'))  # ← oder wo auch immer
     return render_template('register.html', form=form)
 
 
