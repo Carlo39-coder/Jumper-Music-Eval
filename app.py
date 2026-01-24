@@ -369,8 +369,8 @@ def register():
             username=username,
             email=email,
             alter=alter,
-            is_mentor=True,
-            is_admin=True
+            is_mentor=False,
+            is_admin=False
         )
         new_user.set_password(password)
 
