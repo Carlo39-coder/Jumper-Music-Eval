@@ -350,12 +350,18 @@ def register():
 
     form = RegistrationForm()
 
+    pending_track_id = session.get('pending_track_id')
+    if not pending_track_id:
+        flash('Du musst zuerst einen Track hochladen!', 'danger')
+        return redirect(url_for('gast_upload'))
+
     if form.validate_on_submit():
         username = form.username.data.strip()
-        email    = form.email.data.strip().lower()
-        alter    = form.alter.data
+        email = form.email.data.strip().lower()
+        alter = form.alter.data
         password = form.password.data
 
+        # Username und Email prüfen VOR dem Erstellen des Users
         if User.query.filter_by(username=username).first():
             flash('Username bereits vergeben.', 'danger')
             return render_template('register.html', form=form)
@@ -364,6 +370,7 @@ def register():
             flash('E-Mail bereits registriert.', 'danger')
             return render_template('register.html', form=form)
 
+        # User erstellen
         new_user = User(
             username=username,
             email=email,
@@ -377,15 +384,27 @@ def register():
             db.session.add(new_user)
             db.session.commit()
 
-            # ──────────────────────────────
-            # Das fehlte komplett!
-            login_user(new_user)
-            flash('Registrierung erfolgreich! Willkommen!', 'success')
-            return redirect(url_for('submit'))  # oder 'index', 'tracks', 'dashboard'
+            # Track dem neuen User zuweisen
+            track = Track.query.get(pending_track_id)
+            if track:
+                track.artist_id = new_user.id
 
+                # Battle finden (aktuell aktives für Deutschrap)
+                battle = Battle.query.filter_by(
+                    genre_id=Genre.query.filter_by(name='Deutschrap').first().id,
+                    status='open'
+                ).first()
+                if battle:
+                    track.battle_id = battle.id
+                db.session.commit()
+
+            session.pop('pending_track_id', None)
+
+            flash('Registrierung erfolgreich! Dein Track ist jetzt deinem Account zugewiesen.', 'success')
+            return redirect(url_for('login'))
         except Exception as e:
             db.session.rollback()
-            app.logger.error(f"Registrierungsfehler: {str(e)}", exc_info=True)
+            logger.error(f"Registrierungsfehler: {str(e)}", exc_info=True)
             flash('Fehler beim Speichern des Benutzers. Bitte später erneut versuchen.', 'danger')
             return render_template('register.html', form=form)
 
