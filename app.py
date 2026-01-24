@@ -213,7 +213,27 @@ def kriterien_theorie():
         ), 500
 
 
+@app.route('/init-deutschrap')
+def init_deutschrap():
+    deutschrap = Genre.query.filter_by(name='Deutschrap').first()
+    if not deutschrap:
+        deutschrap = Genre(name='Deutschrap', description='Monatliche Deutschrap-Battles')
+        db.session.add(deutschrap)
+        db.session.flush()
 
+    battle = Battle.query.filter_by(genre_id=deutschrap.id, start_date=datetime(2026, 2, 1).date()).first()
+    if not battle:
+        battle = Battle(
+            genre_id=deutschrap.id,
+            start_date=datetime(2026, 2, 1).date(),
+            end_date=datetime(2026, 2, 28).date(),
+            title='Deutschrap Battle Februar 2026',
+            status='open'
+        )
+        db.session.add(battle)
+
+    db.session.commit()
+    return "Deutschrap + Battle 01.02.–28.02.2026 angelegt!"
 
 
 
