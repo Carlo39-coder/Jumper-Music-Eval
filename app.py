@@ -344,6 +344,53 @@ def rate(track_id):
 
     return render_template('rate.html', track=track, kriterien=KRITERIEN_DATA)
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    form = RegistrationForm()
+
+    if form.validate_on_submit():
+        username = form.username.data.strip()
+        email = form.email.data.strip().lower()
+        alter = form.alter.data
+        password = form.password.data
+
+        # Prüfen, ob Username oder E-Mail schon existiert
+        if User.query.filter_by(username=username).first():
+            flash('Username bereits vergeben.', 'danger')
+            return render_template('register.html', form=form)
+
+        if User.query.filter_by(email=email).first():
+            flash('E-Mail bereits registriert.', 'danger')
+            return render_template('register.html', form=form)
+
+        # Neuen User erstellen
+        new_user = User(
+            username=username,
+            email=email,
+            alter=alter,
+            is_mentor=False,
+            is_admin=False
+        )
+        new_user.set_password(password)
+
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+
+        
+
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f"Registrierungsfehler: {str(e)}", exc_info=True)
+            flash('Fehler beim Speichern. Bitte später erneut versuchen.', 'danger')
+
+    # Formular anzeigen (GET oder ungültig)
+    return render_template('register.html', form=form)
+
+
 
 @app.route('/admin/users')
 @login_required
