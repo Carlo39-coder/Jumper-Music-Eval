@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{{% extends "base.html" %}
 
 {% block title %}Login – Jumper{% endblock %}
 
@@ -8,7 +8,6 @@
         <div class="col-md-6 col-lg-5">
             <div class="card bg-dark text-white shadow-lg border-0 p-4">
                 <h2 class="text-center mb-4 text-warning">Login</h2>
-
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                         {% for category, message in messages %}
@@ -19,23 +18,18 @@
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
-
                 <form method="POST" action="">
-                    {{ form.hidden_tag() }}  <!-- Das war der fehlende CSRF-Token – wichtig gegen CSRF-Angriffe -->
-
+                    {{ form.hidden_tag() }} <!-- Das fehlte! CSRF-Token – jetzt hinzugefügt -->
                     <div class="mb-3">
                         <label class="form-label">{{ form.username.label }}</label>
-                        {{ form.username(class="form-control bg-dark text-white border-secondary", autofocus=true, required=true) }}
+                        {{ form.username(class="form-control bg-dark text-white border-secondary", required=true, autofocus=true) }}
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label">{{ form.password.label }}</label>
                         {{ form.password(class="form-control bg-dark text-white border-secondary", required=true) }}
                     </div>
-
                     <button type="submit" class="btn btn-warning w-100">{{ form.submit.label }}</button>
                 </form>
-
                 <p class="text-center mt-3">
                     Noch kein Account? <a href="{{ url_for('register') }}" class="text-warning">Registrieren</a>
                 </p>
