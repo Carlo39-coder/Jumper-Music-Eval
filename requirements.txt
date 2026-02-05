@@ -6,8 +6,5 @@ pandas
 cloudinary
 flask_login
 flask
-Flask-BasicAuth
 markdown
-flask-wtf
-email-validator
-flask-migrate
+
