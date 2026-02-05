@@ -1,8 +1,0 @@
-project_analysis/
-├── structure.txt
-├── backend_overview.md
-├── frontend_overview.md
-├── criteria_analysis.md
-├── improvement_plan.md
-├── deployment_guide.md
-└── metrics.json
