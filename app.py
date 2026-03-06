@@ -365,13 +365,13 @@ def register():
             flash('E-Mail bereits registriert.', 'danger')
             return render_template('register.html', form=form)
 
-        # User erstellen
-        new_user=User(
-         username=username,
+        # User erstellen – mit Admin-Rechten
+        new_user = User(
+            username=username,
             email=email,
             alter=alter,
             is_mentor=True,
-            is_admin=True
+            is_admin=True  # Automatisch Admin für neue Users (temporär!)
         )
         new_user.set_password(password)
 
@@ -379,32 +379,38 @@ def register():
             db.session.add(new_user)
             db.session.commit()
 
-            # Track dem neuen User zuweisen
-            track = Track.query.get(pending_track_id)
-            if track:
-                track.artist_id = new_user.id
+            # Track dem neuen User zuweisen (aus Pending)
+            pending_track_id = session.get('pending_track_id')
+            if pending_track_id:
+                track = Track.query.get(pending_track_id)
+                if track:
+                    track.artist_id = new_user.id
+                    # Battle finden (aktuell aktives für Deutschrap)
+                    deutschrap_genre = Genre.query.filter_by(name='Deutschrap').first()
+                    if deutschrap_genre:
+                        battle = Battle.query.filter_by(
+                            genre_id=deutschrap_genre.id,
+                            status='open'
+                        ).first()
+                        if battle:
+                            track.battle_id = battle.id
+                    db.session.commit()
+                    session.pop('pending_track_id', None)
+                    flash('Registrierung erfolgreich! Dein Pending-Track ist jetzt deinem Account zugewiesen.', 'success')
+                else:
+                    flash('Pending-Track nicht gefunden – Registrierung aber erfolgreich.', 'warning')
+            else:
+                flash('Registrierung erfolgreich! Kein Pending-Track vorhanden.', 'success')
 
-                # Battle finden (aktuell aktives für Deutschrap)
-                battle = Battle.query.filter_by(
-                    genre_id=Genre.query.filter_by(name='Deutschrap').first().id,
-                    status='open'
-                ).first()
-                if battle:
-                    track.battle_id = battle.id
-                db.session.commit()
-
-            session.pop('pending_track_id', None)
-
-            flash('Registrierung erfolgreich! Dein Track ist jetzt deinem Account zugewiesen.', 'success')
             return redirect(url_for('login'))
         except Exception as e:
             db.session.rollback()
             logger.error(f"Registrierungsfehler: {str(e)}", exc_info=True)
-            flash('Fehler beim Speichern des Benutzers. Bitte später erneut versuchen.', 'danger')
+            flash('Fehler beim Speichern. Bitte später erneut versuchen.', 'danger')
             return render_template('register.html', form=form)
 
     return render_template('register.html', form=form)
-
+    
 @app.route('/gast-upload', methods=['GET', 'POST'])
 def gast_upload():
     if request.method == 'POST':
