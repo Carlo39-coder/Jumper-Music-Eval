@@ -4,6 +4,19 @@
 
 {% block content %}
 <h1>Gast-Upload</h1>
-<p>Hier kannst du als Gast hochladen.</p>
-<!-- Dein Form-Code hier, ähnlich wie in submit.html -->
+<form method="post" enctype="multipart/form-data">
+    <label for="name">Track Name:</label>
+    <input type="text" id="name" name="name" required><br>
+
+    <label for="genre">Genre:</label>
+    <input type="text" id="genre" name="genre" required><br>
+
+    <label for="track">Upload Audio:</label>
+    <input type="file" id="track" name="track"><br>
+
+    <label for="link">Oder Link:</label>
+    <input type="text" id="link" name="link"><br>
+
+    <button type="submit">Hochladen</button>
+</form>
 {% endblock %}
