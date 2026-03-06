@@ -350,11 +350,6 @@ def register():
 
     form = RegistrationForm()
 
-    pending_track_id = session.get('pending_track_id')
-    if not pending_track_id:
-        flash('Du musst zuerst einen Track hochladen!', 'danger')
-        return redirect(url_for('gast_upload'))
-
     if form.validate_on_submit():
         username = form.username.data.strip()
         email = form.email.data.strip().lower()
