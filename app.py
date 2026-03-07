@@ -380,9 +380,10 @@ def register():
             db.session.commit()
 
             # Track dem neuen User zuweisen (aus Pending)
-            pending_track_id = session.get('pending_track_id')
-            if pending_track_id:
-                track = Track.query.get(pending_track_id)
+      pending_track_id = session.get('pending_track_id')
+if not pending_track_id:
+    flash('Du musst zuerst einen Track hochladen!', 'danger')
+    return redirect(url_for('gast_upload'))
                 if track:
                     track.artist_id = new_user.id
                     # Battle finden (aktuell aktives für Deutschrap)
@@ -414,42 +415,53 @@ def register():
 @app.route('/gast-upload', methods=['GET', 'POST'])
 def gast_upload():
     if request.method == 'POST':
-        name = request.form['name'].strip()
-        genre = request.form['genre'].strip()
-        link = request.form.get('link')
+        # Hier dein POST-Handling-Code, z. B. Track-Upload verarbeiten
+        name = request.form.get('name', '').strip()
+        genre = request.form.get('genre', '').strip()
+        link = request.form.get('link', '').strip()
         track_url = ''
-        if not name or not genre:
-            flash('Name und Genre müssen ausgefüllt sein.', 'danger')
-            return redirect(url_for('gast_upload'))
+
         try:
             if 'track' in request.files and request.files['track'].filename:
                 file = request.files['track']
+                if not file.mimetype.startswith('audio/'):
+                    raise ValueError("Nur Audio-Dateien erlaubt.")
                 upload_result = cloudinary.uploader.upload(file, resource_type="video")
                 track_url = upload_result['secure_url']
             elif link:
                 track_url = link
             else:
-                flash('Bitte Datei oder Link angeben.', 'danger')
+                flash('Bitte Datei hochladen oder Link angeben.', 'danger')
                 return redirect(url_for('gast_upload'))
+
+            if not name or not genre:
+                flash('Name und Genre müssen ausgefüllt sein.', 'danger')
+                return redirect(url_for('gast_upload'))
+
+            # Speichere den Track temporär, z. B. als Pending-Track in der Session oder DB
+            # Beispiel: Erstelle einen temporären Track und speichere ID in Session
             temp_track = Track(
                 name=name,
-                artist_id=None,
+                artist_id=None,  # Kein User noch
                 genre=genre,
                 url=track_url,
-                bonus=0,
                 datum=datetime.now().date()
             )
             db.session.add(temp_track)
             db.session.commit()
-            session['pending_track_id'] = temp_track.id
-            session['pending_genre'] = genre  # Für spätere Zuordnung
-            flash('Track hochgeladen! Jetzt kannst du dich registrieren.', 'success')
+            session['pending_track_id'] = temp_track.id  # Setze Session-Variable für Register
+
+            flash('Track hochgeladen! Nun kannst du dich registrieren.', 'success')
             return redirect(url_for('register'))
+
         except Exception as e:
             db.session.rollback()
-            flash(f'Upload-Fehler: {str(e)}', 'danger')
-            return redirect(url_for('gast_upload'))  # Redirect bei Fehler, um Loop zu vermeiden
-    
+            logger.error(f"Gast-Upload-Fehler: {str(e)}", exc_info=True)
+            flash(f'Fehler beim Upload: {str(e)}', 'danger')
+            return redirect(url_for('gast_upload'))
+
+    # Für GET: Zeige das Upload-Formular an
+    return render_template('gast_upload.html')  # Ersetze durch dein Template, z. B. ein Formular ähnlich wie submit.html
 
 
 @app.route('/admin/users')
