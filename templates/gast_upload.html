@@ -1,22 +1,37 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Gast-Upload – Jumper Music Eval</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Track als Gast hochladen</h1>
 
-{% block title %}Gast-Upload{% endblock %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
-{% block content %}
-<h1>Gast-Upload</h1>
-<form method="post" enctype="multipart/form-data">
-    <label for="name">Track Name:</label>
-    <input type="text" id="name" name="name" required><br>
+    <form method="post" enctype="multipart/form-data">
+        <label>Track-Name:</label><br>
+        <input type="text" name="name" required><br><br>
 
-    <label for="genre">Genre:</label>
-    <input type="text" id="genre" name="genre" required><br>
+        <label>Genre:</label><br>
+        <input type="text" name="genre" required value="Deutschrap"><br><br>
 
-    <label for="track">Upload Audio:</label>
-    <input type="file" id="track" name="track"><br>
+        <label>MP3/WAV hochladen:</label><br>
+        <input type="file" name="track" accept="audio/*"><br><br>
 
-    <label for="link">Oder Link:</label>
-    <input type="text" id="link" name="link"><br>
+        <label>ODER YouTube/SoundCloud-Link:</label><br>
+        <input type="url" name="link"><br><br>
 
-    <button type="submit">Hochladen</button>
-</form>
-{% endblock %}
+        <button type="submit">Hochladen & weiter zur Registrierung</button>
+    </form>
+
+    <p><a href="{{ url_for('register') }}">Ich habe schon hochgeladen → direkt registrieren</a></p>
+</body>
+</html>
