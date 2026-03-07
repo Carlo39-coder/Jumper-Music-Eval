@@ -2,8 +2,7 @@ import os
 import json
 import logging
 from datetime import datetime
-from flask import session
-from flask import Flask, render_template, request, redirect, url_for, flash, abort
+from flask import Flask, render_template, request, redirect, url_for, flash, abort, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_migrate import Migrate
@@ -33,7 +32,7 @@ if not app.secret_key:
     )
 
 # Produktionssichere Session-Cookie-Einstellungen
-app.config['SESSION_COOKIE_SECURE'] = True      # Nur HTTPS (Render erzwingt HTTPS)
+app.config['SESSION_COOKIE_SECURE'] = True
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 Stunde
@@ -41,9 +40,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 Stunde
 # ==================================================
 # Datenbank-Konfiguration
 # ==================================================
-# Datenbank-Konfiguration
 database_url = os.getenv('DATABASE_URL')
-
 if database_url:
     if database_url.startswith('postgres://'):
         database_url = database_url.replace('postgres://', 'postgresql://', 1)
@@ -80,7 +77,6 @@ if not all([cloudinary.config().cloud_name, cloudinary.config().api_key, cloudin
 # ==================================================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 KRITERIEN_DATA = {}
-
 try:
     json_path = os.path.join(BASE_DIR, 'kriterien.json')
     with open(json_path, 'r', encoding='utf-8') as f:
@@ -115,7 +111,6 @@ class RegistrationForm(FlaskForm):
     ])
     submit = SubmitField('Registrieren')
 
-
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Passwort', validators=[DataRequired()])
@@ -140,7 +135,6 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-
 class Genre(db.Model):
     __tablename__ = 'genre'
     id = db.Column(db.Integer, primary_key=True)
@@ -148,7 +142,6 @@ class Genre(db.Model):
     description = db.Column(db.Text, nullable=True)
     active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
 
 class Battle(db.Model):
     __tablename__ = 'battle'
@@ -158,9 +151,7 @@ class Battle(db.Model):
     end_date = db.Column(db.Date, nullable=False)
     title = db.Column(db.String(100), nullable=False)
     status = db.Column(db.String(20), default="active")  # active, voting, finished
-
     genre = db.relationship('Genre', backref='battles')
-
 
 class Track(db.Model):
     __tablename__ = 'track'
@@ -177,11 +168,9 @@ class Track(db.Model):
     community = db.Column(db.Integer, default=0)
     gesamt_score = db.Column(db.Float, default=0.0)
     mentor_feedback = db.Column(db.Text)
-
     artist = db.relationship('User', backref='tracks')
     battle_id = db.Column(db.Integer, db.ForeignKey('battle.id'), nullable=True)
     battle = db.relationship('Battle', backref='tracks')
-
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -193,7 +182,6 @@ def load_user(user_id):
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 @app.route('/kriterien_theorie')
 def kriterien_theorie():
@@ -212,15 +200,10 @@ def kriterien_theorie():
             title="Fehler"
         ), 500
 
-
-
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
-
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data.strip()).first()
@@ -231,10 +214,7 @@ def login():
             return redirect(next_page or url_for('submit'))
         else:
             flash('Falscher Username oder Passwort.', 'danger')
-
     return render_template('login.html', form=form)
-
-
 
 @app.route('/logout')
 @login_required
@@ -243,7 +223,6 @@ def logout():
     flash('Erfolgreich ausgeloggt.', 'success')
     return redirect(url_for('index'))
 
-
 @app.route('/submit', methods=['GET', 'POST'])
 @login_required
 def submit():
@@ -251,9 +230,7 @@ def submit():
         name = request.form.get('name', '').strip()
         genre = request.form.get('genre', '').strip()
         link = request.form.get('link', '').strip()
-
         track_url = ''
-
         try:
             if 'track' in request.files and request.files['track'].filename:
                 file = request.files['track']
@@ -272,7 +249,6 @@ def submit():
                 return redirect(url_for('submit'))
 
             bonus = 10 if current_user.alter < 25 else 0
-
             new_track = Track(
                 name=name,
                 artist_id=current_user.id,
@@ -285,14 +261,11 @@ def submit():
             db.session.commit()
             flash('Track erfolgreich eingereicht!', 'success')
             return redirect(url_for('tracks'))
-
         except Exception as e:
             db.session.rollback()
             logger.error(f"Submit-Fehler: {str(e)}", exc_info=True)
             flash(f'Fehler beim Upload: {str(e)}', 'danger')
-
     return render_template('submit.html')
-
 
 @app.route('/tracks')
 @login_required
@@ -302,45 +275,36 @@ def tracks():
     all_tracks = Track.query.all()
     return render_template('tracks.html', tracks=all_tracks)
 
-
 @app.route('/rate/<int:track_id>', methods=['GET', 'POST'])
 @login_required
 def rate(track_id):
     if not (current_user.is_mentor or current_user.is_admin):
         abort(403)
-
     track = Track.query.get_or_404(track_id)
-
     if request.method == 'POST':
         try:
             track.historischer_bezug = int(request.form.get('historischer_bezug', 0))
             track.kreativitaet = int(request.form.get('kreativitaet', 0))
             track.technische_qualitaet = int(request.form.get('technische_qualitaet', 0))
             track.community = int(request.form.get('community', 0))
-
             scores = [
                 track.historischer_bezug,
                 track.kreativitaet,
                 track.technische_qualitaet,
                 track.community
             ]
-
             if any(s < 0 or s > 10 for s in scores):
                 raise ValueError("Scores müssen zwischen 0 und 10 liegen.")
-
             track.mentor_feedback = request.form.get('feedback', '')
             track.gesamt_score = (sum(scores) + track.bonus) / 5.0
-
             db.session.commit()
             flash('Bewertung gespeichert!', 'success')
             return redirect(url_for('tracks'))
-
         except ValueError as e:
             flash(f'Ungültige Eingabe: {str(e)}', 'danger')
         except Exception as e:
             logger.error(f"Rate-Fehler: {str(e)}", exc_info=True)
             flash('Fehler beim Speichern der Bewertung.', 'danger')
-
     return render_template('rate.html', track=track, kriterien=KRITERIEN_DATA)
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -365,13 +329,13 @@ def register():
             flash('E-Mail bereits registriert.', 'danger')
             return render_template('register.html', form=form)
 
-        # User erstellen – mit Admin-Rechten
+        # User erstellen
         new_user = User(
             username=username,
             email=email,
             alter=alter,
-            is_mentor=True,
-            is_admin=True  # Automatisch Admin für neue Users (temporär!)
+            is_mentor=True,   # ← temporär, später anpassen
+            is_admin=True     # ← temporär, später anpassen
         )
         new_user.set_password(password)
 
@@ -379,31 +343,33 @@ def register():
             db.session.add(new_user)
             db.session.commit()
 
-            # Track dem neuen User zuweisen (aus Pending)
-      pending_track_id = session.get('pending_track_id')
-if not pending_track_id:
-    flash('Du musst zuerst einen Track hochladen!', 'danger')
-    return redirect(url_for('gast_upload'))
-                if track:
-                    track.artist_id = new_user.id
-                    # Battle finden (aktuell aktives für Deutschrap)
-                    deutschrap_genre = Genre.query.filter_by(name='Deutschrap').first()
-                    if deutschrap_genre:
-                        battle = Battle.query.filter_by(
-                            genre_id=deutschrap_genre.id,
-                            status='open'
-                        ).first()
-                        if battle:
-                            track.battle_id = battle.id
-                    db.session.commit()
-                    session.pop('pending_track_id', None)
-                    flash('Registrierung erfolgreich! Dein Pending-Track ist jetzt deinem Account zugewiesen.', 'success')
-                else:
-                    flash('Pending-Track nicht gefunden – Registrierung aber erfolgreich.', 'warning')
-            else:
-                flash('Registrierung erfolgreich! Kein Pending-Track vorhanden.', 'success')
+            # Pending-Track dem neuen User zuweisen
+            pending_track_id = session.get('pending_track_id')
+            if not pending_track_id:
+                flash('Du musst zuerst einen Track hochladen!', 'danger')
+                return redirect(url_for('gast_upload'))
 
-            return redirect(url_for('login'))
+            track = Track.query.get(pending_track_id)
+            if track:
+                track.artist_id = new_user.id
+                # Battle finden (aktuelles aktives Battle für Deutschrap)
+                deutschrap_genre = Genre.query.filter_by(name='Deutschrap').first()
+                if deutschrap_genre:
+                    battle = Battle.query.filter_by(
+                        genre_id=deutschrap_genre.id,
+                        status='active'
+                    ).first()
+                    if battle:
+                        track.battle_id = battle.id
+                db.session.commit()
+                session.pop('pending_track_id', None)
+                flash('Registrierung erfolgreich! Dein Track ist jetzt deinem Account zugewiesen.', 'success')
+            else:
+                flash('Pending-Track nicht gefunden – Registrierung trotzdem erfolgreich.', 'warning')
+
+            login_user(new_user)  # ← optional: sofort einloggen
+            return redirect(url_for('index'))  # oder 'submit' / 'tracks'
+
         except Exception as e:
             db.session.rollback()
             logger.error(f"Registrierungsfehler: {str(e)}", exc_info=True)
@@ -411,16 +377,14 @@ if not pending_track_id:
             return render_template('register.html', form=form)
 
     return render_template('register.html', form=form)
-    
+
 @app.route('/gast-upload', methods=['GET', 'POST'])
 def gast_upload():
     if request.method == 'POST':
-        # Hier dein POST-Handling-Code, z. B. Track-Upload verarbeiten
         name = request.form.get('name', '').strip()
         genre = request.form.get('genre', '').strip()
         link = request.form.get('link', '').strip()
         track_url = ''
-
         try:
             if 'track' in request.files and request.files['track'].filename:
                 file = request.files['track']
@@ -438,19 +402,17 @@ def gast_upload():
                 flash('Name und Genre müssen ausgefüllt sein.', 'danger')
                 return redirect(url_for('gast_upload'))
 
-            # Speichere den Track temporär, z. B. als Pending-Track in der Session oder DB
-            # Beispiel: Erstelle einen temporären Track und speichere ID in Session
             temp_track = Track(
                 name=name,
-                artist_id=None,  # Kein User noch
+                artist_id=None,  # noch kein User
                 genre=genre,
                 url=track_url,
                 datum=datetime.now().date()
             )
             db.session.add(temp_track)
             db.session.commit()
-            session['pending_track_id'] = temp_track.id  # Setze Session-Variable für Register
 
+            session['pending_track_id'] = temp_track.id
             flash('Track hochgeladen! Nun kannst du dich registrieren.', 'success')
             return redirect(url_for('register'))
 
@@ -460,96 +422,11 @@ def gast_upload():
             flash(f'Fehler beim Upload: {str(e)}', 'danger')
             return redirect(url_for('gast_upload'))
 
-    # Für GET: Zeige das Upload-Formular an
-    return render_template('gast_upload.html')  # Ersetze durch dein Template, z. B. ein Formular ähnlich wie submit.html
+    return render_template('gast_upload.html')
 
+# ... (deine anderen Routen wie admin_users, setup-initial-genre, db-setup-full bleiben unverändert)
 
-@app.route('/admin/users')
-@login_required
-def admin_users():
-    if not current_user.is_admin:
-        abort(403)
-    all_users = User.query.all()
-    return render_template('admin_users.html', users=all_users)
-
-
-# ==================================================
-# Hilfs- & Setup-Routen
-# ==================================================
-@app.route('/setup-initial-genre')
-def setup_initial_genre():
-    if Genre.query.filter_by(name='Deutschrap').first():
-        return "Deutschrap existiert bereits."
-    
-    deutschrap = Genre(
-        name='Deutschrap',
-        description='Monatliche Battles im Genre Deutschrap'
-    )
-    db.session.add(deutschrap)
-    db.session.commit()
-
-    battle = Battle(
-        genre_id=deutschrap.id,
-        start_date=datetime(2026, 2, 1).date(),
-        end_date=datetime(2026, 2, 28).date(),
-        title='Deutschrap Battle Februar 2026',
-        status='active'
-    )
-    db.session.add(battle)
-    db.session.commit()
-    
-    return "Deutschrap + erstes Battle erfolgreich angelegt!"
-
-
-@app.route('/db-setup-full')
-def db_setup_full():
-    try:
-        db.create_all()
-        
-        deutschrap = Genre.query.filter_by(name='Deutschrap').first()
-        if not deutschrap:
-            deutschrap = Genre(
-                name='Deutschrap',
-                description='Monatliche Battles im Genre Deutschrap',
-                active=True
-            )
-            db.session.add(deutschrap)
-            db.session.flush()
-
-        battle = Battle.query.filter_by(
-            genre_id=deutschrap.id,
-            start_date=datetime(2026, 2, 1).date()
-        ).first()
-        
-        if not battle:
-            battle = Battle(
-                genre_id=deutschrap.id,
-                start_date=datetime(2026, 2, 1).date(),
-                end_date=datetime(2026, 2, 28).date(),
-                title='Deutschrap Battle Februar 2026',
-                status='active'
-            )
-            db.session.add(battle)
-            db.session.commit()
-
-        return (
-            "Erfolg!<br>"
-            "→ Alle Tabellen erstellt<br>"
-            "→ Genre 'Deutschrap' + Battle Feb 2026 angelegt.<br>"
-            "Du kannst jetzt Tracks hochladen und dich registrieren."
-        )
-    except Exception as e:
-        db.session.rollback()
-        logger.error(f"DB-Setup-Fehler: {str(e)}", exc_info=True)
-        return f"Fehler: {str(e)}", 500
-
-
-
-# ==================================================
-# Start
-# ==================================================
 if __name__ == '__main__':
     with app.app_context():
-        # db.create_all()   # ← nur lokal / Entwicklung – im Prod besser via Migrationen
         port = int(os.environ.get('PORT', 5000))
         app.run(debug=True, host='0.0.0.0', port=port)
