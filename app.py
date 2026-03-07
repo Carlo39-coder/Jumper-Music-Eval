@@ -418,11 +418,9 @@ def gast_upload():
         genre = request.form['genre'].strip()
         link = request.form.get('link')
         track_url = ''
-
         if not name or not genre:
             flash('Name und Genre müssen ausgefüllt sein.', 'danger')
             return redirect(url_for('gast_upload'))
-
         try:
             if 'track' in request.files and request.files['track'].filename:
                 file = request.files['track']
@@ -433,7 +431,6 @@ def gast_upload():
             else:
                 flash('Bitte Datei oder Link angeben.', 'danger')
                 return redirect(url_for('gast_upload'))
-
             temp_track = Track(
                 name=name,
                 artist_id=None,
@@ -444,17 +441,16 @@ def gast_upload():
             )
             db.session.add(temp_track)
             db.session.commit()
-
             session['pending_track_id'] = temp_track.id
             session['pending_genre'] = genre  # Für spätere Zuordnung
-
             flash('Track hochgeladen! Jetzt kannst du dich registrieren.', 'success')
             return redirect(url_for('register'))
-
         except Exception as e:
             db.session.rollback()
             flash(f'Upload-Fehler: {str(e)}', 'danger')
-
+            return redirect(url_for('gast_upload'))  # Redirect bei Fehler, um Loop zu vermeiden
+    else:  # Für GET: Form anzeigen
+        return render_template('gast_upload.html')  # Ersetze mit deinem Template-Namen
 
 
 @app.route('/admin/users')
