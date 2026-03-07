@@ -449,8 +449,7 @@ def gast_upload():
             db.session.rollback()
             flash(f'Upload-Fehler: {str(e)}', 'danger')
             return redirect(url_for('gast_upload'))  # Redirect bei Fehler, um Loop zu vermeiden
-    else:  # Für GET: Form anzeigen
-        return render_template('gast_upload.html')  # Ersetze mit deinem Template-Namen
+    
 
 
 @app.route('/admin/users')
