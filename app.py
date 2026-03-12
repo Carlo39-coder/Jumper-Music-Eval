@@ -385,6 +385,11 @@ def gast_upload():
         genre = request.form.get('genre', '').strip()
         link = request.form.get('link', '').strip()
         track_url = ''
+
+        if not name or not genre:
+            flash('Name und Genre müssen ausgefüllt sein.', 'danger')
+            return redirect(url_for('gast_upload'))
+
         try:
             if 'track' in request.files and request.files['track'].filename:
                 file = request.files['track']
@@ -398,32 +403,27 @@ def gast_upload():
                 flash('Bitte Datei hochladen oder Link angeben.', 'danger')
                 return redirect(url_for('gast_upload'))
 
-            if not name or not genre:
-                flash('Name und Genre müssen ausgefüllt sein.', 'danger')
-                return redirect(url_for('gast_upload'))
-
             temp_track = Track(
                 name=name,
                 artist_id=None,  # noch kein User
                 genre=genre,
                 url=track_url,
+                bonus=0,
                 datum=datetime.now().date()
             )
             db.session.add(temp_track)
             db.session.commit()
 
             session['pending_track_id'] = temp_track.id
-            flash('Track hochgeladen! Nun kannst du dich registrieren.', 'success')
-            return redirect(url_for('register'))
 
+            flash('Track hochgeladen! Jetzt kannst du dich registrieren.', 'success')
+            return redirect(url_for('register'))
         except Exception as e:
             db.session.rollback()
             logger.error(f"Gast-Upload-Fehler: {str(e)}", exc_info=True)
             flash(f'Fehler beim Upload: {str(e)}', 'danger')
-            return redirect(url_for('gast_upload'))
 
     return render_template('gast_upload.html')
-
 # ... (deine anderen Routen wie admin_users, setup-initial-genre, db-setup-full bleiben unverändert)
 
 if __name__ == '__main__':
