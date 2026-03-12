@@ -1,11 +1,11 @@
-Flask-SQLAlchemy
-psycopg2-binary
-gunicorn
-numpy
-pandas
-cloudinary
-flask_login
-flask
-markdown
-flask-migrate
-flask-wtf
+flask==3.0.3
+flask-sqlalchemy==3.1.1
+flask-login==0.6.3
+flask-wtf==1.2.1
+flask-migrate==4.1.0          # ← fehlte – für DB-Migrationen
+werkzeug==3.0.3
+cloudinary==1.43.0
+psycopg2-binary==2.9.10
+gunicorn==23.0.0
+email-validator==2.2.0        # ← für WTForms Email()
+python-dotenv==1.0.1          # ← optional, aber hilfreich lokal
