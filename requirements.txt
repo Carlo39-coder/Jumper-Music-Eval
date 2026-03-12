@@ -7,4 +7,4 @@ cloudinary
 flask_login
 flask
 markdown
-
+flask-migrate
