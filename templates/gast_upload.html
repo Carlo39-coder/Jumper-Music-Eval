@@ -1,37 +1,47 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <title>Gast-Upload – Jumper Music Eval</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <h1>Track als Gast hochladen</h1>
+{% extends "base.html" %}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert alert-{{ category }}">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
+{% block title %}Track hochladen – Jumper{% endblock %}
 
-    <form method="post" enctype="multipart/form-data">
-        <label>Track-Name:</label><br>
-        <input type="text" name="name" required><br><br>
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card bg-dark text-white shadow-lg p-4">
+                <h2 class="text-center mb-4 text-warning">Track hochladen</h2>
+                <p class="text-center">Lade deinen Track hoch – das ist Pflicht vor der Registrierung.</p>
 
-        <label>Genre:</label><br>
-        <input type="text" name="genre" required value="Deutschrap"><br><br>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
 
-        <label>MP3/WAV hochladen:</label><br>
-        <input type="file" name="track" accept="audio/*"><br><br>
-
-        <label>ODER YouTube/SoundCloud-Link:</label><br>
-        <input type="url" name="link"><br><br>
-
-        <button type="submit">Hochladen & weiter zur Registrierung</button>
-    </form>
-
-    <p><a href="{{ url_for('register') }}">Ich habe schon hochgeladen → direkt registrieren</a></p>
-</body>
-</html>
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Track-Name</label>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Genre</label>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" name="genre" value="Deutschrap" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Audio-Datei hochladen</label>
+                        <input type="file" class="form-control bg-dark text-white border-secondary" name="track" accept="audio/*">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">oder Link</label>
+                        <input type="url" class="form-control bg-dark text-white border-secondary" name="link" placeholder="https://...">
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100">Hochladen & zur Registrierung</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
