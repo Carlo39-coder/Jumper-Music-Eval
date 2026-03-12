@@ -314,13 +314,24 @@ def register():
 
     form = RegistrationForm()
 
+    # ← Hier die Ausnahme für DICH (deinen speziellen Username)
+    # Ersetze 'DEIN_USERNAME' durch deinen echten Username (z. B. 'admin', 'Carlo39' usw.)
+    is_special_user = 'SpaceShio' in [form.username.data.strip().lower() if form.username.data else '']
+
+    pending_track_id = session.get('pending_track_id')
+
+    # Normale User brauchen einen Track – dein spezieller User nicht
+    if not is_special_user and not pending_track_id:
+        flash('Du musst zuerst einen Track hochladen!', 'danger')
+        return redirect(url_for('gast_upload'))
+
     if form.validate_on_submit():
         username = form.username.data.strip()
         email = form.email.data.strip().lower()
         alter = form.alter.data
         password = form.password.data
 
-        # Username und Email prüfen VOR dem Erstellen des Users
+        # Username und Email prüfen VOR dem Erstellen
         if User.query.filter_by(username=username).first():
             flash('Username bereits vergeben.', 'danger')
             return render_template('register.html', form=form)
@@ -329,13 +340,12 @@ def register():
             flash('E-Mail bereits registriert.', 'danger')
             return render_template('register.html', form=form)
 
-        # User erstellen
         new_user = User(
             username=username,
             email=email,
             alter=alter,
-            is_mentor=True,   # ← temporär, später anpassen
-            is_admin=True     # ← temporär, später anpassen
+            is_mentor=False,
+            is_admin=is_special_user  # ← nur DU bekommst Admin-Rechte automatisch
         )
         new_user.set_password(password)
 
@@ -343,32 +353,26 @@ def register():
             db.session.add(new_user)
             db.session.commit()
 
-            # Pending-Track dem neuen User zuweisen
-            pending_track_id = session.get('pending_track_id')
-            if not pending_track_id:
-                flash('Du musst zuerst einen Track hochladen!', 'danger')
-                return redirect(url_for('gast_upload'))
+            # Track zuweisen – nur wenn vorhanden (bei dir optional)
+            if pending_track_id:
+                track = Track.query.get(pending_track_id)
+                if track:
+                    track.artist_id = new_user.id
+                    # Battle zuweisen (aktuelles offenes für Deutschrap)
+                    deutschrap = Genre.query.filter_by(name='Deutschrap').first()
+                    if deutschrap:
+                        battle = Battle.query.filter_by(
+                            genre_id=deutschrap.id,
+                            status='open'  # oder 'active'
+                        ).first()
+                        if battle:
+                            track.battle_id = battle.id
+                    db.session.commit()
 
-            track = Track.query.get(pending_track_id)
-            if track:
-                track.artist_id = new_user.id
-                # Battle finden (aktuelles aktives Battle für Deutschrap)
-                deutschrap_genre = Genre.query.filter_by(name='Deutschrap').first()
-                if deutschrap_genre:
-                    battle = Battle.query.filter_by(
-                        genre_id=deutschrap_genre.id,
-                        status='active'
-                    ).first()
-                    if battle:
-                        track.battle_id = battle.id
-                db.session.commit()
                 session.pop('pending_track_id', None)
-                flash('Registrierung erfolgreich! Dein Track ist jetzt deinem Account zugewiesen.', 'success')
-            else:
-                flash('Pending-Track nicht gefunden – Registrierung trotzdem erfolgreich.', 'warning')
 
-            login_user(new_user)  # ← optional: sofort einloggen
-            return redirect(url_for('index'))  # oder 'submit' / 'tracks'
+            flash('Registrierung erfolgreich! Willkommen!', 'success')
+            return redirect(url_for('login'))
 
         except Exception as e:
             db.session.rollback()
