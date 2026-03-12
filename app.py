@@ -431,6 +431,7 @@ def gast_upload():
 # ... (deine anderen Routen wie admin_users, setup-initial-genre, db-setup-full bleiben unverändert)
 
 if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 10000))  # Render setzt PORT automatisch (meist 10000)
     with app.app_context():
-        port = int(os.environ.get('PORT', 5000))
-        app.run(debug=True, host='0.0.0.0', port=port)
+        db.create_all()  # Falls nötig
+    app.run(debug=False, host='0.0.0.0', port=port)
