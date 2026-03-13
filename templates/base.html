@@ -39,13 +39,12 @@
             z-index: 1000;
         }
 
-        .navbar-brand img {
-            filter: hue-rotate(200deg) brightness(1.3) saturate(2); /* Blau → Gelb umfärben */
+        .navbar-brand {
             transition: transform 0.3s;
         }
 
-        .navbar-brand:hover img {
-            transform: scale(1.15);
+        .navbar-brand:hover {
+            transform: scale(1.1);
         }
 
         .nav-link {
@@ -58,12 +57,12 @@
         }
 
         main {
-            margin-top: 80px; /* Abstand zur fixierten Top-Bar */
+            margin-top: 70px; /* Abstand zur fixierten Top-Bar */
         }
 
         @media (max-width: 768px) {
             main {
-                margin-top: 70px;
+                margin-top: 60px;
             }
         }
     </style>
@@ -75,12 +74,9 @@
     <!-- Horizontale Top-Bar -->
     <nav class="navbar navbar-expand top-bar fixed-top">
         <div class="container-fluid px-4">
-            <!-- Nur das gelbe Notenblatt-Logo – ohne Text, ohne Umrandung -->
+            <!-- Nur das gelbe Notensymbol (Logo) – ohne Text, ohne Umrandung -->
             <a class="navbar-brand" href="{{ url_for('index') }}">
-                <img src="{{ url_for('static', filename='944b8f32-b8af-43ca-bfe4-7df6a20c3435_preview_rev_1.png') }}" 
-                     alt="Jumper Logo" 
-                     width="55" 
-                     height="55">
+                <i class="fas fa-music text-warning fs-3"></i> <!-- Notensymbol in gelb, groß -->
             </a>
 
             <!-- Menü rechts -->
@@ -103,6 +99,7 @@
                         </li>
                         {% if current_user.is_admin %}
                             <li class="nav-item">
+                                <a class="nav-link text-warning {% if request.endpoint == 'admin_users' %}active{% endif %}" href="{{ url_for('admin_users') }}">
                                     <i class="fas fa-users-cog me-1"></i> Admin
                                 </a>
                             </li>
@@ -113,7 +110,8 @@
                             </a>
                         </li>
                     {% else %}
-                        <li class="nav-item"
+                        <li class="nav-item">
+                            <a class="nav-link text-light {% if request.endpoint == 'login' %}active{% endif %}" href="{{ url_for('login') }}">
                                 <i class="fas fa-sign-in-alt me-1"></i> Login
                             </a>
                         </li>
@@ -129,7 +127,7 @@
     </nav>
 
     <!-- Hauptinhalt – mit Abstand zur Top-Bar -->
-    <main class="container-fluid px-4 py-5" style="margin-top: 80px;">
+    <main class="container-fluid px-4 py-5" style="margin-top: 70px;">
         {% block content %}{% endblock %}
     </main>
 
