@@ -10,76 +10,122 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <!-- Deine eigene CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: #fff;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+        }
+
+        /* Vollbild-Hintergrund ohne schwarze Ränder */
+        .bg-full {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('/static/kier-in-sight-archives-GROaOafbSKY-unsplash.jpg') center/cover no-repeat fixed;
+            z-index: -1;
+        }
+
+        /* Horizontale Top-Bar (wie Bandcamp) */
+        .top-bar {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+        }
+
+        .navbar-brand img {
+            border: 2px solid #ffcc00;
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+        }
+
+        .nav-link {
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #ffcc00 !important;
+            transform: scale(1.05);
+        }
+
+        main {
+            margin-top: 80px; /* Abstand zur fixierten Top-Bar */
+        }
+
+        @media (max-width: 768px) {
+            main {
+                margin-top: 70px;
+            }
+        }
+    </style>
 </head>
-<body class="bg-dark text-white">
+<body>
+    <!-- Vollbild-Hintergrund ohne schwarze Ränder -->
+    <div class="bg-full"></div>
 
-    <!-- Haupt-Hintergrundbild (bündig in die Ecken, keine schwarzen Ränder) -->
-    <div class="background-image"></div>
+    <!-- Horizontale Top-Bar (von links nach rechts, Logo links) -->
+    <nav class="navbar navbar-expand top-bar fixed-top">
+        <div class="container-fluid px-4">
+            <!-- Jumper Logo ganz links -->
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='944b8f32-b8af-43ca-bfe4-7df6a20c3435_preview_rev_1.png') }}" alt="Jumper Logo" width="45" height="45" class="me-3 rounded-circle">
+                <span class="fs-4 fw-bold text-warning">Jumper</span>
+            </a>
 
-    <!-- Sidebar (von unten nach oben, horizontal links → rechts) -->
-    <nav class="sidebar bg-dark border-end border-secondary vh-100 position-fixed top-0 start-0 d-flex flex-column p-3 shadow-lg">
-        <!-- Jumper Logo ganz oben links -->
-        <a href="{{ url_for('index') }}" class="d-flex align-items-center mb-4 text-decoration-none">
-            <img src="{{ url_for('static', filename='944b8f32-b8af-43ca-bfe4-7df6a20c3435_preview_rev_1.png') }}" alt="Jumper Logo" width="60" height="60" class="me-3 rounded-circle">
-            <span class="fs-4 fw-bold text-warning">Jumper</span>
-        </a>
+            <!-- Menü rechts -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <!-- Menüpunkte untereinander (vertikal) -->
-        <ul class="nav flex-column w-100">
-            <li class="nav-item mb-2">
-                <a class="nav-link text-light {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
-                    <i class="fas fa-home me-2"></i> Home
-                </a>
-            </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link text-light {% if request.endpoint == 'kriterien_theorie' %}active{% endif %}" href="{{ url_for('kriterien_theorie') }}">
-                    <i class="fas fa-book me-2"></i> Kriterien Theorie
-                </a>
-            </li>
-
-            {% if current_user.is_authenticated %}
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-light {% if request.endpoint == 'submit' %}active{% endif %}" href="{{ url_for('submit') }}">
-                        <i class="fas fa-upload me-2"></i> Track einreichen
-                    </a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-light {% if request.endpoint == 'tracks' %}active{% endif %}" href="{{ url_for('tracks') }}">
-                        <i class="fas fa-music me-2"></i> Alle Tracks
-                    </a>
-                </li>
-                {% if current_user.is_admin %}
-                    <li class="nav-item mb-2">
-                        <a class="nav-link text-warning {% if request.endpoint == 'admin_users' %}active{% endif %}" href="{{ url_for('admin_users') }}">
-                            <i class="fas fa-users-cog me-2"></i> Admin: User
-                        </a>
-                    </li>
-                {% endif %}
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-light" href="{{ url_for('logout') }}">
-                        <i class="fas fa-sign-out-alt me-2"></i> Logout
-                    </a>
-                </li>
-            {% else %}
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-light {% if request.endpoint == 'login' %}active{% endif %}" href="{{ url_for('login') }}">
-                        <i class="fas fa-sign-in-alt me-2"></i> Login
-                    </a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-light {% if request.endpoint == 'register' %}active{% endif %}" href="{{ url_for('register') }}">
-                        <i class="fas fa-user-plus me-2"></i> Registrieren
-                    </a>
-                </li>
-            {% endif %}
-        </ul>
-
-        <!-- Platzhalter unten, damit Inhalt nicht überlappt -->
-        <div class="mt-auto"></div>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link text-light {% if request.endpoint == 'submit' %}active{% endif %}" href="{{ url_for('submit') }}">
+                                <i class="fas fa-upload me-1"></i> Upload
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light {% if request.endpoint == 'tracks' %}active{% endif %}" href="{{ url_for('tracks') }}">
+                                <i class="fas fa-music me-1"></i> Tracks
+                            </a>
+                        </li>
+                        {% if current_user.is_admin %}
+                            <li class="nav-item">
+                                <a class="nav-link text-warning {% if request.endpoint == 'admin_users' %}active{% endif %}" href="{{ url_for('admin_users') }}">
+                                    <i class="fas fa-users-cog me-1"></i> Admin
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link text-light" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-1"></i> Logout
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link text-light {% if request.endpoint == 'login' %}active{% endif %}" href="{{ url_for('login') }}">
+                                <i class="fas fa-sign-in-alt me-1"></i> Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light {% if request.endpoint == 'register' %}active{% endif %}" href="{{ url_for('register') }}">
+                                <i class="fas fa-user-plus me-1"></i> Registrieren
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
     </nav>
 
-    <!-- Hauptinhalt – mit Abstand zur Sidebar -->
-    <main class="ms-0 ms-md-5 p-4" style="min-height: 100vh;">
+    <!-- Hauptinhalt – mit Abstand zur Top-Bar -->
+    <main class="container-fluid px-4 py-5" style="margin-top: 80px;">
         {% block content %}{% endblock %}
     </main>
 
