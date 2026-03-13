@@ -1,6 +1,7 @@
 import os
 import json
 import logging
+from sqlalchemy import text
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, flash, abort, session
 from flask_sqlalchemy import SQLAlchemy
@@ -439,7 +440,16 @@ def gast_upload():
     return render_template('gast_upload.html')
 # ... (deine anderen Routen wie admin_users, setup-initial-genre, db-setup-full bleiben unverändert)
 
-
+@app.route('/fix-artist-id-nullable-v2')
+def fix_artist_id_nullable_v2():
+    try:
+        # Explizit mit text() umwickeln – das ist der Fix
+        db.session.execute(text("ALTER TABLE track ALTER COLUMN artist_id DROP NOT NULL;"))
+        db.session.commit()
+        return "Erfolg! Spalte artist_id ist jetzt nullable (NULL erlaubt).<br>Geh zurück zu /gast-upload und teste erneut."
+    except Exception as e:
+        db.session.rollback()
+        return f"Fehler beim Ändern der Spalte: {str(e)}", 500
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))  # Render setzt PORT automatisch (meist 10000)
