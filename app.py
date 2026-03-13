@@ -237,7 +237,11 @@ def submit():
                 file = request.files['track']
                 if not file.mimetype.startswith('audio/'):
                     raise ValueError("Nur Audio-Dateien erlaubt.")
-                upload_result = cloudinary.uploader.upload(file, resource_type="video")
+            upload_result = cloudinary.uploader.upload(
+               file,
+               resource_type="video",
+               format="mp3"  # erzwingt MP3-Ausgabe – Player läuft besser
+             )
                 track_url = upload_result['secure_url']
             elif link:
                 track_url = link
@@ -409,7 +413,11 @@ def gast_upload():
                 file = request.files['track']
                 if not file.mimetype.startswith('audio/'):
                     raise ValueError("Nur Audio-Dateien erlaubt.")
-                upload_result = cloudinary.uploader.upload(file, resource_type="video")
+             upload_result = cloudinary.uploader.upload(
+                file,
+                resource_type="video",
+                format="mp3"  # erzwingt MP3-Ausgabe – Player läuft besser
+            )
                 track_url = upload_result['secure_url']
             elif link:
                 track_url = link
