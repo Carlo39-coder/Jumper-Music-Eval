@@ -17,8 +17,16 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <style>
-        body { background: #000; color: #fff; margin: 0; padding: 0; }
-        .navbar { background: transparent !important; border-bottom: none; height: 70px; z-index: 1030; }
+        body { 
+           background-image: url('/static/kier-in-sight-archives-GROaOafbSKY-unsplash.jpg');
+           background-size: cover;          /* Bild füllt komplett aus */
+           background-position: center;     /* zentriert */
+           background-repeat: no-repeat;    /* kein Wiederholen */
+           background-attachment: fixed;    /* Bild scrollt nicht mit */
+           margin: 0;                       /* keine Ränder */
+           padding: 0;                      /* keine Ränder */
+           min-height: 100vh;               /* volle Höhe */
+           color: white;                    /* Textfarbe bleibt */
         
         .sidebar-left {
             position: fixed;
