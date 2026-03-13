@@ -77,9 +77,12 @@
         <div class="container-fluid px-4">
             <!-- Nur das gelbe Notensymbol (Logo) – ohne Text, ohne Umrandung -->
             <a class="navbar-brand" href="{{ url_for('index') }}">
-                <i class="fas fa-music text-warning fs-3"></i> <!-- Notensymbol in gelb, groß -->
+                <img src="{{ url_for('static', filename='944b8f32-b8af-43ca-bfe4-7df6a20c3435_preview_rev_1.png') }}" 
+                     alt="Jumper Logo" 
+                     width="38" 
+                     height="38" 
+                     class="d-inline-block align-text-top">
             </a>
-
             <!-- Menü rechts -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
