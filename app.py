@@ -437,10 +437,10 @@ def delete_all_tracks():
     try:
         db.session.execute("DELETE FROM track")
         db.session.commit()
-        return "Alle Tracks gelöscht! Gehe zurück zu /tracks."
+        return "Erfolg! Alle Tracks wurden gelöscht.<br>Geh zu /tracks und überprüfe – Seite sollte jetzt leer sein."
     except Exception as e:
         db.session.rollback()
-        return f"Fehler: {str(e)}", 500
+        return f"Fehler beim Löschen: {str(e)}", 500
 
 # ==================================================
 # Start
