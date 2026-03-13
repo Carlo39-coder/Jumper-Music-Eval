@@ -97,7 +97,6 @@
                         </li>
                         {% if current_user.is_admin %}
                             <li class="nav-item">
-                                <a class="nav-link text-warning {% if request.endpoint == 'admin_users' %}active{% endif %}" href="{{ url_for('admin_users') }}">
                                     <i class="fas fa-users-cog me-1"></i> Admin
                                 </a>
                             </li>
