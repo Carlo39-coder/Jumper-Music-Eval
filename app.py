@@ -435,7 +435,7 @@ def gast_upload():
 @app.route('/delete-all-tracks')
 def delete_all_tracks():
     try:
-        db.session.execute("DELETE FROM track")
+        db.session.execute(text("DELETE FROM track"))
         db.session.commit()
         return "Erfolg! Alle Tracks wurden gelöscht.<br>Geh zu /tracks und überprüfe – Seite sollte jetzt leer sein."
     except Exception as e:
