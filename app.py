@@ -439,6 +439,15 @@ def gast_upload():
     return render_template('gast_upload.html')
 # ... (deine anderen Routen wie admin_users, setup-initial-genre, db-setup-full bleiben unverändert)
 
+@app.route('/flask-db-init')
+def flask_db_init():
+    try:
+        from flask_migrate import init
+        init()
+        return "Migrations-Ordner erfolgreich erstellt! Jetzt kannst du migrieren."
+    except Exception as e:
+        return f"Fehler bei init: {str(e)}", 500
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))  # Render setzt PORT automatisch (meist 10000)
     with app.app_context():
