@@ -50,9 +50,7 @@ if database_url:
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///JumperDB'
     print("⚠️ WARNUNG: Keine DATABASE_URL → SQLite Fallback (nur lokal!)")
-
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
@@ -69,7 +67,6 @@ cloudinary.config(
     api_key=os.getenv('CLOUDINARY_API_KEY'),
     api_secret=os.getenv('CLOUDINARY_API_SECRET')
 )
-
 if not all([cloudinary.config().cloud_name, cloudinary.config().api_key, cloudinary.config().api_secret]):
     logger.warning("Cloudinary-Keys fehlen – Uploads werden fehlschlagen.")
 
@@ -151,14 +148,14 @@ class Battle(db.Model):
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
     title = db.Column(db.String(100), nullable=False)
-    status = db.Column(db.String(20), default="active")  # active, voting, finished
+    status = db.Column(db.String(20), default="active")
     genre = db.relationship('Genre', backref='battles')
 
 class Track(db.Model):
     __tablename__ = 'track'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    artist_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    artist_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # ← jetzt nullable
     genre = db.Column(db.String(50), default="Deutschrap")
     url = db.Column(db.String(500), nullable=False)
     bonus = db.Column(db.Integer, default=0)
@@ -205,16 +202,23 @@ def kriterien_theorie():
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
+
     form = LoginForm()
+
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data.strip()).first()
-        if user and user.check_password(form.password.data):
+        username = form.username.data.strip()
+        password = form.password.data
+
+        user = User.query.filter_by(username=username).first()
+
+        if user and user.check_password(password):
             login_user(user)
             flash('Erfolgreich eingeloggt!', 'success')
             next_page = request.args.get('next')
             return redirect(next_page or url_for('submit'))
         else:
             flash('Falscher Username oder Passwort.', 'danger')
+
     return render_template('login.html', form=form)
 
 @app.route('/logout')
@@ -232,16 +236,21 @@ def submit():
         genre = request.form.get('genre', '').strip()
         link = request.form.get('link', '').strip()
         track_url = ''
+
+        if not name or not genre:
+            flash('Name und Genre müssen ausgefüllt sein.', 'danger')
+            return redirect(url_for('submit'))
+
         try:
             if 'track' in request.files and request.files['track'].filename:
                 file = request.files['track']
                 if not file.mimetype.startswith('audio/'):
                     raise ValueError("Nur Audio-Dateien erlaubt.")
-            upload_result = cloudinary.uploader.upload(
-               file,
-               resource_type="video",
-               format="mp3"  # erzwingt MP3-Ausgabe – Player läuft besser
-             )
+                upload_result = cloudinary.uploader.upload(
+                    file,
+                    resource_type="video",
+                    format="mp3"  # erzwingt MP3-Ausgabe – Player läuft besser
+                )
                 track_url = upload_result['secure_url']
             elif link:
                 track_url = link
@@ -249,11 +258,8 @@ def submit():
                 flash('Bitte Datei hochladen oder Link angeben.', 'danger')
                 return redirect(url_for('submit'))
 
-            if not name or not genre:
-                flash('Name und Genre müssen ausgefüllt sein.', 'danger')
-                return redirect(url_for('submit'))
-
             bonus = 10 if current_user.alter < 25 else 0
+
             new_track = Track(
                 name=name,
                 artist_id=current_user.id,
@@ -270,6 +276,7 @@ def submit():
             db.session.rollback()
             logger.error(f"Submit-Fehler: {str(e)}", exc_info=True)
             flash(f'Fehler beim Upload: {str(e)}', 'danger')
+
     return render_template('submit.html')
 
 @app.route('/tracks')
@@ -286,18 +293,14 @@ def rate(track_id):
     if not (current_user.is_mentor or current_user.is_admin):
         abort(403)
     track = Track.query.get_or_404(track_id)
+
     if request.method == 'POST':
         try:
             track.historischer_bezug = int(request.form.get('historischer_bezug', 0))
             track.kreativitaet = int(request.form.get('kreativitaet', 0))
             track.technische_qualitaet = int(request.form.get('technische_qualitaet', 0))
             track.community = int(request.form.get('community', 0))
-            scores = [
-                track.historischer_bezug,
-                track.kreativitaet,
-                track.technische_qualitaet,
-                track.community
-            ]
+            scores = [track.historischer_bezug, track.kreativitaet, track.technische_qualitaet, track.community]
             if any(s < 0 or s > 10 for s in scores):
                 raise ValueError("Scores müssen zwischen 0 und 10 liegen.")
             track.mentor_feedback = request.form.get('feedback', '')
@@ -310,14 +313,8 @@ def rate(track_id):
         except Exception as e:
             logger.error(f"Rate-Fehler: {str(e)}", exc_info=True)
             flash('Fehler beim Speichern der Bewertung.', 'danger')
-    return render_template('rate.html', track=track, kriterien=KRITERIEN_DATA)
 
-# Nur einmal ausführen – danach wieder löschen
-@app.route('/migrate-artist-nullable')
-def migrate_artist_nullable():
-    from flask_migrate import upgrade
-    upgrade()
-    return "Migration durchgeführt – artist_id ist jetzt nullable"
+    return render_template('rate.html', track=track, kriterien=KRITERIEN_DATA)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -326,14 +323,8 @@ def register():
 
     form = RegistrationForm()
 
-    # ← Hier die Ausnahme für DICH (deinen speziellen Username)
-    # Ersetze 'DEIN_USERNAME' durch deinen echten Username (z. B. 'admin', 'Carlo39' usw.)
-    is_special_user = 'SpaceShio' in [form.username.data.strip().lower() if form.username.data else '']
-
     pending_track_id = session.get('pending_track_id')
-
-    # Normale User brauchen einen Track – dein spezieller User nicht
-    if not is_special_user and not pending_track_id:
+    if not pending_track_id:
         flash('Du musst zuerst einen Track hochladen!', 'danger')
         return redirect(url_for('gast_upload'))
 
@@ -343,7 +334,6 @@ def register():
         alter = form.alter.data
         password = form.password.data
 
-        # Username und Email prüfen VOR dem Erstellen
         if User.query.filter_by(username=username).first():
             flash('Username bereits vergeben.', 'danger')
             return render_template('register.html', form=form)
@@ -357,7 +347,7 @@ def register():
             email=email,
             alter=alter,
             is_mentor=False,
-            is_admin=is_special_user  # ← nur DU bekommst Admin-Rechte automatisch
+            is_admin=False
         )
         new_user.set_password(password)
 
@@ -365,27 +355,24 @@ def register():
             db.session.add(new_user)
             db.session.commit()
 
-            # Track zuweisen – nur wenn vorhanden (bei dir optional)
-            if pending_track_id:
-                track = Track.query.get(pending_track_id)
-                if track:
-                    track.artist_id = new_user.id
-                    # Battle zuweisen (aktuelles offenes für Deutschrap)
-                    deutschrap = Genre.query.filter_by(name='Deutschrap').first()
-                    if deutschrap:
-                        battle = Battle.query.filter_by(
-                            genre_id=deutschrap.id,
-                            status='open'  # oder 'active'
-                        ).first()
-                        if battle:
-                            track.battle_id = battle.id
-                    db.session.commit()
+            track = Track.query.get(pending_track_id)
+            if track:
+                track.artist_id = new_user.id
 
-                session.pop('pending_track_id', None)
+                deutschrap = Genre.query.filter_by(name='Deutschrap').first()
+                if deutschrap:
+                    battle = Battle.query.filter_by(
+                        genre_id=deutschrap.id,
+                        status='open'
+                    ).first()
+                    if battle:
+                        track.battle_id = battle.id
+                db.session.commit()
 
-            flash('Registrierung erfolgreich! Willkommen!', 'success')
+            session.pop('pending_track_id', None)
+
+            flash('Registrierung erfolgreich! Dein Track ist jetzt deinem Account zugewiesen.', 'success')
             return redirect(url_for('login'))
-
         except Exception as e:
             db.session.rollback()
             logger.error(f"Registrierungsfehler: {str(e)}", exc_info=True)
@@ -393,8 +380,6 @@ def register():
             return render_template('register.html', form=form)
 
     return render_template('register.html', form=form)
-
-
 
 @app.route('/gast-upload', methods=['GET', 'POST'])
 def gast_upload():
@@ -413,11 +398,11 @@ def gast_upload():
                 file = request.files['track']
                 if not file.mimetype.startswith('audio/'):
                     raise ValueError("Nur Audio-Dateien erlaubt.")
-             upload_result = cloudinary.uploader.upload(
-                file,
-                resource_type="video",
-                format="mp3"  # erzwingt MP3-Ausgabe – Player läuft besser
-            )
+                upload_result = cloudinary.uploader.upload(
+                    file,
+                    resource_type="video",
+                    format="mp3"  # erzwingt MP3-Ausgabe – Player läuft besser
+                )
                 track_url = upload_result['secure_url']
             elif link:
                 track_url = link
@@ -427,7 +412,7 @@ def gast_upload():
 
             temp_track = Track(
                 name=name,
-                artist_id=None,  # noch kein User
+                artist_id=None,
                 genre=genre,
                 url=track_url,
                 bonus=0,
@@ -446,11 +431,12 @@ def gast_upload():
             flash(f'Fehler beim Upload: {str(e)}', 'danger')
 
     return render_template('gast_upload.html')
-# ... (deine anderen Routen wie admin_users, setup-initial-genre, db-setup-full bleiben unverändert)
 
-
+# ==================================================
+# Start
+# ==================================================
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 10000))  # Render setzt PORT automatisch (meist 10000)
+    port = int(os.environ.get('PORT', 10000))
     with app.app_context():
         db.create_all()  # Falls nötig
     app.run(debug=False, host='0.0.0.0', port=port)
