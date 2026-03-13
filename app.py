@@ -439,6 +439,16 @@ def gast_upload():
     return render_template('gast_upload.html')
 # ... (deine anderen Routen wie admin_users, setup-initial-genre, db-setup-full bleiben unverändert)
 
+@app.route('/fix-artist-id-nullable')
+def fix_artist_id_nullable():
+    try:
+        # SQL-Befehl direkt ausführen
+        db.session.execute("ALTER TABLE track ALTER COLUMN artist_id DROP NOT NULL;")
+        db.session.commit()
+        return "Erfolg! Spalte artist_id ist jetzt nullable (NULL erlaubt).<br>Geh zurück zu /gast-upload und teste erneut."
+    except Exception as e:
+        db.session.rollback()
+        return f"Fehler beim Ändern der Spalte: {str(e)}", 500
 
 
 if __name__ == '__main__':
