@@ -307,6 +307,13 @@ def rate(track_id):
             flash('Fehler beim Speichern der Bewertung.', 'danger')
     return render_template('rate.html', track=track, kriterien=KRITERIEN_DATA)
 
+# Nur einmal ausführen – danach wieder löschen
+@app.route('/migrate-artist-nullable')
+def migrate_artist_nullable():
+    from flask_migrate import upgrade
+    upgrade()
+    return "Migration durchgeführt – artist_id ist jetzt nullable"
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
