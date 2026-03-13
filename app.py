@@ -382,6 +382,13 @@ def register():
 
     return render_template('register.html', form=form)
 
+# Nur einmal ausführen – danach wieder löschen
+@app.route('/migrate-nullable-artist')
+def migrate_nullable_artist():
+    from flask_migrate import upgrade
+    upgrade()
+    return "Migration durchgeführt – artist_id ist jetzt nullable"
+
 @app.route('/gast-upload', methods=['GET', 'POST'])
 def gast_upload():
     if request.method == 'POST':
