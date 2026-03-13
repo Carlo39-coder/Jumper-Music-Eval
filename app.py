@@ -432,6 +432,15 @@ def gast_upload():
 
     return render_template('gast_upload.html')
 
+@app.route('/delete-all-tracks')
+def delete_all_tracks():
+    try:
+        db.session.execute("DELETE FROM track")
+        db.session.commit()
+        return "Erfolg! Alle Tracks wurden gelöscht.<br>Geh zu /tracks und überprüfe – Seite sollte jetzt leer sein."
+    except Exception as e:
+        db.session.rollback()
+        return f"Fehler beim Löschen: {str(e)}", 500
 
 # ==================================================
 # Start
